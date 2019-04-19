@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>436681342936-7dvltff322a2jms2a4angnvlr21177bc.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.436681342936-7dvltff322a2jms2a4angnvlr21177bc</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAdgqXr3JqBoiUWcA4cIOMzTfOrdCVDUJQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>436681342936</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.burkunantoncompany.medicalcard</string>
+	<key>PROJECT_ID</key>
+	<string>medicalcard-30ec0</string>
+	<key>STORAGE_BUCKET</key>
+	<string>medicalcard-30ec0.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:436681342936:ios:e727c45df20f6140</string>
+	<key>DATABASE_URL</key>
+	<string>https://medicalcard-30ec0.firebaseio.com</string>
+</dict>
+</plist>

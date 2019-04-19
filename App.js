@@ -3,6 +3,12 @@ import { StyleSheet, Platform, Image, Text, View, ScrollView } from 'react-nativ
 
 import firebase from 'react-native-firebase';
 
+function readUserData() {
+  firebase.database().ref('Users/').on('value', function (snapshot) {
+    console.log(snapshot.val())
+  });
+}
+
 export default class App extends React.Component {
   constructor() {
     super();
@@ -15,6 +21,8 @@ export default class App extends React.Component {
     // console.warn('User -> ', user.toJSON());
 
     // await firebase.analytics().logEvent('foo', { bar: '123'});
+
+    readUserData();
   }
 
   render() {

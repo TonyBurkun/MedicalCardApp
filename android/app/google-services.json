@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "436681342936",
+    "firebase_url": "https://medicalcard-30ec0.firebaseio.com",
+    "project_id": "medicalcard-30ec0",
+    "storage_bucket": "medicalcard-30ec0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436681342936:android:e727c45df20f6140",
+        "android_client_info": {
+          "package_name": "com.burkunantoncompany.medicalcard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "436681342936-po8654c9o89cfk1tnp5v6m2bpv3mgmpr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMDjeHf0XzeSJdoFKO_W62yrcQOigd6N0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "436681342936-po8654c9o89cfk1tnp5v6m2bpv3mgmpr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "436681342936-am5r3viou4agio6702d0i71g6dk5qost.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.burkunanton.medicalcard"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

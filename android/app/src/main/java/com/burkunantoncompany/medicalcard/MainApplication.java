@@ -1,4 +1,4 @@
-package com.invertase.rnfirebasestarter;
+package com.burkunantoncompany.medicalcard;
 
 import android.app.Application;
 
