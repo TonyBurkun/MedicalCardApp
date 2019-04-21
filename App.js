@@ -1,104 +1,205 @@
 import React from 'react';
-import { StyleSheet, Platform, Image, Text, View, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  Platform,
+  Text,
+  View,
+  StatusBar,
+  AsyncStorage,
+  ActivityIndicator,
+} from 'react-native'
+import * as Colors from './utils/colors'
+import commonStyles from './utils/commonStyles'
 
-import firebase from 'react-native-firebase';
+import Login from './components/Login'
+import Recovery from './components/RecoveryPassword'
+import Registration from './components/Registration'
+import StepOne from './components/StepOne'
+import StepTwo from './components/StepTwo'
+import MedicalCardStart from './components/MedicalCardStart'
+import MedicalCardCreate from './components/MedicalCardCreate'
+import Home from './components/Home'
 
-function readUserData() {
-  firebase.database().ref('Users/').on('value', function (snapshot) {
-    console.log(snapshot.val())
-  });
-}
 
-export default class App extends React.Component {
+import {createSwitchNavigator, createStackNavigator} from 'react-navigation'
+import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
+import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'
+
+// import firebase from 'react-native-firebase';
+
+
+class App extends React.Component {
   constructor() {
     super();
     this.state = {};
   }
 
-  async componentDidMount() {
+  _bootstrapAsync = async() => {
+    const {navigation} = this.props;
 
+    if (isUserAuth()){
+      console.log('user auth');
+
+      const userToken = await AsyncStorage.getItem(USER_TOKEN_LOCAL_STORAGE_KEY)
+        .catch(error => {
+          console.log('Try to get userToken item from AsyncStorage and getting the ERROR', error);
+        });
+
+      console.log(userToken);
+
+      const userInDB = await isUserExistInDB();
+      // console.log(userInDB);
+
+      if (userInDB) {
+
+        const setUpParam = await checkSetUpParamInUser();
+        // console.log(setUpParam);
+
+        setUpParam ? navigation.navigate('MainNavigation') : navigation.navigate('setUpOneProfile');
+
+      } else {
+        signOut(navigation)
+      }
+
+
+    } else {
+      console.log('user does not auth');
+      this.props.navigation.navigate('Login');
+    }
+
+  };
+
+
+
+
+
+  componentDidMount() {
+
+    this._bootstrapAsync();
   }
 
   render() {
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          <Image source={require('./assets/ReactNativeFirebase.png')} style={[styles.logo]}/>
-          <Text style={styles.welcome}>
-            Welcome to {'\n'} React Native Firebase
-          </Text>
-          <Text style={styles.instructions}>
-            To get started, edit App.js
-          </Text>
-          {Platform.OS === 'ios' ? (
-            <Text style={styles.instructions}>
-              Press Cmd+R to reload,{'\n'}
-              Cmd+D or shake for dev menu
-            </Text>
-          ) : (
-            <Text style={styles.instructions}>
-              Double tap R on your keyboard to reload,{'\n'}
-              Cmd+M or shake for dev menu
-            </Text>
-          )}
-          <View style={styles.modules}>
-            <Text style={styles.modulesHeader}>The following Firebase modules are pre-installed:</Text>
-            {firebase.admob.nativeModuleExists && <Text style={styles.module}>admob()</Text>}
-            {firebase.analytics.nativeModuleExists && <Text style={styles.module}>analytics()</Text>}
-            {firebase.auth.nativeModuleExists && <Text style={styles.module}>auth()</Text>}
-            {firebase.config.nativeModuleExists && <Text style={styles.module}>config()</Text>}
-            {firebase.crashlytics.nativeModuleExists && <Text style={styles.module}>crashlytics()</Text>}
-            {firebase.database.nativeModuleExists && <Text style={styles.module}>database()</Text>}
-            {firebase.firestore.nativeModuleExists && <Text style={styles.module}>firestore()</Text>}
-            {firebase.functions.nativeModuleExists && <Text style={styles.module}>functions()</Text>}
-            {firebase.iid.nativeModuleExists && <Text style={styles.module}>iid()</Text>}
-            {firebase.invites.nativeModuleExists && <Text style={styles.module}>invites()</Text>}
-            {firebase.links.nativeModuleExists && <Text style={styles.module}>links()</Text>}
-            {firebase.messaging.nativeModuleExists && <Text style={styles.module}>messaging()</Text>}
-            {firebase.notifications.nativeModuleExists && <Text style={styles.module}>notifications()</Text>}
-            {firebase.perf.nativeModuleExists && <Text style={styles.module}>perf()</Text>}
-            {firebase.storage.nativeModuleExists && <Text style={styles.module}>storage()</Text>}
-          </View>
-        </View>
-      </ScrollView>
+      <View style={commonStyles.container}>
+        <StatusBar
+          backgroundColor={Colors.MAIN_BACKGROUND}
+          barStyle="dark-content"
+        />
+        <ActivityIndicator />
+      </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  logo: {
-    height: 120,
-    marginBottom: 16,
-    marginTop: 64,
-    padding: 10,
-    width: 135,
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-  modules: {
-    margin: 20,
-  },
-  modulesHeader: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  module: {
-    fontSize: 14,
-    marginTop: 4,
-    textAlign: 'center',
+
+
+const AppStack = createStackNavigator({
+  App: {
+    screen: App,
   }
 });
+
+const LoginStack = createStackNavigator({
+  Login: {
+    screen: Login,
+    navigationOptions: {
+      header: null,
+      headerTintColor: Colors.BLACK_TITLE,
+      headerStyle: {
+        backgroundColor: Colors.MAIN_BACKGROUND,
+        elevation: 0,
+        shadowOpacity: 0,
+        borderBottomWidth: 0
+
+      }
+    }
+  },
+  Recovery: {
+    screen: Recovery,
+    navigationOptions: () => ({
+      headerTintColor: Colors.BLACK_TITLE,
+      headerStyle: {
+        backgroundColor: Colors.MAIN_BACKGROUND,
+        elevation: 0,
+        shadowOpacity: 0,
+        borderBottomWidth: 0
+
+      }
+    }),
+  }
+
+});
+
+const RegistrationStack = createStackNavigator({
+  Registration: {
+    screen: Registration,
+    navigationOptions: {
+      header: null
+    }
+  }
+});
+
+const setUpOneProfileStack = createStackNavigator({
+  StepOne: {
+    screen: StepOne,
+    navigationOptions: {
+      header: null
+    }
+  },
+
+});
+
+const setUpTwoProfileStack = createStackNavigator({
+  StepTwo: {
+    screen: StepTwo,
+    navigationOptions: {
+      header: null
+    }
+  }
+});
+
+const MedicalCardStartStack = createStackNavigator({
+  MedicalCardStart: {
+    screen: MedicalCardStart,
+    navigationOptions: {
+      header: null
+    }
+  }
+});
+
+const MedicalCardCreateStack = createStackNavigator({
+  MedicalCardStart: {
+    screen: MedicalCardCreate,
+    navigationOptions: {
+      header: null
+    }
+  }
+});
+
+
+const MainNavStack = createStackNavigator({
+  Home: {
+    screen: Home,
+    navigationOptions: {
+      // header: null
+    }
+  }
+});
+
+
+export default createSwitchNavigator(
+  {
+    EntryPoint: AppStack,
+    App: AppStack,
+    Login: LoginStack,
+    Register: RegistrationStack,
+    setUpOneProfile: setUpOneProfileStack,
+    setUpTwoProfile: setUpTwoProfileStack,
+    MedicalCardStart: MedicalCardStartStack,
+    MedicalCardCreate: MedicalCardCreateStack,
+    MainNavigation: MainNavStack,
+  },
+  {
+    initialRouteName: 'EntryPoint'
+  }
+);
