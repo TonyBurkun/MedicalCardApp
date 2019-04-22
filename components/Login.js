@@ -40,6 +40,8 @@ const validationRules = {
 
 const {height} = Dimensions.get('window');
 
+import firebase from 'react-native-firebase'
+
 
 
 class Login extends Component{
@@ -81,6 +83,7 @@ class Login extends Component{
           const uid = getUIDfromFireBase();
 
 
+
           if(isEmailVerified){
 
             const userInDB = await isUserExistInDB();
@@ -89,7 +92,11 @@ class Login extends Component{
               createUserbyIDinDB();
             }
 
-            const userTokenWasSaved = await addUserTokenToAsyncStorage(USER_TOKEN_LOCAL_STORAGE_KEY,refreshToken);
+
+
+            const userTokenWasSaved = await addUserTokenToAsyncStorage(USER_TOKEN_LOCAL_STORAGE_KEY, 'true');
+
+            console.log(userTokenWasSaved);
             if (userTokenWasSaved) {
               const setUpParam = await checkSetUpParamInUser();
 

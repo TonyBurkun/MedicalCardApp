@@ -1,5 +1,6 @@
 import firebase from 'react-native-firebase'
-import {Alert, AsyncStorage} from 'react-native';
+import {Alert} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import {ACCOUNT_NOT_FOUND, LOGIN_FAILED, EMAIL_CONFIRMATION, SUBMIT_RECOVERY_PASS} from '../utils/systemMessages'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
 
@@ -8,6 +9,7 @@ import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
 //-- Work with AsyncStorage ----------
 
 export function addUserTokenToAsyncStorage(key, value){
+
   return (
     AsyncStorage.setItem(key, value)
       .then(() => {
