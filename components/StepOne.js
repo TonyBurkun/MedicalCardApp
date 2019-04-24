@@ -72,7 +72,6 @@ export default class StepOne extends Component {
     if (photoURL) {
       photoURL = photoURL + '?width=300&height=300';
 
-      // console.log(firebase.auth().currentUser.providerData[0]);
       this.setState({
         avatarSelected: true,
         defaultAvatar: photoURL,
@@ -177,6 +176,7 @@ export default class StepOne extends Component {
   render() {
 
     console.log(this.state);
+    console.log(new Date());
 
     const scrollEnabled = this.state.screenHeight > height;
     const {userAvatar, name, surname, date, gender} = this.state.formField;
@@ -203,13 +203,13 @@ export default class StepOne extends Component {
 
               <TouchableOpacity
                 onPress={this.selectImage}
-                style={{flexDirection: 'row', justifyContent: 'flex-end'}}
+                style={{flexDirection: 'row', justifyContent: 'flex-end', borderRadius: 40}}
               >
                 {this.state.avatarSelected ?
                   <Image
                     style={styles.uploadImage}
                     resizeMode='cover'
-                    source={{url: this.state.formField.userAvatar}}
+                    source={{uri: userAvatar}}
                   />
                   :
                   <Image
@@ -264,7 +264,7 @@ export default class StepOne extends Component {
                 placeholder="Дата рождения (обязательное поле)"
                 format="DD-MM-YYYY"
                 minDate="01-01-1930"
-                maxDate={date}
+                maxDate={new Date()}
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
                 iconSource={require('../assets/datepicker-icon.png')}
