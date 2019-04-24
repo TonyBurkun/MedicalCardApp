@@ -45,6 +45,12 @@
 		3A8DF637226F714A00FB3267 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF633226F714900FB3267 /* FBSDKLoginKit.framework */; };
 		3A8DF638226F714A00FB3267 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF634226F714A00FB3267 /* FBSDKShareKit.framework */; };
 		3A8DF678226F72E500FB3267 /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF654226F72CA00FB3267 /* libRCTFBSDK.a */; };
+		3A8DF6CA2270659C00FB3267 /* TwitterShareExtensionUIResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3A8DF6C62270659A00FB3267 /* TwitterShareExtensionUIResources.bundle */; };
+		3A8DF6CB2270659C00FB3267 /* TwitterKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3A8DF6C72270659A00FB3267 /* TwitterKitResources.bundle */; };
+		3A8DF6CC2270659C00FB3267 /* TwitterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6C82270659B00FB3267 /* TwitterKit.framework */; };
+		3A8DF6CD2270659C00FB3267 /* TwitterCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6C92270659C00FB3267 /* TwitterCore.framework */; };
+		3A8DF6CF227065BB00FB3267 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6CE227065BB00FB3267 /* Twitter.framework */; };
+		3A8DF6D72270662D00FB3267 /* libRNTwitterSignIn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6D62270661C00FB3267 /* libRNTwitterSignIn.a */; };
 		66F583A38C047519D1E18159 /* libPods-MedicalCard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599A1087F9C545123EFD61BE /* libPods-MedicalCard.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		8AEB10120B9847F8905B7DA1 /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DD56AE46E45398AF70E2E /* libRNFirebase.a */; };
@@ -244,6 +250,13 @@
 			remoteGlobalIDString = 9350E0F11CE3B0920041D815;
 			remoteInfo = RCTFBSDK;
 		};
+		3A8DF6D52270661C00FB3267 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3A8DF6D02270661C00FB3267 /* RNTwitterSignIn.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D07E57251F07806700A7160F;
+			remoteInfo = RNTwitterSignIn;
+		};
 		3DAD3E831DF850E9000B6D8A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */;
@@ -390,6 +403,12 @@
 		3A8DF633226F714900FB3267 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		3A8DF634226F714A00FB3267 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
 		3A8DF64A226F72CA00FB3267 /* RCTFBSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTFBSDK.xcodeproj; path = "../node_modules/react-native-fbsdk/ios/RCTFBSDK.xcodeproj"; sourceTree = "<group>"; };
+		3A8DF6C62270659A00FB3267 /* TwitterShareExtensionUIResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TwitterShareExtensionUIResources.bundle; sourceTree = "<group>"; };
+		3A8DF6C72270659A00FB3267 /* TwitterKitResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TwitterKitResources.bundle; sourceTree = "<group>"; };
+		3A8DF6C82270659B00FB3267 /* TwitterKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TwitterKit.framework; sourceTree = "<group>"; };
+		3A8DF6C92270659C00FB3267 /* TwitterCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TwitterCore.framework; sourceTree = "<group>"; };
+		3A8DF6CE227065BB00FB3267 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
+		3A8DF6D02270661C00FB3267 /* RNTwitterSignIn.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNTwitterSignIn.xcodeproj; path = "../node_modules/react-native-twitter-signin/ios/RNTwitterSignIn.xcodeproj"; sourceTree = "<group>"; };
 		4A114661868ACFA83CCA60B3 /* libPods-MedicalCard-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MedicalCard-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		599A1087F9C545123EFD61BE /* libPods-MedicalCard.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MedicalCard.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C04F7E60E3774814827066E /* Pods-MedicalCard-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MedicalCard-tvOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MedicalCard-tvOS/Pods-MedicalCard-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -421,7 +440,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A8DF6D72270662D00FB3267 /* libRNTwitterSignIn.a in Frameworks */,
+				3A8DF6CF227065BB00FB3267 /* Twitter.framework in Frameworks */,
 				3A8DF678226F72E500FB3267 /* libRCTFBSDK.a in Frameworks */,
+				3A8DF6CC2270659C00FB3267 /* TwitterKit.framework in Frameworks */,
 				3A8DF3B9226DD3B400FB3267 /* libRNCAsyncStorage.a in Frameworks */,
 				3A8DF343226CE15B00FB3267 /* libRNImagePicker.a in Frameworks */,
 				3A8DF637226F714A00FB3267 /* FBSDKLoginKit.framework in Frameworks */,
@@ -433,6 +455,7 @@
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				3A8DF636226F714A00FB3267 /* FBSDKCoreKit.framework in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
+				3A8DF6CD2270659C00FB3267 /* TwitterCore.framework in Frameworks */,
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
@@ -608,6 +631,11 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3A8DF6CE227065BB00FB3267 /* Twitter.framework */,
+				3A8DF6C92270659C00FB3267 /* TwitterCore.framework */,
+				3A8DF6C82270659B00FB3267 /* TwitterKit.framework */,
+				3A8DF6C72270659A00FB3267 /* TwitterKitResources.bundle */,
+				3A8DF6C62270659A00FB3267 /* TwitterShareExtensionUIResources.bundle */,
 				3A8DF609226F714800FB3267 /* Bolts.framework */,
 				3A8DF632226F714900FB3267 /* FBSDKCoreKit.framework */,
 				3A8DF633226F714900FB3267 /* FBSDKLoginKit.framework */,
@@ -662,6 +690,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		3A8DF6D12270661C00FB3267 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3A8DF6D62270661C00FB3267 /* libRNTwitterSignIn.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		5E91572E1DD0AC6500FF2AA8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -683,6 +719,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				3A8DF6D02270661C00FB3267 /* RNTwitterSignIn.xcodeproj */,
 				3A8DF64A226F72CA00FB3267 /* RCTFBSDK.xcodeproj */,
 				3A8DF38A226DD39C00FB3267 /* RNCAsyncStorage.xcodeproj */,
 				3A8DF317226CE13A00FB3267 /* RNImagePicker.xcodeproj */,
@@ -930,6 +967,10 @@
 					ProductGroup = 3A8DF318226CE13A00FB3267 /* Products */;
 					ProjectRef = 3A8DF317226CE13A00FB3267 /* RNImagePicker.xcodeproj */;
 				},
+				{
+					ProductGroup = 3A8DF6D12270661C00FB3267 /* Products */;
+					ProjectRef = 3A8DF6D02270661C00FB3267 /* RNTwitterSignIn.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1117,6 +1158,13 @@
 			remoteRef = 3A8DF653226F72CA00FB3267 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		3A8DF6D62270661C00FB3267 /* libRNTwitterSignIn.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNTwitterSignIn.a;
+			remoteRef = 3A8DF6D52270661C00FB3267 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		3DAD3E841DF850E9000B6D8A /* libRCTImage-tvOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1246,6 +1294,8 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				3A8DF23C226A7B9900FB3267 /* GoogleService-Info.plist in Resources */,
+				3A8DF6CA2270659C00FB3267 /* TwitterShareExtensionUIResources.bundle in Resources */,
+				3A8DF6CB2270659C00FB3267 /* TwitterKitResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

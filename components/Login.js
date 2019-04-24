@@ -17,7 +17,7 @@ import * as Colors from '../utils/colors'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import validationChecker from '../utils/validationChecker'
 import {facebookLogin} from '../utils/facebook'
-// import {twitterLogin} from '../utils/twitter'
+import {twitterLogin} from '../utils/twitter'
 import {
   addUserTokenToAsyncStorage,
   signInWithEmailAndPassword,
@@ -168,12 +168,11 @@ class Login extends Component{
     facebookLogin()
       .then(async (data) => {
         const {navigation} = this.props;
-        const {refreshToken} = data;
 
         const userInDB = await isUserExistInDB();
 
         if (userInDB) {
-          const userTokenWasSaved = await addUserTokenToAsyncStorage(USER_TOKEN_LOCAL_STORAGE_KEY, refreshToken);
+          const userTokenWasSaved = await addUserTokenToAsyncStorage(USER_TOKEN_LOCAL_STORAGE_KEY, 'true');
 
           if (userTokenWasSaved) {
             const setUpParam = await checkSetUpParamInUser();
@@ -193,12 +192,11 @@ class Login extends Component{
     twitterLogin()
       .then(async (data) => {
         const {navigation} = this.props;
-        const {refreshToken} = data;
 
         const userInDB = await isUserExistInDB();
 
         if (userInDB) {
-          const userTokenWasSaved = await addUserTokenToAsyncStorage(USER_TOKEN_LOCAL_STORAGE_KEY, refreshToken);
+          const userTokenWasSaved = await addUserTokenToAsyncStorage(USER_TOKEN_LOCAL_STORAGE_KEY, 'true');
 
           if (userTokenWasSaved) {
             const setUpParam = await checkSetUpParamInUser();
