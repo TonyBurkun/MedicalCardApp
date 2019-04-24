@@ -4,10 +4,12 @@
 
 
 A basic react native app with [`react-native-firebase`](https://github.com/invertase/react-native-firebase) pre-integrated  to get you started quickly.
+<br/>
+<br/>
+<br/>
 
 
-
-## Getting Started
+## Getting Started  
 
 
 #### 1) Clone & Install Dependencies
