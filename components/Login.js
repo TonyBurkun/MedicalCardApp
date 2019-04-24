@@ -16,7 +16,7 @@ import { SafeAreaView } from 'react-navigation'
 import * as Colors from '../utils/colors'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import validationChecker from '../utils/validationChecker'
-// import {facebookLogin} from '../utils/facebook'
+import {facebookLogin} from '../utils/facebook'
 // import {twitterLogin} from '../utils/twitter'
 import {
   addUserTokenToAsyncStorage,

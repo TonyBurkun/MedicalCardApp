@@ -3,6 +3,7 @@ package com.burkunantoncompany.medicalcard;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.imagepicker.ImagePickerPackage;
 //import fr.bamlab.rnimageresizer.ImageResizerPackage;
@@ -45,6 +46,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new FBSDKPackage(),
             new AsyncStoragePackage(),
             new ImagePickerPackage(),
            // new ImageResizerPackage(),
