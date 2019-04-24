@@ -1,4 +1,4 @@
-## MedicalCard App <img align="left" src="https://firebasestorage.googleapis.com/v0/b/medicalcard-30ec0.appspot.com/o/project-logo%2Fheart.png?alt=media&token=1f3df019-eadb-45e9-8d24-fe802d0fa664" width="180px">
+# MedicalCard App <img align="left" src="https://firebasestorage.googleapis.com/v0/b/medicalcard-30ec0.appspot.com/o/project-logo%2Fheart.png?alt=media&token=1f3df019-eadb-45e9-8d24-fe802d0fa664" width="180px">
 
 
 
@@ -7,7 +7,7 @@ A basic react native app with [`react-native-firebase`](https://github.com/inver
 
 
 
-### Getting Started
+## Getting Started
 
 
 #### 1) Clone & Install Dependencies
@@ -27,11 +27,6 @@ A basic react native app with [`react-native-firebase`](https://github.com/inver
 - 2.3) **[Android]** If you haven't already got an android device attached/emulator running then you'll need to get one running (make sure the emulator is with Google Play / APIs). When ready run `npm run android` or `yarn run android` from the root of your project.
 
   
-## Contributors
-
-This project exists thanks to all the people who contribute. [[Contribute]](https://github.com/invertase/react-native-firebase/blob/master/CONTRIBUTING.md).
-<a href="graphs/contributors"><img src="https://opencollective.com/react-native-firebase/contributors.svg?width=890" /></a>
-
 
 
 ## Troubleshooting
