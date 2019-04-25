@@ -11,20 +11,23 @@ export const ISABELLINE = '#F1F2EB';
 
 export const GRANITE_GRAY = '#667761';
 export const ONYX = '#333745';
+export const TYPOGRAPHY_COLOR_DARK = '#38454D';
 
 
 
 
 
-export const WHITE = '#ffffff';
+export const WHITE = '#FFFFFF';
 export const MAIN_BACKGROUND = '#F8F8F8';
+export const TABLE_TITLE = '#CDD6E0';
 export const BORDER_COLOR = '#DADADA';
+export const TABLE_BORDER = '#EAEAEA';
 export const GRAY_TEXT = '#89969F';
 
 
 export const DISABLED_TEXT = '#BDBDBD';
-export const DISABLED_BORDER = '#e5e5e5';
-export const DISABLED_BG = '#f3f5f9';
+export const DISABLED_BORDER = '#E5E5E5';
+export const DISABLED_BG = '#F3F5F9';
 
 
 

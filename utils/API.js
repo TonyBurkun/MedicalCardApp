@@ -261,5 +261,13 @@ export async function getMetricsByTitle(nameMetric){
 }
 
 
+
+export async function getChildhoodDiseases () {
+  const snapshotDB = await firebase.database().ref('childhood_diseases/').once('value');
+
+  return snapshotDB.val();
+}
+
+
 //-- End FireBase  -----------------------------
 

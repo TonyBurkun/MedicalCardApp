@@ -18,6 +18,7 @@ import StepOne from './components/StepOne'
 import StepTwo from './components/StepTwo'
 import MedicalCardStart from './components/MedicalCardStart'
 import MedicalCardCreate from './components/MedicalCardCreate'
+import MedicalCardList from './components/MedicalCardList'
 import Home from './components/Home'
 
 
@@ -172,7 +173,21 @@ const MedicalCardCreateStack = createStackNavigator({
     screen: MedicalCardCreate,
     navigationOptions: {
       header: null
-    }
+    },
+  },
+
+  MedicalCardList: {
+    screen: MedicalCardList,
+    navigationOptions: () => ({
+      headerTintColor: Colors.BLACK_TITLE,
+      headerStyle: {
+        backgroundColor: Colors.MAIN_BACKGROUND,
+        elevation: 0,
+        shadowOpacity: 0,
+        borderBottomWidth: 0
+
+      }
+    }),
   }
 });
 
@@ -189,7 +204,7 @@ const MainNavStack = createStackNavigator({
 
 export default createSwitchNavigator(
   {
-    EntryPoint: AppStack,
+    EntryPoint: MedicalCardCreateStack,
     App: AppStack,
     Login: LoginStack,
     Register: RegistrationStack,

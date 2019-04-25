@@ -117,9 +117,6 @@ const commonStyles = StyleSheet.create({
     alignSelf: 'center',
   },
 
-
-
-
   submitBtn: {
     // paddingTop: 17,
     // paddingBottom: 17,
@@ -207,12 +204,35 @@ const commonStyles = StyleSheet.create({
   datePicker: {
     width: 'auto',
     height: 55.5,
+  },
 
 
 
+//  -- TABLE BLOCK ------
 
+  tableBlock: {
+    marginTop: 32,
+  },
+
+  tableBlockTitle: {
+    fontSize: 12,
+    color: Colors.TABLE_TITLE,
+    marginBottom: 7.32,
+  },
+  tableBlockItem: {
+    backgroundColor: Colors.WHITE,
+    color: Colors.TYPOGRAPHY_COLOR_DARK,
+    borderBottomWidth: 1,
+    borderColor: Colors.TABLE_BORDER
+  },
+
+  tableBlockItemText: {
+    fontSize: 14,
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingLeft: 16,
+    paddingRight: 25,
   }
-
 
 });
 
