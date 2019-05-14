@@ -40,8 +40,6 @@ const validationRules = {
 
 const {height} = Dimensions.get('window');
 
-import firebase from 'react-native-firebase'
-
 
 
 class Login extends Component{

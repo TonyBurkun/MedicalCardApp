@@ -16,11 +16,13 @@ import { SafeAreaView } from 'react-navigation'
 import * as Colors from '../utils/colors'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import validationChecker from '../utils/validationChecker'
-import {registrationWithEmailAndPassword} from '../utils/API'
+import {registrationWithEmailAndPassword, isUserExistInDB, addUserTokenToAsyncStorage, checkSetUpParamInUser, handleUserData} from '../utils/API'
 import commonStyles from '../utils/commonStyles'
+import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
 
 
-
+import {facebookLogin} from '../utils/facebook'
+import {twitterLogin} from '../utils/twitter'
 
 const validationRules = {
   firstName: {required: false,},
@@ -66,6 +68,55 @@ class Registration extends Component {
     }
 
   };
+
+  handleFacebookLogin = () => {
+
+    facebookLogin()
+      .then(async (data) => {
+        const {navigation} = this.props;
+
+        const userInDB = await isUserExistInDB();
+
+        if (userInDB) {
+          const userTokenWasSaved = await addUserTokenToAsyncStorage(USER_TOKEN_LOCAL_STORAGE_KEY, 'true');
+
+          if (userTokenWasSaved) {
+            const setUpParam = await checkSetUpParamInUser();
+            setUpParam ? navigation.navigate('App') : navigation.navigate('setUpOneProfile');
+          }
+
+        } else {
+          handleUserData(data);
+          navigation.navigate('setUpOneProfile');
+        }
+
+      });
+
+  };
+
+  handleTwitterLogin = () => {
+    twitterLogin()
+      .then(async (data) => {
+        const {navigation} = this.props;
+
+        const userInDB = await isUserExistInDB();
+
+        if (userInDB) {
+          const userTokenWasSaved = await addUserTokenToAsyncStorage(USER_TOKEN_LOCAL_STORAGE_KEY, 'true');
+
+          if (userTokenWasSaved) {
+            const setUpParam = await checkSetUpParamInUser();
+            setUpParam ? navigation.navigate('App') : navigation.navigate('setUpOneProfile');
+          }
+
+        } else {
+          handleUserData(data);
+          navigation.navigate('setUpOneProfile');
+        }
+
+      });
+  };
+
 
   onContentSizeChange = (contentWidth, contentHeight) => {
     this.setState({
