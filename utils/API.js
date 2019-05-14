@@ -85,7 +85,6 @@ export function createUserbyIDinDB (){
 export async function saveUserAvatarToStorage (localUri){
   //localUri - local link on the image from device
 
-
   const userId = getUIDfromFireBase();
   console.log(userId);
   const downloadURL = await firebase
@@ -100,8 +99,6 @@ export async function saveUserAvatarToStorage (localUri){
   return downloadURL;
 
 }
-
-
 export function updateUserData (fieldsForUpdateObj){
   const uid = getUIDfromFireBase();
 
@@ -268,6 +265,91 @@ export async function getChildhoodDiseases () {
   return snapshotDB.val();
 }
 
+
+export async function getVaccinations () {
+  const snapshotDB = await firebase.database().ref('vaccinations/').once('value');
+  return snapshotDB.val();
+}
+
+export async function getPregnancyOutcome () {
+  const snapshotDB = await firebase.database().ref('pregnancy_outcome/').once('value');
+  return snapshotDB.val();
+}
+
+export async function getGynecologicalDiseases () {
+  const snapshotDB = await firebase.database().ref('gynecological_diseases/').once('value');
+  return snapshotDB.val();
+}
+
+export async function getDisability () {
+  const snapshotDB = await firebase.database().ref('disability/').once('value');
+  return snapshotDB.val();
+}
+
+export async function getBadHabits () {
+  const snapshotDB = await firebase.database().ref('badHabits/').once('value');
+  return snapshotDB.val();
+}
+
+export async function getGenitalInfections () {
+  const snapshotDB = await firebase.database().ref('genital_infections/').once('value');
+  return snapshotDB.val();
+}
+
+
+
+export function generateUniqID(){
+  let myRef = firebase.database().ref().push();
+  let id = myRef.key;
+
+  return id;
+}
+
+export function createMedicalCardInDB(id, data) {
+  // data - it should be the object. The minimal field is the UID.
+  firebase.database().ref('medical_cards/' + id).set(data)
+}
+
+export function updateMedicalCardInDB(id, updatedDataObj){
+  // firebase.database().reg('medical_cards/'+ medicalCardID).set(updatedDataObj);
+
+  for (let key in updatedDataObj){
+
+    if (updatedDataObj.hasOwnProperty(key)) {
+      firebase.database().ref('medical_cards/' + id).update({
+        [key]: updatedDataObj[key]
+      }).then((data)=>{
+        //success callback
+      }).catch((error)=>{
+        //error callback
+        console.log('error ' , error)
+      })
+    }
+  }
+}
+
+export async function getCurrentUserData(){
+  const uid = getUIDfromFireBase();
+
+  const snapshotDB = await firebase.database().ref('Users/' + uid).once('value');
+
+  return snapshotDB.val();
+}
+
+export function addMedicalCardIDtoCurrentUser(medicalCardID){
+  getCurrentUserData()
+    .then(data => {
+      if (!data.medicalCardsList) {
+        updateUserData ({ medicalCardsList: [medicalCardID]})
+
+      } else {
+        updateUserData ({ medicalCardsList: [...data.medicalCardsList, medicalCardID]})
+      }
+    })
+    .catch(error => {
+      console.log('Can not get the CURRENT USER DATA: ', error);
+    })
+}
 
 //-- End FireBase  -----------------------------
 

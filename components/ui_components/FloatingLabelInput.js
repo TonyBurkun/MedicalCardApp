@@ -2,19 +2,33 @@ import React, {Component} from 'react'
 import {View, Text, TextInput, StyleSheet} from 'react-native'
 import commonStyles from '../../utils/commonStyles'
 import * as Colors from '../../utils/colors'
+import {MAIN_BACKGROUND} from "../../utils/colors";
+import {MAIN_GREEN} from "../../utils/colors";
 
 
 export default class FloatingLabelInput extends Component {
   state = {
     isFocused: false,
+    isEmpty: true,
   };
 
-  handleFocus = () => this.setState({ isFocused: true });
+  handleFocus = () => this.setState({
+    isEmpty: false,
+    isFocused: true
+  });
   handleBlur = () => {
+
+    console.log('IN BLUR');
     const {value} = this.props;
 
+    this.setState({
+      isFocused: false
+    });
+
     if (!value) {
-      this.setState({ isFocused: false })
+      this.setState({
+        isEmpty: true,
+      })
     }
 
 
@@ -22,13 +36,15 @@ export default class FloatingLabelInput extends Component {
 
   render() {
     const { label, ...props } = this.props;
-    const { isFocused } = this.state;
+    const { isEmpty, isFocused } = this.state;
+
+    console.log('IS FOCUSED: ', isFocused);
     const labelStyle = {
       position: 'absolute',
       left: 16,
-      top: !isFocused ? 20 : 5,
-      fontSize: !isFocused ? 14 : 14,
-      color: !isFocused ? Colors.BLACK_TITLE : Colors.BLACK_TITLE,
+      top: isEmpty ? 20 : 5,
+      fontSize: 14,
+      color: isEmpty ? Colors.BLACK_TITLE : Colors.GRAY_TEXT,
     };
     return (
       <View style={[commonStyles.tableBlockItem, { paddingTop: 18 }]}>
@@ -37,7 +53,7 @@ export default class FloatingLabelInput extends Component {
         </Text>
         <TextInput
           {...props}
-          style={[commonStyles.tableBlockItemText, {fontSize: 16, color: Colors.MAIN_GREEN, paddingTop: 8.7, paddingBottom: 10}]}
+          style={[commonStyles.tableBlockItemText, {fontSize: 16, paddingTop: 8.7, paddingBottom: 10}, isFocused ? {color: Colors.MAIN_GREEN} : {color: Colors.TYPOGRAPHY_COLOR_DARK}]}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
           blurOnSubmit

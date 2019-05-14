@@ -181,7 +181,7 @@ const MedicalCardCreateStack = createStackNavigator({
     navigationOptions: () => ({
       headerTintColor: Colors.BLACK_TITLE,
       headerStyle: {
-        backgroundColor: Colors.MAIN_BACKGROUND,
+        backgroundColor: Colors.WHITE,
         elevation: 0,
         shadowOpacity: 0,
         borderBottomWidth: 0
@@ -204,7 +204,7 @@ const MainNavStack = createStackNavigator({
 
 export default createSwitchNavigator(
   {
-    EntryPoint: MedicalCardCreateStack,
+    EntryPoint: AppStack,
     App: AppStack,
     Login: LoginStack,
     Register: RegistrationStack,
