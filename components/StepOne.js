@@ -19,6 +19,7 @@ import {signOut, getUIDfromFireBase, readUserData, writeUserDataToDB, updateCurr
 import validationChecker from '../utils/validationChecker'
 import DatePicker from 'react-native-datepicker'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
+import { getStatusBarHeight, getBottomSpace } from 'react-native-iphone-x-helper'
 
 import StepScreenTitle from './ui_components/StepScreenTitle'
 import ScreenTitle from './ui_components/ScreenTitle'
@@ -48,6 +49,9 @@ export default class StepOne extends Component {
   constructor(props) {
     super(props);
 
+    const statusBarHeight = getStatusBarHeight();
+    const bottomSpace = getBottomSpace();
+
     this.state = {
       avatarSource: '',
       avatarSelected: false,
@@ -60,7 +64,7 @@ export default class StepOne extends Component {
         date: '',
         gender: -1,
       },
-      screenHeight: 0,
+      screenHeight: statusBarHeight + bottomSpace,
 
 
     }
@@ -114,10 +118,10 @@ export default class StepOne extends Component {
   };
 
 
-  handleLogOut = () => {
-    const {navigation} = this.props;
-    signOut(navigation);
-  };
+  // handleLogOut = () => {
+  //   const {navigation} = this.props;
+  //   signOut(navigation);
+  // };
 
   handleSubmitForm = () => {
     let {navigation} = this.props;
@@ -132,51 +136,47 @@ export default class StepOne extends Component {
     if (isFormValid) {
 
       //  TODO: update permission for the camera and gallery
+
+
+      const formDataObj = {};
+      formDataObj.name = this.state.formField.name;
+      formDataObj.surname = this.state.formField.surname;
+      formDataObj.date = this.state.formField.date;
+      formDataObj.gender = this.state.formField.gender;
+
+      const localUri = this.state.formField.userAvatar;
+
+      if (this.state.needToUploadAvatar) {
+        Promise.all([saveUserAvatarToStorage(localUri), updateUserData(formDataObj)])
+          .then(success => {
+            const imgData = success[0];
+            const {downloadURL} = imgData;
+
+            updateUserData({avatarURL: downloadURL});
+
+          })
+          .catch(error => {
+            console.log('Upload user data and img to server was rejected with error: ', error);
+          })
+      } else {
+        updateUserData(formDataObj);
+      }
+
+      updateUserData({setUpProfile: true});
+      navigation.navigate('setUpTwoProfile');
     }
-
-    const formDataObj = {};
-    formDataObj.name = this.state.formField.name;
-    formDataObj.surname = this.state.formField.surname;
-    formDataObj.date = this.state.formField.date;
-    formDataObj.gender = this.state.formField.gender;
-
-    const localUri = this.state.formField.userAvatar;
-
-    if (this.state.needToUploadAvatar) {
-      Promise.all([saveUserAvatarToStorage(localUri), updateUserData(formDataObj)])
-        .then(success => {
-          const imgData = success[0];
-          const {downloadURL} = imgData;
-
-          updateUserData({avatarURL: downloadURL});
-
-        })
-        .catch(error => {
-          console.log('Upload user data and img to server was rejected with error: ', error);
-        })
-    } else {
-      updateUserData(formDataObj);
-    }
-
-    updateUserData({setUpProfile: true});
-    navigation.navigate('setUpTwoProfile');
-
-
-
 
   };
 
   onContentSizeChange = (contentWidth, contentHeight) => {
     this.setState({
-      screenHeight: contentHeight
+      ...this.state,
+      screenHeight: this.state.screenHeight + contentHeight
     })
   };
 
 
   render() {
-
-    console.log(this.state);
-    console.log(new Date());
 
     const scrollEnabled = this.state.screenHeight > height;
     const {userAvatar, name, surname, date, gender} = this.state.formField;
@@ -320,7 +320,7 @@ export default class StepOne extends Component {
                   labelColor={Colors.GRAY_TEXT}
                   selectedButtonColor={Colors.MAIN_GREEN}
                   selectedLabelColor={Colors.MAIN_GREEN}
-                  labelStyle={{fontSize: 16, marginRight: 35}}
+                  labelStyle={{fontSize: 16, marginLeft: '6%'}}
                   formHorizontal={true}
                   buttonSize={10}
                   buttonOuterSize={20}
@@ -339,18 +339,18 @@ export default class StepOne extends Component {
             </View>
           </View>
           <View style={{flexGrow: 1, justifyContent: 'flex-end'}}>
-            <TouchableOpacity
-              onPress={this.handleLogOut}
-              style={[commonStyles.submitBtn, commonStyles.firstBtn]}
-            >
-              <Text style={commonStyles.submitBtnText}>Log Out</Text>
-            </TouchableOpacity>
+            {/*<TouchableOpacity*/}
+            {/*  onPress={this.handleLogOut}*/}
+            {/*  style={[commonStyles.submitBtn, commonStyles.firstBtn]}*/}
+            {/*>*/}
+            {/*  <Text style={commonStyles.submitBtnText}>Log Out</Text>*/}
+            {/*</TouchableOpacity>*/}
 
             <TouchableOpacity
               onPress={this.handleSubmitForm}
               style={ isEnabled
                 ? [commonStyles.submitBtn, commonStyles.firstBtn]
-                : [commonStyles.submitBtn, commonStyles.disabledSubmitBtn ]}
+                : [commonStyles.submitBtn, commonStyles.firstBtn, commonStyles.disabledSubmitBtn ]}
               disabled={!isEnabled}
             >
               <Text style={ isEnabled
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: Colors.GRAY_TEXT,
     fontSize: 16,
-    marginRight: 35,
+    marginRight: '4%',
     marginTop: -5
 
   },

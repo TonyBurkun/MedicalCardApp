@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView, Switch} from 'react-native'
 import {Icon} from 'react-native-elements'
 import {SafeAreaView} from 'react-navigation'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import ScreenTitle from './ui_components/ScreenTitle'
 import FloatingLabelInput from './ui_components/FloatingLabelInput'
 import * as Colors from '../utils/colors'
@@ -29,6 +30,7 @@ import {getBadHabits} from '../utils/API';
 import {getGenitalInfections} from '../utils/API';
 
 import {generateUniqID, createMedicalCardInDB, getUIDfromFireBase, updateMedicalCardInDB, updateUserData, addMedicalCardIDtoCurrentUser} from '../utils/API'
+import {ifIphoneX} from "react-native-iphone-x-helper";
 
 
 class MedicalCardCreate extends Component {
@@ -107,13 +109,6 @@ class MedicalCardCreate extends Component {
       });
 
   }
-
-
-  handleSubmitForm = () => {
-    console.log('sumbit form');
-
-
-  };
 
   handleLogOut = () => {
     const {navigation} = this.props;
@@ -285,335 +280,337 @@ class MedicalCardCreate extends Component {
     console.log(this.props);
 
 
-
-
     return (
-      <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0}]}>
-        <ScrollView>
-          <View
-            style={{paddingLeft: 16, paddingRight: 16}}>
-            <ScreenTitle
-              titleText={'МЕДИЦИНСКАЯ КАРТА'} marginTop={48}/>
-            <Text style={[commonStyles.subTitle, {textAlign: 'left', marginTop: 10, marginBottom: 0}]}>Вы можете
-              заполнить только подходящие для Вас блоки</Text>
-          </View>
+      <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0}]}>
+        <KeyboardAwareScrollView>
+          <ScrollView
+            alwaysBounceVertical={false}
+            contentContainerStyle={{flex: 1,justifyContent: 'space-between'}}>
+            <View
+              style={{paddingLeft: 16, paddingRight: 16}}>
+              <ScreenTitle
+                titleText={'МЕДИЦИНСКАЯ КАРТА'} marginTop={48}/>
+              <Text style={[commonStyles.subTitle, {textAlign: 'left', marginTop: 10, marginBottom: 0}]}>Вы можете
+                заполнить только подходящие для Вас блоки</Text>
+            </View>
 
-          <View style={commonStyles.tableBlock}>
-            <Text style={[commonStyles.tableBlockTitle, {paddingLeft: 16}]}>ОСНОВНЫЕ РАЗДЕЛЫ</Text>
+            <View style={commonStyles.tableBlock}>
+              <Text style={[commonStyles.tableBlockTitle, {paddingLeft: 16}]}>ОСНОВНЫЕ РАЗДЕЛЫ</Text>
 
-            <View>
-              {/* allergicReactions block */}
               <View>
-                <FloatingLabelInput
-                  label="Алергические реакции"
-                  value={this.state.formField.allergicReactions}
-                  onChangeText={this.handleTextChange}
-                />
-              </View>
+                {/* allergicReactions block */}
+                <View>
+                  <FloatingLabelInput
+                    label="Алергические реакции"
+                    value={this.state.formField.allergicReactions}
+                    onChangeText={this.handleTextChange}
+                  />
+                </View>
 
-              {/* Childhood Diseases block */}
-              <View
-                style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
-                <Text style={{
-                  position: 'absolute',
-                  left: 12,
-                  top: 5,
-                  fontSize: 14,
-                  color: Colors.GRAY_TEXT
-                }}> {getChildhoodDiseasesTitleStr(chosenChildhoodDiseases).length > 0 && 'Перенесенные детские заболевания'}</Text>
-                <Text
-                  onPress={() => {
-                    this.showItemsList('childhoodDiseases', 'Детские заболевания')
-                  }}
-                  style={!getChildhoodDiseasesTitleStr(chosenChildhoodDiseases).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
-                    paddingTop: 28,
-                    fontSize: 16,
-                    color: Colors.TYPOGRAPHY_COLOR_DARK
-                  }]}>
-                  {!getChildhoodDiseasesTitleStr(chosenChildhoodDiseases).length ? 'Перенесенные детские заболевания' : getChildhoodDiseasesTitleStr(chosenChildhoodDiseases)}
-                </Text>
-                <Icon
-                  name='chevron-right'
-                  type='evilicon'
-                  color={Colors.GRAY_TEXT}
-                  size={40}
-                  containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
-                  onPress={() => {
-                    this.showItemsList('childhoodDiseases', 'Детские заболевания')
-                  }}
-                />
-              </View>
+                {/* Childhood Diseases block */}
+                <View
+                  style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+                  <Text style={{
+                    position: 'absolute',
+                    left: 12,
+                    top: 5,
+                    fontSize: 14,
+                    color: Colors.GRAY_TEXT
+                  }}> {getChildhoodDiseasesTitleStr(chosenChildhoodDiseases).length > 0 && 'Перенесенные детские заболевания'}</Text>
+                  <Text
+                    onPress={() => {
+                      this.showItemsList('childhoodDiseases', 'Детские заболевания')
+                    }}
+                    style={!getChildhoodDiseasesTitleStr(chosenChildhoodDiseases).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
+                      paddingTop: 28,
+                      fontSize: 16,
+                      color: Colors.TYPOGRAPHY_COLOR_DARK
+                    }]}>
+                    {!getChildhoodDiseasesTitleStr(chosenChildhoodDiseases).length ? 'Перенесенные детские заболевания' : getChildhoodDiseasesTitleStr(chosenChildhoodDiseases)}
+                  </Text>
+                  <Icon
+                    name='chevron-right'
+                    type='evilicon'
+                    color={Colors.GRAY_TEXT}
+                    size={40}
+                    containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
+                    onPress={() => {
+                      this.showItemsList('childhoodDiseases', 'Детские заболевания')
+                    }}
+                  />
+                </View>
 
-              {/* Vaccinations block*/}
-              <View
-                style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
-                <Text style={{
-                  position: 'absolute',
-                  left: 12,
-                  top: 5,
-                  fontSize: 14,
-                  color: Colors.GRAY_TEXT
-                }}> {getVaccinationsTitleStr(chosenVaccinations).length > 0 && 'Наличие прививок'}</Text>
-                <Text
-                  onPress={() => {
-                    this.showItemsList('vaccinations', 'Прививки')
-                  }}
-                  style={!getVaccinationsTitleStr(chosenVaccinations).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
-                    paddingTop: 28,
-                    fontSize: 16,
-                    color: Colors.TYPOGRAPHY_COLOR_DARK
-                  }]}>
-                  {!getVaccinationsTitleStr(chosenVaccinations).length ? 'Наличие прививок' : getVaccinationsTitleStr (chosenVaccinations)}
-                </Text>
-                <Icon
-                  name='chevron-right'
-                  type='evilicon'
-                  color={Colors.GRAY_TEXT}
-                  size={40}
-                  containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
-                  onPress={() => {
-                    this.showItemsList('vaccinations', 'Прививки')
-                  }}
-                />
+                {/* Vaccinations block*/}
+                <View
+                  style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+                  <Text style={{
+                    position: 'absolute',
+                    left: 12,
+                    top: 5,
+                    fontSize: 14,
+                    color: Colors.GRAY_TEXT
+                  }}> {getVaccinationsTitleStr(chosenVaccinations).length > 0 && 'Наличие прививок'}</Text>
+                  <Text
+                    onPress={() => {
+                      this.showItemsList('vaccinations', 'Прививки')
+                    }}
+                    style={!getVaccinationsTitleStr(chosenVaccinations).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
+                      paddingTop: 28,
+                      fontSize: 16,
+                      color: Colors.TYPOGRAPHY_COLOR_DARK
+                    }]}>
+                    {!getVaccinationsTitleStr(chosenVaccinations).length ? 'Наличие прививок' : getVaccinationsTitleStr (chosenVaccinations)}
+                  </Text>
+                  <Icon
+                    name='chevron-right'
+                    type='evilicon'
+                    color={Colors.GRAY_TEXT}
+                    size={40}
+                    containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
+                    onPress={() => {
+                      this.showItemsList('vaccinations', 'Прививки')
+                    }}
+                  />
+                </View>
               </View>
             </View>
-          </View>
 
-          <View style={commonStyles.tableBlock}>
-            <Text style={[commonStyles.tableBlockTitle, {paddingLeft: 16}]}>АКУШЕРСКИЙ АНАМНЕЗ</Text>
+            <View style={commonStyles.tableBlock}>
+              <Text style={[commonStyles.tableBlockTitle, {paddingLeft: 16}]}>АКУШЕРСКИЙ АНАМНЕЗ</Text>
 
-            <View>
+              <View>
 
-              {/* Pregnancy block*/}
-              <View
-                style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
-                <Text style={{
-                  position: 'absolute',
-                  left: 12,
-                  top: 5,
-                  fontSize: 14,
-                  color: Colors.GRAY_TEXT
-                }}> {getPregnancyOutcomeTitleStr(chosenPregnancyOutcome).length > 0 && 'Исходы беременности'}</Text>
-                <Text
-                  onPress={() => {
-                    this.showItemsList('pregnancyOutcome', 'Исходы беременности')
-                  }}
-                  style={!getPregnancyOutcomeTitleStr(chosenPregnancyOutcome).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
-                    paddingTop: 28,
-                    fontSize: 16,
-                    color: Colors.TYPOGRAPHY_COLOR_DARK
-                  }]}>
-                  {!getPregnancyOutcomeTitleStr(chosenPregnancyOutcome).length ? 'Исходы беременности' : getPregnancyOutcomeTitleStr(chosenPregnancyOutcome)}
-                </Text>
-                <Icon
-                  name='chevron-right'
-                  type='evilicon'
-                  color={Colors.GRAY_TEXT}
-                  size={40}
-                  containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
-                  onPress={() => {
-                    this.showItemsList('pregnancyOutcome', 'Исходы беременности')
-                  }}
-                />
+                {/* Pregnancy block*/}
+                <View
+                  style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+                  <Text style={{
+                    position: 'absolute',
+                    left: 12,
+                    top: 5,
+                    fontSize: 14,
+                    color: Colors.GRAY_TEXT
+                  }}> {getPregnancyOutcomeTitleStr(chosenPregnancyOutcome).length > 0 && 'Исходы беременности'}</Text>
+                  <Text
+                    onPress={() => {
+                      this.showItemsList('pregnancyOutcome', 'Исходы беременности')
+                    }}
+                    style={!getPregnancyOutcomeTitleStr(chosenPregnancyOutcome).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
+                      paddingTop: 28,
+                      fontSize: 16,
+                      color: Colors.TYPOGRAPHY_COLOR_DARK
+                    }]}>
+                    {!getPregnancyOutcomeTitleStr(chosenPregnancyOutcome).length ? 'Исходы беременности' : getPregnancyOutcomeTitleStr(chosenPregnancyOutcome)}
+                  </Text>
+                  <Icon
+                    name='chevron-right'
+                    type='evilicon'
+                    color={Colors.GRAY_TEXT}
+                    size={40}
+                    containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
+                    onPress={() => {
+                      this.showItemsList('pregnancyOutcome', 'Исходы беременности')
+                    }}
+                  />
+                </View>
+
+                {/* Gynecological Diseases block */}
+                <View
+                  style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+                  <Text style={{
+                    position: 'absolute',
+                    left: 12,
+                    top: 5,
+                    fontSize: 14,
+                    color: Colors.GRAY_TEXT
+                  }}> {getGynecologicalDiseasesTitleStr(chosenGynecologicalDiseases).length > 0 && 'Гинекологические заболевания'}</Text>
+                  <Text
+                    onPress={() => {
+                      this.showItemsList('gynecologicalDiseases', 'Гинекологические заболевания')
+                    }}
+                    style={!getGynecologicalDiseasesTitleStr(chosenGynecologicalDiseases).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
+                      paddingTop: 28,
+                      fontSize: 16,
+                      color: Colors.TYPOGRAPHY_COLOR_DARK
+                    }]}>
+                    {!getGynecologicalDiseasesTitleStr (chosenGynecologicalDiseases).length ? 'Гинекологические заболевания' : getGynecologicalDiseasesTitleStr(chosenGynecologicalDiseases)}
+                  </Text>
+                  <Icon
+                    name='chevron-right'
+                    type='evilicon'
+                    color={Colors.GRAY_TEXT}
+                    size={40}
+                    containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
+                    onPress={() => {
+                      this.showItemsList('gynecologicalDiseases', 'Гинекологические заболевания')
+                    }}
+                  />
+                </View>
+
+                {/*  \Transferred IVF block */}
+                <View
+                  style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+                  <Text
+                    style={commonStyles.tableBlockItemText}>
+                    Перенесенные ЭКО
+                  </Text>
+                  <Switch
+                    style={{position: 'absolute', right: 16, top: '50%', marginTop: -16}}
+                    value={this.state.formField.transferredIVF}
+                    onValueChange={() => {
+                      this.setState({
+                        formField: {
+                          ...this.state.formField,
+                          transferredIVF: !this.state.formField.transferredIVF
+
+                        }
+                      })
+                    }}
+                  />
+                </View>
               </View>
+            </View>
 
-              {/* Gynecological Diseases block */}
-              <View
-                style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
-                <Text style={{
-                  position: 'absolute',
-                  left: 12,
-                  top: 5,
-                  fontSize: 14,
-                  color: Colors.GRAY_TEXT
-                }}> {getGynecologicalDiseasesTitleStr(chosenGynecologicalDiseases).length > 0 && 'Гинекологические заболевания'}</Text>
-                <Text
-                  onPress={() => {
-                    this.showItemsList('gynecologicalDiseases', 'Гинекологические заболевания')
-                  }}
-                  style={!getGynecologicalDiseasesTitleStr(chosenGynecologicalDiseases).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
-                    paddingTop: 28,
-                    fontSize: 16,
-                    color: Colors.TYPOGRAPHY_COLOR_DARK
-                  }]}>
-                  {!getGynecologicalDiseasesTitleStr (chosenGynecologicalDiseases).length ? 'Гинекологические заболевания' : getGynecologicalDiseasesTitleStr(chosenGynecologicalDiseases)}
-                </Text>
-                <Icon
-                  name='chevron-right'
-                  type='evilicon'
-                  color={Colors.GRAY_TEXT}
-                  size={40}
-                  containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
-                  onPress={() => {
-                    this.showItemsList('gynecologicalDiseases', 'Гинекологические заболевания')
-                  }}
-                />
+            <View style={commonStyles.tableBlock}>
+              <Text style={[commonStyles.tableBlockTitle, {paddingLeft: 16}]}>ДОПОЛНИТЕЛЬНО</Text>
+
+              <View>
+
+                {/* Disability block*/}
+                <View
+                  style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+                  <Text style={{
+                    position: 'absolute',
+                    left: 12,
+                    top: 5,
+                    fontSize: 14,
+                    color: Colors.GRAY_TEXT
+                  }}> {getDisabilityTitleStr(chosenDisability).length > 0 && 'Наличие инвалидности'}</Text>
+                  <Text
+                    onPress={() => {
+                      this.showItemsList('disability', 'Наличие инвалидности', 'radio')
+                    }}
+                    style={!getDisabilityTitleStr(chosenDisability).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
+                      paddingTop: 28,
+                      fontSize: 16,
+                      color: Colors.TYPOGRAPHY_COLOR_DARK
+                    }]}>
+                    {!getDisabilityTitleStr(chosenDisability).length ? 'Наличие инвалидности' : getDisabilityTitleStr (chosenDisability)}
+                  </Text>
+                  <Icon
+                    name='chevron-right'
+                    type='evilicon'
+                    color={Colors.GRAY_TEXT}
+                    size={40}
+                    containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
+                    onPress={() => {
+                      this.showItemsList('disability', 'Наличие инвалидности', 'radio')
+                    }}
+                  />
+                </View>
+
+                {/* Bad Habits  block */}
+                <View
+                  style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+                  <Text style={{
+                    position: 'absolute',
+                    left: 12,
+                    top: 5,
+                    fontSize: 14,
+                    color: Colors.GRAY_TEXT
+                  }}> {getBadHabitsTitleStr(chosenBadHabits).length > 0 && 'Наличие вредных привычек'}</Text>
+                  <Text
+                    onPress={() => {
+                      this.showItemsList('badHabits', 'Наличие вредных привычек')
+                    }}
+                    style={!getBadHabitsTitleStr(chosenBadHabits).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
+                      paddingTop: 28,
+                      fontSize: 16,
+                      color: Colors.TYPOGRAPHY_COLOR_DARK
+                    }]}>
+                    {!getBadHabitsTitleStr (chosenBadHabits).length ? 'Наличие вредных привычек' : getBadHabitsTitleStr(chosenBadHabits)}
+                  </Text>
+                  <Icon
+                    name='chevron-right'
+                    type='evilicon'
+                    color={Colors.GRAY_TEXT}
+                    size={40}
+                    containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
+                    onPress={() => {
+                      this.showItemsList('badHabits', 'Наличие вредных привычек')
+                    }}
+                  />
+                </View>
+
+                {/*  genitalInfections block */}
+                <View
+                  style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+                  <Text style={{
+                    position: 'absolute',
+                    left: 12,
+                    top: 5,
+                    fontSize: 14,
+                    color: Colors.GRAY_TEXT
+                  }}> {getGenitalInfectionsTitleStr(chosenGenitalInfections).length > 0 && 'Половые инфекции'}</Text>
+                  <Text
+                    onPress={() => {
+                      this.showItemsList('genitalInfections', 'Половые инфекции')
+                    }}
+                    style={!getGenitalInfectionsTitleStr(chosenGenitalInfections).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
+                      paddingTop: 28,
+                      fontSize: 16,
+                      color: Colors.TYPOGRAPHY_COLOR_DARK
+                    }]}>
+                    {!getGenitalInfectionsTitleStr(chosenGenitalInfections).length ? 'Половые инфекции' : getGenitalInfectionsTitleStr(chosenGenitalInfections)}
+                  </Text>
+                  <Icon
+                    name='chevron-right'
+                    type='evilicon'
+                    color={Colors.GRAY_TEXT}
+                    size={40}
+                    containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
+                    onPress={() => {
+                      this.showItemsList('genitalInfections', 'Половые инфекции')
+                    }}
+                  />
+                </View>
+
               </View>
+            </View>
 
-              {/*  \Transferred IVF block */}
-              <View
-                style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
-                <Text
-                  style={commonStyles.tableBlockItemText}>
-                  Перенесенные ЭКО
-                </Text>
-                <Switch
-                  style={{position: 'absolute', right: 16, top: '50%', marginTop: -16}}
-                  value={this.state.formField.transferredIVF}
-                  onValueChange={() => {
+            <View style={commonStyles.tableBlock}>
+              <Text style={[commonStyles.tableBlockTitle, {paddingLeft: 16}]}>ДРУГОЕ</Text>
+
+              <View style={{paddingLeft: 16, paddingRight: 16}}>
+                <TextInput
+                  style={styles.textArea}
+                  editable = {true}
+                  multiline = {true}
+                  placeholder={'Введите текст'}
+                  value={this.state.other}
+                  onChangeText={(text) => {
                     this.setState({
+                      ...this.state,
                       formField: {
                         ...this.state.formField,
-                        transferredIVF: !this.state.formField.transferredIVF
-
+                        other: text
                       }
                     })
                   }}
                 />
               </View>
             </View>
-          </View>
 
-          <View style={commonStyles.tableBlock}>
-            <Text style={[commonStyles.tableBlockTitle, {paddingLeft: 16}]}>ДОПОЛНИТЕЛЬНО</Text>
-
-            <View>
-
-              {/* Disability block*/}
-              <View
-                style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
-                <Text style={{
-                  position: 'absolute',
-                  left: 12,
-                  top: 5,
-                  fontSize: 14,
-                  color: Colors.GRAY_TEXT
-                }}> {getDisabilityTitleStr(chosenDisability).length > 0 && 'Наличие инвалидности'}</Text>
-                <Text
-                  onPress={() => {
-                    this.showItemsList('disability', 'Наличие инвалидности', 'radio')
-                  }}
-                  style={!getDisabilityTitleStr(chosenDisability).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
-                    paddingTop: 28,
-                    fontSize: 16,
-                    color: Colors.TYPOGRAPHY_COLOR_DARK
-                  }]}>
-                  {!getDisabilityTitleStr(chosenDisability).length ? 'Наличие инвалидности' : getDisabilityTitleStr (chosenDisability)}
-                </Text>
-                <Icon
-                  name='chevron-right'
-                  type='evilicon'
-                  color={Colors.GRAY_TEXT}
-                  size={40}
-                  containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
-                  onPress={() => {
-                    this.showItemsList('disability', 'Наличие инвалидности', 'radio')
-                  }}
-                />
-              </View>
-
-              {/* Bad Habits  block */}
-              <View
-                style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
-                <Text style={{
-                  position: 'absolute',
-                  left: 12,
-                  top: 5,
-                  fontSize: 14,
-                  color: Colors.GRAY_TEXT
-                }}> {getBadHabitsTitleStr(chosenBadHabits).length > 0 && 'Наличие вредных привычек'}</Text>
-                <Text
-                  onPress={() => {
-                    this.showItemsList('badHabits', 'Наличие вредных привычек')
-                  }}
-                  style={!getBadHabitsTitleStr(chosenBadHabits).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
-                    paddingTop: 28,
-                    fontSize: 16,
-                    color: Colors.TYPOGRAPHY_COLOR_DARK
-                  }]}>
-                  {!getBadHabitsTitleStr (chosenBadHabits).length ? 'Наличие вредных привычек' : getBadHabitsTitleStr(chosenBadHabits)}
-                </Text>
-                <Icon
-                  name='chevron-right'
-                  type='evilicon'
-                  color={Colors.GRAY_TEXT}
-                  size={40}
-                  containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
-                  onPress={() => {
-                    this.showItemsList('badHabits', 'Наличие вредных привычек')
-                  }}
-                />
-              </View>
-
-              {/*  genitalInfections block */}
-              <View
-                style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
-                <Text style={{
-                  position: 'absolute',
-                  left: 12,
-                  top: 5,
-                  fontSize: 14,
-                  color: Colors.GRAY_TEXT
-                }}> {getGenitalInfectionsTitleStr(chosenGenitalInfections).length > 0 && 'Половые инфекции'}</Text>
-                <Text
-                  onPress={() => {
-                    this.showItemsList('genitalInfections', 'Половые инфекции')
-                  }}
-                  style={!getGenitalInfectionsTitleStr(chosenGenitalInfections).length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
-                    paddingTop: 28,
-                    fontSize: 16,
-                    color: Colors.TYPOGRAPHY_COLOR_DARK
-                  }]}>
-                  {!getGenitalInfectionsTitleStr(chosenGenitalInfections).length ? 'Половые инфекции' : getGenitalInfectionsTitleStr(chosenGenitalInfections)}
-                </Text>
-                <Icon
-                  name='chevron-right'
-                  type='evilicon'
-                  color={Colors.GRAY_TEXT}
-                  size={40}
-                  containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
-                  onPress={() => {
-                    this.showItemsList('genitalInfections', 'Половые инфекции')
-                  }}
-                />
-              </View>
-
+            <View style={{paddingTop: 40, paddingLeft: 16, paddingRight: 16}}>
+              <TouchableOpacity
+                style={[commonStyles.submitBtn, {...ifIphoneX({marginBottom: 0},{marginBottom: 20})}]}
+                onPress={this.handleSaveBtn}
+              >
+                <Text style={commonStyles.submitBtnText}>Сохранить</Text>
+              </TouchableOpacity>
             </View>
-          </View>
 
-          <View style={commonStyles.tableBlock}>
-            <Text style={[commonStyles.tableBlockTitle, {paddingLeft: 16}]}>ДРУГОЕ</Text>
-
-            <View style={{paddingLeft: 16, paddingRight: 16}}>
-              <TextInput
-                style={styles.textArea}
-                editable = {true}
-                multiline = {true}
-                placeholder={'Введите текст'}
-                value={this.state.other}
-                onChangeText={(text) => {
-                  this.setState({
-                    ...this.state,
-                    formField: {
-                      ...this.state.formField,
-                      other: text
-                    }
-                  })
-                }}
-              />
-            </View>
-          </View>
-
-          <View style={{paddingTop: 40, paddingLeft: 16, paddingRight: 16}}>
-            <TouchableOpacity
-              style={[commonStyles.submitBtn]}
-              onPress={this.handleSaveBtn}
-            >
-              <Text style={commonStyles.submitBtnText}>Сохранить</Text>
-            </TouchableOpacity>
-          </View>
-
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     )
   }

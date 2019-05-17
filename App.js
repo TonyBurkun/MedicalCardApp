@@ -5,9 +5,9 @@ import {
   Text,
   View,
   StatusBar,
-  AsyncStorage,
   ActivityIndicator,
 } from 'react-native'
+import AsyncStorage from '@react-native-community/async-storage';
 import * as Colors from './utils/colors'
 import commonStyles from './utils/commonStyles'
 
@@ -105,6 +105,7 @@ const LoginStack = createStackNavigator({
     screen: Login,
     navigationOptions: {
       header: null,
+      headerBackTitle: null,
       headerTintColor: Colors.BLACK_TITLE,
       headerStyle: {
         backgroundColor: Colors.MAIN_BACKGROUND,

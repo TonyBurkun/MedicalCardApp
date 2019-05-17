@@ -18,6 +18,8 @@ import {signOut, getUIDfromFireBase, updateUserData, getMetricsByTitle} from '..
 import validationChecker from '../utils/validationChecker'
 // import DatePicker from 'react-native-datepicker'
 // import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
+import { getStatusBarHeight, getBottomSpace } from 'react-native-iphone-x-helper'
+
 
 import StepScreenTitle from './ui_components/StepScreenTitle'
 import ScreenTitle from './ui_components/ScreenTitle'
@@ -33,6 +35,9 @@ const windowHeight = Dimensions.get('window').height;
 export default class StepTwo extends Component {
   constructor(props) {
     super(props);
+
+    const statusBarHeight = getStatusBarHeight();
+    const bottomSpace = getBottomSpace();
 
     this.state = {
       bloodTypes: [
@@ -85,7 +90,7 @@ export default class StepTwo extends Component {
         weight: '',
         height: '',
       },
-      screenHeight: 0,
+      screenHeight: statusBarHeight + bottomSpace,
 
     }
 
@@ -157,10 +162,10 @@ export default class StepTwo extends Component {
 
   };
 
-  handleLogOut = () => {
-    const {navigation} = this.props;
-    signOut(navigation);
-  };
+  // handleLogOut = () => {
+  //   const {navigation} = this.props;
+  //   signOut(navigation);
+  // };
 
   handlePassBtn= () => {
     this.props.navigation.navigate('MedicalCardStart');
@@ -168,7 +173,8 @@ export default class StepTwo extends Component {
 
   onContentSizeChange = (contentWidth, contentHeight) => {
     this.setState({
-      screenHeight: contentHeight
+      ...this.state,
+      screenHeight: this.state.screenHeight + contentHeight
     })
   };
 
@@ -310,17 +316,17 @@ export default class StepTwo extends Component {
 
 
           <View style={{flex: 1, justifyContent: 'flex-end'}}>
-            <TouchableOpacity
-              onPress={this.handleLogOut}
-              style={[commonStyles.submitBtn, commonStyles.firstBtn]}
-            >
-              <Text style={commonStyles.submitBtnText}>Log Out</Text>
-            </TouchableOpacity>
+            {/*<TouchableOpacity*/}
+            {/*  onPress={this.handleLogOut}*/}
+            {/*  style={[commonStyles.submitBtn, commonStyles.firstBtn]}*/}
+            {/*>*/}
+            {/*  <Text style={commonStyles.submitBtnText}>Log Out</Text>*/}
+            {/*</TouchableOpacity>*/}
             <TouchableOpacity
               onPress={this.handleSubmitForm}
               style={ isEnabled
-                ? [commonStyles.submitBtn, commonStyles.firstBtn, commonStyles.buttonIndents]
-                : [commonStyles.submitBtn, commonStyles.disabledSubmitBtn, commonStyles.buttonIndents ]}
+                ? [commonStyles.submitBtn, commonStyles.firstBtn]
+                : [commonStyles.submitBtn, commonStyles.firstBtn, commonStyles.disabledSubmitBtn]}
               disabled={!isEnabled}
             >
               <Text style={ isEnabled

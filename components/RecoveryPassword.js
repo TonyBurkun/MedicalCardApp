@@ -5,6 +5,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import validationChecker from '../utils/validationChecker'
 import {sendPasswordResetEmail} from '../utils/API'
 import commonStyles from '../utils/commonStyles'
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 
 const validationRules = {
@@ -25,8 +26,6 @@ export default class RecoveryPassword extends Component {
 
 
   handleSubmitBtn = () => {
-
-
     const currentState = this.state.formField;
     const {email} = currentState;
     const {navigation} = this.props;
@@ -39,12 +38,9 @@ export default class RecoveryPassword extends Component {
       })
     };
 
-
-
     if (isFormValid) {
       sendPasswordResetEmail(email, actionCodeSettings, navigation);
     }
-
   };
 
   render() {
@@ -60,11 +56,11 @@ export default class RecoveryPassword extends Component {
             <Image
               style={commonStyles.logoSmallIMG}
               source={require('../assets/logo/heart.png')}/>
-            <Text style={[commonStyles.screenTitle, {marginBottom: 36, marginTop: 16}]}>ВОССТАНОВЛЕНИЕ ПАРОЛЯ</Text>
+            <Text style={[commonStyles.screenTitle, {marginBottom: hp('4%'), marginTop: 16}]}>ВОССТАНОВЛЕНИЕ ПАРОЛЯ</Text>
           </View>
           <TextInput
             placeholder="Введите Ваш Email адрес"
-            style={[commonStyles.formInput, {marginTop: 80, marginBottom: 70}]}
+            style={[commonStyles.formInput, {marginTop: hp('10%'), marginBottom: hp('8.5%')}]}
             value={email}
             onChangeText={(text) => {
               this.setState({

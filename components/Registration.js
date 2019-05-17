@@ -12,6 +12,7 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native'
+import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import { SafeAreaView } from 'react-navigation'
 import * as Colors from '../utils/colors'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -24,6 +25,9 @@ import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
 import {facebookLogin} from '../utils/facebook'
 import {twitterLogin} from '../utils/twitter'
 
+import { getStatusBarHeight, getBottomSpace } from 'react-native-iphone-x-helper'
+
+
 const validationRules = {
   firstName: {required: false,},
   secondName: {required: false},
@@ -34,17 +38,27 @@ const validationRules = {
 
 const {height} = Dimensions.get('window');
 
+
+const radio_props = [
+  {label: 'Я согласен с Политикой Конфиденциальности', value: 1},
+
+];
+
 class Registration extends Component {
   constructor(props){
     super(props);
+
+    const statusBarHeight = getStatusBarHeight();
+    const bottomSpace = getBottomSpace();
 
     this.state = {
       formField: {
         email: '',
         password: '',
         confirmPassword: '',
+        privacyPolicy: 0
       },
-      screenHeight: 0,
+      screenHeight: statusBarHeight + bottomSpace,
     };
 
   }
@@ -120,7 +134,8 @@ class Registration extends Component {
 
   onContentSizeChange = (contentWidth, contentHeight) => {
     this.setState({
-      screenHeight: contentHeight
+      ...this.state,
+      screenHeight: this.state.screenHeight + contentHeight
     })
   };
 
@@ -128,9 +143,11 @@ class Registration extends Component {
 
   render() {
 
+    console.log(this.state);
+
     const scrollEnabled = this.state.screenHeight > height;
-    const {email, password, confirmPassword} = this.state.formField;
-    const isEnabled = email.length > 0 && password.length > 0 && confirmPassword.length >0;
+    const {email, password, confirmPassword, privacyPolicy} = this.state.formField;
+    const isEnabled = email.length > 0 && password.length > 0 && confirmPassword.length >0 && privacyPolicy;
 
     return (
       <SafeAreaView style={commonStyles.container}>
@@ -199,6 +216,30 @@ class Registration extends Component {
                 }}
               />
               <Text>{validationChecker.getErrorsInField('confirmPassword')}</Text>
+
+             <View
+              style={{marginTop: 15, marginBottom: 25}}>
+               <RadioForm
+                 initial={-1}
+                 radio_props={radio_props}
+                 buttonColor={Colors.GRAY_TEXT}
+                 labelColor={Colors.GRAY_TEXT}
+                 selectedButtonColor={Colors.MAIN_GREEN}
+                 selectedLabelColor={Colors.MAIN_GREEN}
+                 labelStyle={{fontSize: 14}}
+                 formHorizontal={true}
+                 buttonSize={10}
+                 buttonOuterSize={20}
+                 onPress={(value) => {
+                   this.setState({
+                     formField: {
+                       ...this.state.formField,
+                       privacyPolicy: value
+                     }
+                   })
+                 }}
+               />
+             </View>
 
               <TouchableOpacity
                 disabled={!isEnabled}

@@ -1,5 +1,6 @@
 import {StyleSheet, Platform} from 'react-native'
 import * as Colors from '../utils/colors'
+import {ifIphoneX, isIphoneX} from 'react-native-iphone-x-helper'
 
 const commonStyles = StyleSheet.create({
 
@@ -12,7 +13,8 @@ const commonStyles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingLeft: 16,
     paddingRight: 16,
-    backgroundColor: Colors.MAIN_BACKGROUND
+    backgroundColor: Colors.MAIN_BACKGROUND,
+      ...ifIphoneX({paddingBottom: 0}, {paddingBottom: 20})
   },
 
 
@@ -59,9 +61,9 @@ const commonStyles = StyleSheet.create({
 
 
 // -- BUTTONS ------
-  buttonIndents: {
-    marginBottom: 20
-  },
+//   buttonIndents: {
+//     marginBottom: 20
+//   },
 
   disabledSubmitBtn: {
     backgroundColor: Colors.DISABLED_BG,

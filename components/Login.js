@@ -15,6 +15,7 @@ import {
 import { SafeAreaView } from 'react-navigation'
 import * as Colors from '../utils/colors'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { getStatusBarHeight, getBottomSpace } from 'react-native-iphone-x-helper'
 import validationChecker from '../utils/validationChecker'
 import {facebookLogin} from '../utils/facebook'
 import {twitterLogin} from '../utils/twitter'
@@ -47,13 +48,16 @@ class Login extends Component{
   constructor(props){
     super(props);
 
+    const statusBarHeight = getStatusBarHeight();
+    const bottomSpace = getBottomSpace();
+
     this.state = {
       formField: {
         email: '',
         password: '',
       },
       isButtonDisabled: false,
-      screenHeight: 0,
+      screenHeight: statusBarHeight + bottomSpace,
     };
 
   }
@@ -211,16 +215,14 @@ class Login extends Component{
 
   onContentSizeChange = (contentWidth, contentHeight) => {
     this.setState({
-      screenHeight: contentHeight
+      ...this.state,
+      screenHeight: this.state.screenHeight + contentHeight
     })
   };
 
 
 
   render(){
-    console.log(this.state);
-    console.log(this.state.screenHeight);
-    console.log(height);
 
     const scrollEnabled = this.state.screenHeight > height;
     const {email, password} = this.state.formField;

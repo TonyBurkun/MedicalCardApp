@@ -11,11 +11,11 @@ import {setChosenChildhoodDiseases} from '../actions/childhoodDiseases'
 import {setChosenVaccinations} from '../actions/vaccinations'
 import {setChosenPregnancyOutcome} from '../actions/pregnancyOutcome'
 import {setChosenGynecologicalDiseases} from '../actions/gynecologicalDiseases'
-import {setChosenTransferredIVF} from '../actions/transferredIVF'
 import {setChosenDisability} from '../actions/disability'
 import {setChosenBadHabits} from '../actions/badHabits'
 import {setChosenGenitalInfections} from '../actions/genitalInfections'
 import ScreenTitle from "./ui_components/ScreenTitle";
+import {ifIphoneX, isIphoneX} from 'react-native-iphone-x-helper'
 
 
 
@@ -286,7 +286,7 @@ class MedicalCardList extends Component{
                renderItem={this.renderFlatListItem}
                keyExtractor={(item, index) => index.toString()}
              />
-             <View style={{paddingTop: 10, paddingLeft: 16, paddingRight: 16, backgroundColor: Colors.WHITE}}>
+             <View style={{paddingTop: 15, paddingLeft: 16, paddingRight: 16, backgroundColor: Colors.WHITE, ...ifIphoneX({paddingBottom: 0},{paddingBottom: 20})}}>
                <TouchableOpacity
                  style={[commonStyles.submitBtn]}
                  onPress={() => this.handleSaveBtn(this.state.listType)}
