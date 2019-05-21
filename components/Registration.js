@@ -176,6 +176,7 @@ class Registration extends Component {
                 placeholder="Ваш Email"
                 style={commonStyles.formInput}
                 value={this.state.email}
+                autoCapitalize = 'none'
                 onChangeText={(text) => {
                   this.setState({
                     formField:{

@@ -717,7 +717,7 @@
 				3A21291C227316C3005784B9 /* MaterialIcons.ttf */,
 			);
 			name = Resourses;
-			path = "../node_modules/react-native-vector-icons/Resourses";
+			path = "../node_modules/react-native-vector-icons/Fonts";
 			sourceTree = "<group>";
 		};
 		3A21299E22733E40005784B9 /* Products */ = {
