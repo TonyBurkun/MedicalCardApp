@@ -54,3 +54,10 @@ export const SUBMIT_RECOVERY_PASS = {
   message: `Для восстановления аккаунта перейтиде по ссылке в письме`,
   buttonText: 'Я проверю'
 };
+
+//Internet notification
+
+export const INTERNET_CONNECTION ={
+  exist: 'Соединение восстановленно',
+  lost: 'Потерялся интернет...'
+};

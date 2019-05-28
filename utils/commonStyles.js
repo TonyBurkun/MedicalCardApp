@@ -6,7 +6,7 @@ const commonStyles = StyleSheet.create({
 
 // -- GENERAL ------
   container: {
-    // position: 'relative',
+    position: 'relative',
     flex: 1,
     // borderWidth: 2,
     // borderColor: 'yellow',

@@ -12,10 +12,10 @@ import {
   ScrollView,
   Dimensions
 } from 'react-native';
-import { SafeAreaView } from 'react-navigation'
+import {SafeAreaView} from 'react-navigation'
 import * as Colors from '../utils/colors'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { getStatusBarHeight, getBottomSpace } from 'react-native-iphone-x-helper'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
+import {getStatusBarHeight, getBottomSpace} from 'react-native-iphone-x-helper'
 import validationChecker from '../utils/validationChecker'
 import {facebookLogin} from '../utils/facebook'
 import {twitterLogin} from '../utils/twitter'
@@ -34,6 +34,8 @@ import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
 import {ACCOUNT_NOT_FOUND, LOGIN_FAILED} from '../utils/systemMessages'
 import commonStyles from '../utils/commonStyles'
 
+import InternetNotification from '../components/ui_components/InternetNotification'
+
 const validationRules = {
   email: {required: true, isEmail: true},
   password: {required: true},
@@ -42,10 +44,9 @@ const validationRules = {
 const {height} = Dimensions.get('window');
 
 
+class Login extends Component {
 
-class Login extends Component{
-
-  constructor(props){
+  constructor(props) {
     super(props);
 
     const statusBarHeight = getStatusBarHeight();
@@ -76,7 +77,7 @@ class Login extends Component{
 
     console.log('LOGIN FORM IS VALID: ', isFormValid);
 
-    if (isFormValid){
+    if (isFormValid) {
       signInWithEmailAndPassword(email, password)
         .then(async (data) => {
           console.log('AUTH DATA: ', data);
@@ -85,15 +86,13 @@ class Login extends Component{
           const uid = getUIDfromFireBase();
 
 
-
-          if(isEmailVerified){
+          if (isEmailVerified) {
 
             const userInDB = await isUserExistInDB();
 
-            if (!userInDB){
+            if (!userInDB) {
               createUserbyIDinDB();
             }
-
 
 
             const userTokenWasSaved = await addUserTokenToAsyncStorage(USER_TOKEN_LOCAL_STORAGE_KEY, 'true');
@@ -102,13 +101,13 @@ class Login extends Component{
             if (userTokenWasSaved) {
               const setUpParam = await checkSetUpParamInUser();
 
-              setUpParam ? navigation.navigate('App'): navigation.navigate('setUpOneProfile');
+              setUpParam ? navigation.navigate('App') : navigation.navigate('setUpOneProfile');
             }
 
           } else {
             signOut();
             this.setState({
-              formField:{
+              formField: {
                 ...this.state.formField,
                 password: ''
               }
@@ -117,7 +116,11 @@ class Login extends Component{
               `Email Confirmation`,
               `We have sent email to ${email} to confirm the validity of our email address. Please follow the link provided to complete your registration.`,
               [
-                {text: 'Resend the confirmation mail', onPress: () => {sentVerificationEmail()}},
+                {
+                  text: 'Resend the confirmation mail', onPress: () => {
+                    sentVerificationEmail()
+                  }
+                },
                 {text: 'Ok'}
               ],
               {cancelable: false}
@@ -126,7 +129,7 @@ class Login extends Component{
             return false
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           // Handle Errors here.
           console.log(error);
           console.log(error.code);
@@ -134,7 +137,7 @@ class Login extends Component{
 
           let errorCode = error.code;
 
-          switch (errorCode){
+          switch (errorCode) {
             case 'auth/user-not-found':
               Alert.alert(
                 ACCOUNT_NOT_FOUND.title,
@@ -221,26 +224,25 @@ class Login extends Component{
   };
 
 
-
-  render(){
+  render() {
 
     const scrollEnabled = this.state.screenHeight > height;
     const {email, password} = this.state.formField;
 
     const isEnabled = email.length > 0 && password.length > 0;
 
-    return(
+    return (
       <SafeAreaView style={commonStyles.container}>
+        <InternetNotification/>
         <KeyboardAwareScrollView
           alwaysBounceVertical={false}
-          contentContainerStyle={{flex: 1,justifyContent: 'space-between'}}
+          contentContainerStyle={{flex: 1, justifyContent: 'space-between'}}
         >
           <ScrollView
             scrollEnabled={scrollEnabled}
             onContentSizeChange={this.onContentSizeChange}
-            contentContainerStyle={{flexGrow: 1,justifyContent: 'space-between'}}
+            contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between'}}
           >
-
             <View>
               <View style={commonStyles.logoBigWrap}>
                 <Image
@@ -254,7 +256,7 @@ class Login extends Component{
                 value={email}
                 onChangeText={(text) => {
                   this.setState({
-                    formField:{
+                    formField: {
                       ...this.state.formField,
                       email: text.toLowerCase()
                     }
@@ -269,7 +271,7 @@ class Login extends Component{
                 value={password}
                 onChangeText={(text) => {
                   this.setState({
-                    formField:{
+                    formField: {
                       ...this.state.formField,
                       password: text
                     }
@@ -279,7 +281,9 @@ class Login extends Component{
               <Text>{validationChecker.getErrorsInField('password')}</Text>
 
               <TouchableOpacity
-                onPress={() => {this.props.navigation.navigate('Recovery')}}
+                onPress={() => {
+                  this.props.navigation.navigate('Recovery')
+                }}
                 style={styles.forgotPass}
               >
                 <Text style={styles.forgotPass__text}>Забыли пароль?</Text>
@@ -287,10 +291,10 @@ class Login extends Component{
               <TouchableOpacity
                 disabled={!isEnabled}
                 onPress={this.handleSubmitLogin}
-                style={ isEnabled ? commonStyles.submitBtn : [commonStyles.submitBtn, commonStyles.disabledSubmitBtn ]}
+                style={isEnabled ? commonStyles.submitBtn : [commonStyles.submitBtn, commonStyles.disabledSubmitBtn]}
               >
                 <Text
-                  style={ isEnabled ? commonStyles.submitBtnText : [commonStyles.submitBtnText, commonStyles.disabledSubmitBtnText]}
+                  style={isEnabled ? commonStyles.submitBtnText : [commonStyles.submitBtnText, commonStyles.disabledSubmitBtnText]}
                 >ВОЙТИ</Text>
               </TouchableOpacity>
 
@@ -311,7 +315,8 @@ class Login extends Component{
                 </TouchableOpacity>
               </View>
             </View>
-            <View style={[commonStyles.lineTextBtn, {...Platform.select({android: {marginBottom: 25}}), marginTop: 50}]}>
+            <View
+              style={[commonStyles.lineTextBtn, {...Platform.select({android: {marginBottom: 25}}), marginTop: 50}]}>
               <Text style={commonStyles.lineTextBtn__text}>Нет аккаунта? </Text>
               <TouchableOpacity
                 onPress={() => {
@@ -340,7 +345,7 @@ const styles = StyleSheet.create({
     marginBottom: 23,
   },
 
-  forgotPass__text:{
+  forgotPass__text: {
     color: Colors.DARK_GREEN,
     fontSize: 16,
   },
@@ -359,9 +364,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
 
   }
-
-
-
 
 
 });

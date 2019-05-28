@@ -6,6 +6,8 @@ import {
   View,
   StatusBar,
   ActivityIndicator,
+  NetInfo,
+  Alert,
 } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
 import * as Colors from './utils/colors'
@@ -71,15 +73,14 @@ class App extends React.Component {
   };
 
 
-
-
-
   componentDidMount() {
 
     this._bootstrapAsync();
   }
 
   render() {
+
+    console.log(this.state);
     return (
       <View style={commonStyles.container}>
         <StatusBar
