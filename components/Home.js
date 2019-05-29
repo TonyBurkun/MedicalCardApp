@@ -17,6 +17,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import {signOut, getUIDfromFireBase} from '../utils/API'
 import {setAuthedUserID, getAuthedUserAction} from '../actions/authedUser'
 import Avatar from './Avatar'
+import InternetNotification from '../components/ui_components/InternetNotification'
 
 
 
@@ -60,6 +61,7 @@ class Home extends Component{
   render(){
     return(
       <SafeAreaView style={styles.container}>
+        <InternetNotification topDimension={0}/>
         <Text style={{textAlign: 'center'}}>HOME component</Text>
         <TouchableOpacity
           onPress={this.handleLogOut}

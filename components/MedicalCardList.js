@@ -16,6 +16,7 @@ import {setChosenBadHabits} from '../actions/badHabits'
 import {setChosenGenitalInfections} from '../actions/genitalInfections'
 import ScreenTitle from "./ui_components/ScreenTitle";
 import {ifIphoneX, isIphoneX} from 'react-native-iphone-x-helper'
+import InternetNotification from '../components/ui_components/InternetNotification'
 
 
 
@@ -268,6 +269,7 @@ class MedicalCardList extends Component{
 
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: Colors.WHITE}}>
+        <InternetNotification/>
         <SearchBar
           placeholder="Поиск по названию"
           onChangeText={this.updateSearch}

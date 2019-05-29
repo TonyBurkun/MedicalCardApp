@@ -19,6 +19,7 @@ import validationChecker from '../utils/validationChecker'
 // import DatePicker from 'react-native-datepicker'
 // import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import { getStatusBarHeight, getBottomSpace } from 'react-native-iphone-x-helper'
+import InternetNotification from '../components/ui_components/InternetNotification'
 
 
 import StepScreenTitle from './ui_components/StepScreenTitle'
@@ -196,6 +197,7 @@ export default class StepTwo extends Component {
 
     return (
       <SafeAreaView style={commonStyles.container}>
+        <InternetNotification/>
         <ScrollView
           scrollEnabled={scrollEnabled}
           onContentSizeChange={this.onContentSizeChange}

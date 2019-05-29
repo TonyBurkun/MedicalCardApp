@@ -31,6 +31,7 @@ import {getGenitalInfections} from '../utils/API';
 
 import {generateUniqID, createMedicalCardInDB, getUIDfromFireBase, updateMedicalCardInDB, updateUserData, addMedicalCardIDtoCurrentUser} from '../utils/API'
 import {ifIphoneX} from "react-native-iphone-x-helper";
+import InternetNotification from '../components/ui_components/InternetNotification'
 
 
 class MedicalCardCreate extends Component {
@@ -282,6 +283,7 @@ class MedicalCardCreate extends Component {
 
     return (
       <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0}]}>
+        <InternetNotification/>
         <KeyboardAwareScrollView>
           <ScrollView
             alwaysBounceVertical={false}

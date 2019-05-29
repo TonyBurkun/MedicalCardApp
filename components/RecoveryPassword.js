@@ -6,6 +6,7 @@ import validationChecker from '../utils/validationChecker'
 import {sendPasswordResetEmail} from '../utils/API'
 import commonStyles from '../utils/commonStyles'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import InternetNotification from '../components/ui_components/InternetNotification'
 
 
 const validationRules = {
@@ -49,6 +50,7 @@ export default class RecoveryPassword extends Component {
     const isEnabled = email.length > 0;
     return (
       <View style={commonStyles.container}>
+        <InternetNotification topDimension={0}/>
         <KeyboardAwareScrollView
           contentContainerStyle={{flex: 1, justifyContent: 'flex-start'}}>
 
@@ -79,16 +81,16 @@ export default class RecoveryPassword extends Component {
           {/*<Text style={commonStyles.submitBtnText}>Reset password</Text>*/}
           {/*</TouchableOpacity>*/}
 
-          <TouchableOpacity
-            disabled={!isEnabled}
-            onPress={this.handleSubmitBtn}
-            style={ isEnabled ? commonStyles.submitBtn : [commonStyles.submitBtn, commonStyles.disabledSubmitBtn ]}
-          >
-            <Text
-              style={ isEnabled ? commonStyles.submitBtnText : [commonStyles.submitBtnText, commonStyles.disabledSubmitBtnText]}
-            >ВОССТАНОВИТЬ ПАРОЛЬ</Text>
-          </TouchableOpacity>
-        </KeyboardAwareScrollView>
+            <TouchableOpacity
+              disabled={!isEnabled}
+              onPress={this.handleSubmitBtn}
+              style={ isEnabled ? commonStyles.submitBtn : [commonStyles.submitBtn, commonStyles.disabledSubmitBtn ]}
+            >
+              <Text
+                style={ isEnabled ? commonStyles.submitBtnText : [commonStyles.submitBtnText, commonStyles.disabledSubmitBtnText]}
+              >ВОССТАНОВИТЬ ПАРОЛЬ</Text>
+            </TouchableOpacity>
+          </KeyboardAwareScrollView>
 
       </View>
     )

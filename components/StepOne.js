@@ -26,6 +26,7 @@ import ScreenTitle from './ui_components/ScreenTitle'
 
 import firebase from 'react-native-firebase'
 import ImagePicker from 'react-native-image-picker';
+import InternetNotification from '../components/ui_components/InternetNotification'
 
 
 
@@ -186,6 +187,7 @@ export default class StepOne extends Component {
 
     return (
       <SafeAreaView style={commonStyles.container}>
+        <InternetNotification/>
         <ScrollView
           scrollEnabled={scrollEnabled}
           onContentSizeChange={this.onContentSizeChange}

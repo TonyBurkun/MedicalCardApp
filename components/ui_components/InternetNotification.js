@@ -1,9 +1,11 @@
 import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 import {View, Text, TextInput, StyleSheet, NetInfo, Dimensions, Animated,} from 'react-native'
 import commonStyles from '../../utils/commonStyles'
 import * as Colors from '../../utils/colors'
 import {getStatusBarHeight} from 'react-native-iphone-x-helper'
 import {INTERNET_CONNECTION} from '../../utils/systemMessages'
+import ScreenTitle from "./ScreenTitle";
 
 
 const {width} = Dimensions.get('window');
@@ -22,7 +24,6 @@ export default class InternetNotification extends Component {
 
     NetInfo.isConnected.fetch().then(isConnected => {
       this.setState({internetStatus: isConnected});
-
       if (!isConnected) {
         Animated.timing(
           this.state.animationState.height,
@@ -32,11 +33,12 @@ export default class InternetNotification extends Component {
           }
         ).start();
       }
+
+
     });
   }
 
   componentDidMount(){
-    console.log('did mount connection');
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectionChange);
   }
 
@@ -48,12 +50,22 @@ export default class InternetNotification extends Component {
     const {initScreen} = this.state;
     this.setState({internetStatus: isConnected});
 
-
     if (initScreen) {
       this.setState({
         initScreen: !this.state.initScreen
-      })
+      });
+
+      if (!isConnected) {
+        Animated.timing(
+          this.state.animationState.height,
+          {
+            toValue: 49,
+            duration: 300
+          }
+        ).start();
+      }
     } else {
+
       if (isConnected) {
         Animated.sequence([
           Animated.timing(
@@ -72,6 +84,7 @@ export default class InternetNotification extends Component {
           )
         ]).start();
       } else {
+        console.log('should be shown the error notification');
         Animated.timing(
           this.state.animationState.height,
           {
@@ -88,9 +101,10 @@ export default class InternetNotification extends Component {
   render() {
 
     const animatedHeight = {height: this.state.animationState.height};
+    const {topDimension} = this.props;
 
     return (
-     <View style={{position: 'absolute', left: 0, top: getStatusBarHeight() + 14, width: width, zIndex: 1}}>
+     <View style={{position: 'absolute', left: 0, top: topDimension, width: width, zIndex: 1}}>
        {this.state.internetStatus ?
          <Animated.View style={[{ backgroundColor: Colors.MAIN_GREEN, alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}, animatedHeight ]}>
             <Text style={{color: Colors.WHITE, textAlign: 'center'}}>{INTERNET_CONNECTION.exist}</Text>
@@ -104,5 +118,15 @@ export default class InternetNotification extends Component {
     );
   }
 }
+
+InternetNotification.propTypes = {
+  topDimension: PropTypes.number,
+
+};
+
+InternetNotification.defaultProps = {
+  topDimension: getStatusBarHeight() + 14,
+
+};
 
 const styles = StyleSheet.create({});
