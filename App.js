@@ -23,12 +23,111 @@ import MedicalCardCreate from './components/MedicalCardCreate'
 import MedicalCardList from './components/MedicalCardList'
 import Home from './components/Home'
 
+import {NOTES, TESTS, DOCTORS, PILLS} from './utils/textConstants'
+import Notes from './components/Notes'
+import Tests from './components/Tests'
+import Doctors from './components/Doctors'
+import Pills from './components/Pills'
+import AddButton from './components/ui_components/AddButton'
 
-import {createSwitchNavigator, createStackNavigator} from 'react-navigation'
+
+import {createSwitchNavigator, createStackNavigator, createBottomTabNavigator, createMaterialTopTabNavigator} from 'react-navigation'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
 import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'
+import CalendarIcon from "./components/ui_components/CalendarIcon";
+import Avatar from "./components/Avatar";
 
 // import firebase from 'react-native-firebase';
+
+
+const RouteConfigs = {
+  NotesTab: {
+    screen: Notes,
+    navigationOptions: {
+      tabBarLabel: "Notes",
+    }
+  },
+
+  TestsTab: {
+    screen: Tests,
+    navigationOptions: {
+      tabBarLabel: 'Tests',
+      // tabBarIcon: ({tintColor}) => (
+      //   <MaterialCommunityIcons name='playlist-plus' size={30} color={tintColor}/>
+      // )
+    }
+  },
+
+  PillsTab: {
+    screen: Pills,
+    navigationOptions: {
+      tabBarLabel: 'Pills',
+      // tabBarIcon: ({tintColor}) => (
+      //   <MaterialCommunityIcons name='playlist-plus' size={30} color={tintColor}/>
+      // )
+    }
+  },
+
+  DoctorsTab: {
+    screen: Doctors,
+    navigationOptions: {
+      tabBarLabel: 'Doctors',
+      // tabBarIcon: ({tintColor}) => (
+      //   <MaterialCommunityIcons name='playlist-plus' size={30} color={tintColor}/>
+      // )
+    }
+  },
+  Add: {
+    screen: Notes,
+    navigationOptions: () => ({
+
+      tabBarButtonComponent: () => (
+        <AddButton/>
+      ),
+    })
+  },
+
+};
+
+
+const TabNavigatorConfig = {
+  navigationOptions: {
+    // header: null
+  },
+
+  tabBarOptions: {
+    activeTintColor: Platform.OS === "ios" ? 'black' : 'black',
+    style: {
+      // height: 56,
+      backgroundColor: Platform.OS === "ios" ? Colors.TAB_NAVIGATION_BG :  Colors.TAB_NAVIGATION_BG,
+      borderTopWidth: 1,
+      borderTopColor: Colors.TAB_NAVIGATION_BORDER,
+
+      // shadowColor: "rgba(0, 0, 0, 0.24)",
+      // shadowOffset: {
+      //   width: 0,
+      //   height: 3
+      // },
+      // shadowRadius: 6,
+      // shadowOpacity: 1,
+      // paddingTop: 5
+    },
+
+    indicatorStyle: {
+      backgroundColor: 'black',
+    },
+  }
+};
+
+
+const Tabs =
+  Platform.OS === 'ios'
+    ? createBottomTabNavigator(RouteConfigs, TabNavigatorConfig)
+    : createMaterialTopTabNavigator(RouteConfigs, TabNavigatorConfig);
+
+
+
+
 
 
 class App extends React.Component {
@@ -51,19 +150,16 @@ class App extends React.Component {
       console.log(userToken);
 
       const userInDB = await isUserExistInDB();
-      // console.log(userInDB);
 
       if (userInDB) {
 
         const setUpParam = await checkSetUpParamInUser();
-        // console.log(setUpParam);
 
         setUpParam ? navigation.navigate('MainNavigation') : navigation.navigate('setUpOneProfile');
 
       } else {
         signOut(navigation)
       }
-
 
     } else {
       console.log('user does not auth');
@@ -196,11 +292,46 @@ const MedicalCardCreateStack = createStackNavigator({
 
 const MainNavStack = createStackNavigator({
   Home: {
-    screen: Home,
-    navigationOptions: {
-      // header: null
-    }
-  }
+    screen: Tabs,
+    navigationOptions: ({navigation}) => {
+      const activeTabIndex = navigation.state.index;
+      let tabTitle ='';
+
+      switch (activeTabIndex) {
+        case 0:
+          tabTitle = NOTES;
+          break;
+
+        case 1:
+          tabTitle = TESTS;
+          break;
+
+        case 2:
+          tabTitle = PILLS;
+          break;
+
+        case 3:
+          tabTitle = DOCTORS;
+          break;
+
+        default:
+          break;
+      }
+
+      return {
+        headerLeft: (
+          <CalendarIcon/>
+        ),
+        headerTitle: (
+          () => <Text style={{flex: 1, fontSize: 30, color: Colors.BLACK_TITLE, fontWeight: 'bold'}}>{tabTitle}</Text>
+        ),
+        headerRight: (
+          <Avatar/>
+        ),
+        headerStyle: commonStyles.topHeader,
+      }
+
+    }}
 });
 
 

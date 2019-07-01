@@ -5,6 +5,12 @@ import {ifIphoneX, isIphoneX} from 'react-native-iphone-x-helper'
 const commonStyles = StyleSheet.create({
 
 // -- GENERAL ------
+
+  topHeader: {
+    height: 80,
+    backgroundColor: Colors.HEADER_BG
+  },
+
   container: {
     position: 'relative',
     flex: 1,

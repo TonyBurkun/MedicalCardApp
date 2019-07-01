@@ -16,10 +16,11 @@ class Avatar extends Component {
 }
 
 function mapStateToProps(state) {
+  console.log(state);
   const {currentUserUID, currentUserData} = state.authedUser;
-  const {photoURL} = currentUserData;
+  const {avatarURL} = currentUserData;
   return {
-    currentUserPhotoURL: photoURL || ''
+    currentUserPhotoURL: avatarURL || ''
   }
 }
 
@@ -29,9 +30,9 @@ export default connect(mapStateToProps)(Avatar)
 
 const styles = StyleSheet.create({
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     marginRight: 10
   }
 });

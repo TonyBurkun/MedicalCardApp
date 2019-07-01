@@ -233,7 +233,6 @@ export async function isUserExistInDB() {
 }
 
 
-
 export async function checkSetUpParamInUser() {
   const uid = getUIDfromFireBase();
 

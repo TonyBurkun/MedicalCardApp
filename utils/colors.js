@@ -18,6 +18,9 @@ export const TYPOGRAPHY_COLOR_DARK = '#38454D';
 
 
 export const WHITE = '#FFFFFF';
+export const HEADER_BG = '#FAFAFA';
+export const TAB_NAVIGATION_BG = '#FCFCFC';
+export const TAB_NAVIGATION_BORDER = '#F0F0F0';
 export const MAIN_BACKGROUND = '#F8F8F8';
 export const TABLE_TITLE = '#CDD6E0';
 export const BORDER_COLOR = '#DADADA';
@@ -35,6 +38,7 @@ export const DISABLED_BG = '#F3F5F9';
 export const BLACK_TITLE = '#000000';
 export const MAIN_GREEN = '#27AE60';
 export const DARK_GREEN = '#2A7343';
+export const GREEN_ADD_BTN = '#4DD750';
 
 export const FB_COLOR = '#3B5998';
 export const TW_COLOR = '#1DA1F2';

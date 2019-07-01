@@ -25,30 +25,11 @@ import CalendarIcon from '../components/ui_components/CalendarIcon'
 
 
 
-class Home extends Component{
+class Notes extends Component{
 
   constructor(props){
     super(props);
   }
-
-
-  static navigationOptions = ({navigation}) => {
-
-    return {
-      headerLeft: (
-        <CalendarIcon/>
-      ),
-      headerTitle: (
-        () => <Text style={{flex: 1, fontSize: 30, color: Colors.BLACK_TITLE, fontWeight: 'bold'}}>Запись</Text>
-      ),
-      headerRight: (
-        <Avatar/>
-      ),
-      headerStyle: commonStyles.topHeader,
-
-    }
-  };
-
 
   componentDidMount(){
 
@@ -78,7 +59,7 @@ class Home extends Component{
 
   render(){
     return(
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, {backgroundColor: Colors.WHITE}]}>
         <InternetNotification topDimension={0}/>
         <Text style={{textAlign: 'center'}}>HOME component</Text>
         <TouchableOpacity
@@ -106,7 +87,7 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps)(Notes);
 
 
 const styles = StyleSheet.create({
