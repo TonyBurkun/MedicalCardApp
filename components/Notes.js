@@ -20,6 +20,7 @@ import {setAuthedUserID, getAuthedUserAction} from '../actions/authedUser'
 import Avatar from './Avatar'
 import InternetNotification from '../components/ui_components/InternetNotification'
 import CalendarIcon from '../components/ui_components/CalendarIcon'
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 
 
@@ -61,13 +62,27 @@ class Notes extends Component{
     return(
       <SafeAreaView style={[styles.container, {backgroundColor: Colors.WHITE}]}>
         <InternetNotification topDimension={0}/>
-        <Text style={{textAlign: 'center'}}>HOME component</Text>
-        <TouchableOpacity
-          onPress={this.handleLogOut}
-          style={[styles.submitBtn, styles.firstBtn]}
-        >
-          <Text style={styles.submitBtnText}>Log Out</Text>
-        </TouchableOpacity>
+        {/*<Text style={{textAlign: 'center'}}>HOME component</Text>*/}
+        {/*<TouchableOpacity*/}
+        {/*  onPress={this.handleLogOut}*/}
+        {/*  style={[styles.submitBtn, styles.firstBtn]}*/}
+        {/*>*/}
+        {/*  <Text style={styles.submitBtnText}>Log Out</Text>*/}
+        {/*</TouchableOpacity>*/}
+
+        <View style={{flex: 1, position: 'relative'}}>
+          <Text style={styles.mainText}>Здесь будут отображаться Ваши записи, которые Вы создадите</Text>
+          <Image
+            style={styles.personImage}
+            source={require('../assets/person/notes.png')}/>
+          <View style={styles.tipWrapper}>
+            <Text style={styles.tipText}>Создайте запись</Text>
+            <Image
+              style={styles.tipArrow}
+              source={require('../assets/vector/notes_vector.png')}/>
+
+          </View>
+        </View>
       </SafeAreaView>
     )
   }
@@ -119,7 +134,54 @@ const styles = StyleSheet.create({
     }),
     textAlign: 'center',
     color: Colors.ISABELLINE,
+  },
+
+  mainText: {
+    fontSize: 16,
+    color: Colors.TYPOGRAPHY_COLOR_DARK,
+    width: '100%',
+    textAlign: 'center',
+    position: 'absolute',
+    top: '15%',
+    paddingLeft: 35,
+    paddingRight: 35,
+  },
+
+  personImage: {
+    position: 'absolute',
+    right: 10,
+    bottom: 0,
+    width: wp('43%'),
+    height: hp('55%')
+  },
+
+  tipWrapper: {
+    position: 'absolute',
+    bottom: 20,
+    left: '50%',
+    marginLeft: -140,
+    width: 140,
+    height: 90,
+  },
+
+  tipText: {
+    width: '100%',
+    fontSize: 16,
+    textAlign: 'center',
+    color: Colors.GREEN_TIP
+  },
+
+  tipArrow: {
+    width: 39,
+    height: 62,
+    position: 'absolute',
+    bottom: 0,
+    left: '50%',
+    // marginLeft: -31,
   }
+
+
+
 
 
 });

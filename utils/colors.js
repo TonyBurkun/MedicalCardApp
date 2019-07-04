@@ -38,6 +38,7 @@ export const DISABLED_BG = '#F3F5F9';
 export const BLACK_TITLE = '#000000';
 export const MAIN_GREEN = '#27AE60';
 export const DARK_GREEN = '#2A7343';
+export const GREEN_TIP = '#3CBA7B';
 export const GREEN_ADD_BTN = '#4DD750';
 
 export const FB_COLOR = '#3B5998';

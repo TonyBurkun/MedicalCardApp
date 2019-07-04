@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   NetInfo,
   Alert,
+  Image
 } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
 import * as Colors from './utils/colors'
@@ -45,6 +46,15 @@ const RouteConfigs = {
     screen: Notes,
     navigationOptions: {
       tabBarLabel: "Notes",
+      tabBarIcon: ({focused}) => (
+        focused
+          ? <Image
+            style={styles.tabIcon}
+            source={require('./assets/tab_navigation_ico/notes_active.png')}/>
+          : <Image
+            style={styles.tabIcon}
+            source={require('./assets/tab_navigation_ico/notes.png')}/>
+      )
     }
   },
 
@@ -52,9 +62,15 @@ const RouteConfigs = {
     screen: Tests,
     navigationOptions: {
       tabBarLabel: 'Tests',
-      // tabBarIcon: ({tintColor}) => (
-      //   <MaterialCommunityIcons name='playlist-plus' size={30} color={tintColor}/>
-      // )
+      tabBarIcon: ({focused}) => (
+        focused
+        ? <Image
+            style={[styles.tabIcon, {marginRight: 40}]}
+            source={require('./assets/tab_navigation_ico/tests_active.png')}/>
+        : <Image
+            style={[styles.tabIcon, {marginRight: 40}]}
+            source={require('./assets/tab_navigation_ico/tests.png')}/>
+      )
     }
   },
 
@@ -62,9 +78,15 @@ const RouteConfigs = {
     screen: Pills,
     navigationOptions: {
       tabBarLabel: 'Pills',
-      // tabBarIcon: ({tintColor}) => (
-      //   <MaterialCommunityIcons name='playlist-plus' size={30} color={tintColor}/>
-      // )
+      tabBarIcon: ({focused}) => (
+        focused
+          ? <Image
+            style={[styles.tabIcon, {marginLeft: 40}]}
+            source={require('./assets/tab_navigation_ico/pills_active.png')}/>
+          : <Image
+            style={[styles.tabIcon, {marginLeft: 40}]}
+            source={require('./assets/tab_navigation_ico/pills.png')}/>
+      )
     }
   },
 
@@ -72,9 +94,15 @@ const RouteConfigs = {
     screen: Doctors,
     navigationOptions: {
       tabBarLabel: 'Doctors',
-      // tabBarIcon: ({tintColor}) => (
-      //   <MaterialCommunityIcons name='playlist-plus' size={30} color={tintColor}/>
-      // )
+      tabBarIcon: ({focused}) => (
+        focused
+          ? <Image
+            style={styles.tabIcon}
+            source={require('./assets/tab_navigation_ico/doctors_active.png')}/>
+          : <Image
+            style={styles.tabIcon}
+            source={require('./assets/tab_navigation_ico/doctors.png')}/>
+      )
     }
   },
   Add: {
@@ -96,6 +124,7 @@ const TabNavigatorConfig = {
   },
 
   tabBarOptions: {
+    showLabel: false,
     activeTintColor: Platform.OS === "ios" ? 'black' : 'black',
     style: {
       // height: 56,
@@ -188,6 +217,13 @@ class App extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  tabIcon: {
+    width: 40,
+    height: 40
+  }
+});
 
 
 
