@@ -17,10 +17,9 @@ import commonStyles from '../utils/commonStyles'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {signOut, getUIDfromFireBase, getCurrentUserData} from '../utils/API'
 import {setAuthedUserID, getAuthedUserAction} from '../actions/authedUser'
-import Avatar from './Avatar'
 import InternetNotification from '../components/ui_components/InternetNotification'
-import CalendarIcon from '../components/ui_components/CalendarIcon'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {isIphone5} from "../utils/helpers";
 
 
 
@@ -30,6 +29,10 @@ class Notes extends Component{
 
   constructor(props){
     super(props);
+
+    this.state={
+      notes: []
+    }
   }
 
   componentDidMount(){
@@ -59,8 +62,10 @@ class Notes extends Component{
   };
 
   render(){
+
+    const {notes} = this.state;
     return(
-      <SafeAreaView style={[styles.container, {backgroundColor: Colors.WHITE}]}>
+      <SafeAreaView style={styles.container}>
         <InternetNotification topDimension={0}/>
         {/*<Text style={{textAlign: 'center'}}>HOME component</Text>*/}
         {/*<TouchableOpacity*/}
@@ -70,8 +75,11 @@ class Notes extends Component{
         {/*  <Text style={styles.submitBtnText}>Log Out</Text>*/}
         {/*</TouchableOpacity>*/}
 
-        <View style={{flex: 1, position: 'relative'}}>
-          <Text style={styles.mainText}>Здесь будут отображаться Ваши записи, которые Вы создадите</Text>
+        {!notes.length &&
+           <View style={{flex: 1, position: 'relative'}}>
+         <View style={styles.mainTextWrapper}>
+           <Text style={[!isIphone5()? styles.mainText: styles.mainText__smallPhone]}>Здесь будут отображаться Ваши записи, которые Вы создадите</Text>
+         </View>
           <Image
             style={styles.personImage}
             source={require('../assets/person/notes.png')}/>
@@ -83,6 +91,7 @@ class Notes extends Component{
 
           </View>
         </View>
+        }
       </SafeAreaView>
     )
   }
@@ -111,6 +120,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: 'green',
     justifyContent: 'center',
+    backgroundColor: Colors.WHITE
   },
 
   submitBtn: {
@@ -136,15 +146,26 @@ const styles = StyleSheet.create({
     color: Colors.ISABELLINE,
   },
 
+  mainTextWrapper: {
+    position: 'absolute',
+    top: '20%',
+    width: '100%',
+    paddingLeft: 35,
+    paddingRight: 35,
+  },
+
   mainText: {
     fontSize: 16,
     color: Colors.TYPOGRAPHY_COLOR_DARK,
     width: '100%',
     textAlign: 'center',
-    position: 'absolute',
-    top: '15%',
-    paddingLeft: 35,
-    paddingRight: 35,
+  },
+
+  mainText__smallPhone: {
+    fontSize: 12,
+    color: Colors.TYPOGRAPHY_COLOR_DARK,
+    width: '100%',
+    textAlign: 'center',
   },
 
   personImage: {
