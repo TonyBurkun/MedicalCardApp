@@ -173,11 +173,6 @@ class MedicalCardCreate extends Component {
     addMedicalCardIDtoCurrentUser(generatedID);
 
     this.props.navigation.navigate('MainNavigation');
-
-
-
-
-
   };
 
   render() {

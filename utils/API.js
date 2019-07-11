@@ -350,5 +350,38 @@ export function addMedicalCardIDtoCurrentUser(medicalCardID){
     })
 }
 
+
+
+
+//------ LABEL FLOW ------------
+
+
+export function createNewLabel(labelData){
+  const uid = getUIDfromFireBase();
+
+  firebase.database().ref('labels/' + uid + '/' + labelData.id ).set(labelData)
+}
+
+export async function getLabelsForUser(){
+  const uid = getUIDfromFireBase();
+
+  console.log('loading...');
+
+  const snapshotDB = await firebase.database().ref('labels/' + uid).once('value');
+
+  return snapshotDB.val() || {};
+
+}
+
+
+
+//------ END LABEL FLOW --------
+
+
+
+
+
+
+
 //-- End FireBase  -----------------------------
 

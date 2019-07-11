@@ -1,81 +1,55 @@
 import React, {Component} from 'react'
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native'
-import * as Colors from "../../utils/colors";
-import {Icon} from 'react-native-elements'
+import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native'
+import PropTypes from 'prop-types'
+import {withNavigation} from 'react-navigation'
+import * as Colors from '../../utils/colors'
 
-import SceneView from "react-navigation/src/views/SceneView";
 
 
-export default class AddButton extends Component{
+class AddButton extends Component{
 
-  handlePressBtn = () => {
-    console.log('press');
-  };
+  render(){
 
-  render() {
-
-    return (
-     <View style={styles.addButtonContainer}>
-       <View style={{width: 72, height: 36, backgroundColor: Colors.TAB_NAVIGATION_BG, position: 'absolute', bottom: 0, overflow: 'hidden'}}>
-        <View style={{width: 72, height: 72, borderRadius: 36, borderWidth: 1, backgroundColor: 'white', borderColor: Colors.TAB_NAVIGATION_BORDER, position: 'absolute', top: -36}}>
-
-        </View>
-       </View>
-       <View style={styles.buttonBorder}>
-         <TouchableOpacity
-           style={styles.addButton}
-           onPress={this.handlePressBtn}>
-           <Icon
-             name='plus'
-             type='font-awesome'
-             color={Colors.WHITE}
-             size={20}
-             containerStyle={{position: 'absolute', left: '50%', marginLeft: -8, top: '50%', marginTop: -10}}
-           />
-
-         </TouchableOpacity>
-
-       </View>
-     </View>
+    const {right, bottom, left, top, color} = this.props;
+    return(
+      <TouchableOpacity
+        onPress={this.props.handlePress}
+        style={[styles.addBtn, {right: right, bottom: bottom, left: left, top: top, backgroundColor: color,} ]}>
+        <Image
+          source={require('../../assets/tab_navigation_ico/add_button_plus.png')}
+          style={{position: 'absolute', left: '50%', marginLeft: -10, top: '50%', marginTop: -10, width: 20, height: 20}}
+        />
+      </TouchableOpacity>
     )
   }
 }
 
+export default withNavigation(AddButton)
+
+
 const styles = StyleSheet.create({
-  addButtonContainer: {
+  addBtn: {
+    width: 56,
+    height: 56,
     position: 'absolute',
-    left: '50%',
-    top: -36,
-    marginLeft: -36,
-    backgroundColor: 'white',
-    height: 72,
-    width: 72,
-    borderRadius: 72,
-  },
-
-  buttonBorder: {
-    position: 'absolute',
-    left: '50%',
-    marginLeft: -30,
-    top: '50%',
-    marginTop: -30,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "rgba(95, 218, 156, 0.2)",
-  },
-
-  addButton: {
-    position: 'absolute',
-    left: '50%',
-    marginLeft: -26,
-    top: '50%',
-    marginTop: -26,
-    width: 52,
-    height: 52,
-    zIndex: 100,
-    backgroundColor: Colors.GREEN_ADD_BTN,
-    borderRadius: 26,
-  },
-
+    borderRadius: 28,
+  }
 });
+
+
+
+AddButton.propTypes = {
+  right: PropTypes.number,
+  bottom: PropTypes.number,
+  top: PropTypes.number,
+  left: PropTypes.number,
+  color: PropTypes.string,
+  handlePress: PropTypes.func.isRequired
+
+};
+
+AddButton.defaultProps = {
+  right: 24,
+  bottom: 56,
+  color: '#F59D25',
+};

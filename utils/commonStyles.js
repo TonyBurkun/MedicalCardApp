@@ -23,6 +23,11 @@ const commonStyles = StyleSheet.create({
       ...ifIphoneX({paddingBottom: 0}, {paddingBottom: 20})
   },
 
+  containerIndents: {
+    paddingLeft: 16,
+    paddingRight: 16,
+  },
+
 
   logoBigWrap: {
     marginTop: 30
@@ -226,6 +231,7 @@ const commonStyles = StyleSheet.create({
     fontSize: 12,
     color: Colors.TABLE_TITLE,
     marginBottom: 7.32,
+    fontWeight: 'bold',
   },
   tableBlockItem: {
     backgroundColor: Colors.WHITE,

@@ -23,13 +23,19 @@ import MedicalCardStart from './components/MedicalCardStart'
 import MedicalCardCreate from './components/MedicalCardCreate'
 import MedicalCardList from './components/MedicalCardList'
 import Home from './components/Home'
+import CreateNote from './components/CreateNote'
+import CreateTest from './components/CreateTest'
+import CreateLabel from './components/CreateLabel'
+import LabelsList from './components/LabelsList'
 
 import {NOTES, TESTS, DOCTORS, PILLS} from './utils/textConstants'
 import Notes from './components/Notes'
 import Tests from './components/Tests'
 import Doctors from './components/Doctors'
 import Pills from './components/Pills'
-import AddButton from './components/ui_components/AddButton'
+import MainNavigationButton from './components/ui_components/MainNavigationButton'
+import Profile from './components/Profile'
+
 
 
 import {createSwitchNavigator, createStackNavigator, createBottomTabNavigator, createMaterialTopTabNavigator} from 'react-navigation'
@@ -110,7 +116,7 @@ const RouteConfigs = {
     navigationOptions: () => ({
 
       tabBarButtonComponent: () => (
-        <AddButton/>
+        <MainNavigationButton/>
       ),
     })
   },
@@ -176,7 +182,7 @@ class App extends React.Component {
           console.log('Try to get userToken item from AsyncStorage and getting the ERROR', error);
         });
 
-      console.log(userToken);
+      // console.log(userToken);
 
       const userInDB = await isUserExistInDB();
 
@@ -205,7 +211,7 @@ class App extends React.Component {
 
   render() {
 
-    console.log(this.state);
+    // console.log(this.state);
     return (
       <View style={commonStyles.container}>
         <StatusBar
@@ -367,7 +373,38 @@ const MainNavStack = createStackNavigator({
         headerStyle: commonStyles.topHeader,
       }
 
-    }}
+    }},
+
+  CreateNote: {
+    screen: CreateNote,
+    navigationOptions: {
+      // header: null
+    }
+  },
+
+  CreateTest: {
+    screen: CreateTest,
+    navigationOptions: {
+      // header: null
+    }
+  },
+
+
+  Profile: {
+    screen: Profile,
+    navigationOptions: {
+      // header: null
+    }
+  },
+
+  CreateLabel: {
+    screen: CreateLabel,
+  },
+
+  LabelsList: {
+    screen: LabelsList,
+  }
+
 });
 
 

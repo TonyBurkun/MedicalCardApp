@@ -18,7 +18,7 @@ export default class FloatingLabelInput extends Component {
   });
   handleBlur = () => {
 
-    console.log('IN BLUR');
+    // console.log('IN BLUR');
     const {value} = this.props;
 
     this.setState({
@@ -38,7 +38,7 @@ export default class FloatingLabelInput extends Component {
     const { label, ...props } = this.props;
     const { isEmpty, isFocused } = this.state;
 
-    console.log('IS FOCUSED: ', isFocused);
+    // console.log('IS FOCUSED: ', isFocused);
     const labelStyle = {
       position: 'absolute',
       left: 16,

@@ -40,14 +40,10 @@ class Notes extends Component{
     const uid = getUIDfromFireBase();
     this.props.dispatch(setAuthedUserID(uid));
 
-
-    console.log(this.props);
-
     const currentUserDataObj = this.props.currentUserData;
     if (!Object.keys(currentUserDataObj).length) {
       getCurrentUserData()
         .then(data => {
-          console.log(data);
           this.props.dispatch(getAuthedUserAction(data));
         })
         .catch(error => {console.log('can not get Current User Data: ', error)});
@@ -98,7 +94,7 @@ class Notes extends Component{
 }
 function mapStateToProps (state) {
 
-  console.log(state);
+  // console.log(state);
 
   const { currentUserUID, currentUserData } = state.authedUser;
   const {photoURL} = currentUserData;
