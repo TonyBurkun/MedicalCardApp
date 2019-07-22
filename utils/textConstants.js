@@ -8,3 +8,8 @@ export const TESTS = 'Анализы';
 export const PILLS = 'Препараты';
 export const DOCTORS = 'Доктора';
 
+
+
+//EMPTY DATA
+
+export const NO_DATA_TO_SHOW = 'К сожалению, список пуст';

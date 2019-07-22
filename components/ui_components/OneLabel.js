@@ -1,15 +1,15 @@
 import React, { Component } from 'react'
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'
 import {CheckBox} from 'react-native-elements'
 import PropTypes from 'prop-types'
 import * as Colors from '../../utils/colors'
+
 
 
 class OneLabel extends Component{
 
   constructor(props){
     super(props);
-
   }
 
 
@@ -18,23 +18,24 @@ class OneLabel extends Component{
     const {labelData, hasRadio} = this.props;
 
     return(
-      <TouchableOpacity
-        onPress={() => {this.props.handleChoosingLabel(labelData.id)}}
-        style={[styles.labelBody, {backgroundColor: labelData.color, position: 'relative'}, !hasRadio ? {paddingLeft: 18} : {paddingLeft: 38} ]}>
-        {hasRadio &&
+        <TouchableOpacity
+          disabled={!hasRadio}
+          onPress={() => {this.props.handleChoosingLabel(labelData.id)}}
+          style={[styles.labelBody, {backgroundColor: labelData.color, position: 'relative'}, !hasRadio ? {paddingLeft: 18} : {paddingLeft: 38} ]}>
+          {hasRadio &&
           <CheckBox
             checked={labelData.checked}
             iconType='material-community'
-            checkedIcon='radiobox-marked'
-            uncheckedIcon='radiobox-blank'
+            checkedIcon='check-circle'
+            uncheckedIcon='checkbox-blank-circle-outline'
             uncheckedColor={Colors.WHITE}
             checkedColor={Colors.WHITE}
             size={20}
             containerStyle={{margin: 0, padding: 0, alignSelf: 'center', position: 'absolute', left: 0, top: '50%', marginTop: -10}}
           />
-        }
-        <Text style={styles.labelText}>{labelData.title}</Text>
-      </TouchableOpacity>
+          }
+          <Text style={styles.labelText}>{labelData.title}</Text>
+        </TouchableOpacity>
     )
   }
 }

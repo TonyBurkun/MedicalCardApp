@@ -8,8 +8,8 @@ import InternetNotification from '../components/ui_components/InternetNotificati
 import FloatingLabelInput from '../components/ui_components/FloatingLabelInput'
 import GroupButtonsTitle from '../components/ui_components/GroupButtonsTitle'
 import commonStyles from "../utils/commonStyles";
-import {generateUniqID, createNewLabel} from '../utils/API'
-import {updateLabels} from '../actions/labels'
+import {generateUniqID, createNewLabel, updateUserLabel} from '../utils/API'
+import {addLabel, updateLabel} from '../actions/labels'
 
 
 
@@ -21,7 +21,7 @@ class CreateLabel extends Component{
 
 
     this.state = {
-
+      isFormEdit: Boolean(this.props.navigation.state.params),
       formField: {
         labelTitle: '',
         chosenColor: '',
@@ -96,28 +96,44 @@ class CreateLabel extends Component{
     }
   }
 
+  componentDidMount(){
+
+    const {isFormEdit} = this.state;
+
+    if (isFormEdit) {
+      const id = this.props.navigation.state.params.labelID;
+      const editedLabel = this.props.labels[id];
+
+      const colors = this.state.colors.map((item) => {
+        if (item.value === editedLabel.color){
+          item.checked = true;
+        }
+        return item;
+      });
+
+
+      this.setState({
+        formField: {
+          labelTitle: editedLabel.title,
+          chosenColor: editedLabel.color,
+        },
+        colors,
+      });
+    }
+
+  }
+
 
   static navigationOptions = ({navigation}) => {
 
     return {
-      // headerLeft: (
-      //   <CalendarIcon/>
-      // ),
       headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Создать метку </Text>,
       headerTintColor: Colors.GRAY_TEXT,
       headerStyle: {
         backgroundColor: Colors.WHITE,
         elevation: 0,
         shadowOpacity: 0,
-        // borderBottomWidth: 0,
-
-
       }
-      // headerRight: (
-      //   <Avatar/>
-      // ),
-      // headerStyle: commonStyles.topHeader,
-
     }
   };
 
@@ -152,31 +168,40 @@ class CreateLabel extends Component{
 
   handleCreateLabel = () => {
     console.log('press create label');
-    console.log(this.state);
-    // {
-    //   id: '001',
-    //   title: 'Название',
-    //   color: '#00BCD4',
-    //   checked: false,
-    // }
 
-    const generatedID = generateUniqID();
+    if (this.state.isFormEdit) {
+      console.log('edit mode');
+
+      const oldLabelID = this.props.navigation.state.params.labelID;
+
+      const label = {
+        id: oldLabelID,
+        title: this.state.formField.labelTitle,
+        color: this.state.formField.chosenColor,
+        dateModified: new Date().getTime(),
+      };
+
+      updateUserLabel(oldLabelID, label);
+      this.props.dispatch(updateLabel(label));
+      this.props.navigation.navigate('LabelsList');
+
+    } else {
+      const generatedID = generateUniqID();
+
+      const label = {
+        id: generatedID,
+        title: this.state.formField.labelTitle,
+        color: this.state.formField.chosenColor,
+        dateModified: new Date().getTime(),
+      };
+
+      createNewLabel(label);
+      this.props.dispatch(addLabel(label));
+      this.props.navigation.navigate('LabelsList');
+    }
 
 
-    const label = {
-      id: generatedID,
-      title: this.state.formField.labelTitle,
-      color: this.state.formField.chosenColor,
-      dateModified: new Date().getTime(),
-    };
 
-
-
-
-
-    createNewLabel(label);
-    this.props.dispatch(updateLabels(label));
-    this.props.navigation.navigate('LabelsList');
 
 
   };
@@ -188,7 +213,10 @@ class CreateLabel extends Component{
   render() {
     console.log(this.state);
     console.log(this.props);
-    const {colors} = this.state;
+    const {colors, isFormEdit} = this.state;
+
+
+
     const {labelTitle, chosenColor} = this.state.formField;
     const isEnabled = labelTitle.length > 0 && chosenColor.length > 0;
     return (
@@ -198,6 +226,7 @@ class CreateLabel extends Component{
         <View style={{marginTop: 16}}>
           <FloatingLabelInput
             label="Название метки"
+            autoFocus = {isFormEdit}
             value={this.state.formField.labelTitle}
             onChangeText={this.handleTextChange}
           />
@@ -233,7 +262,9 @@ class CreateLabel extends Component{
           >
             <Text
               style={ isEnabled ? commonStyles.submitBtnText : [commonStyles.submitBtnText, commonStyles.disabledSubmitBtnText]}
-            >СОЗДАТЬ</Text>
+            >
+              {isFormEdit ? "СОХРАНИТЬ" : "СОЗДАТЬ"}
+            </Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

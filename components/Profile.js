@@ -47,6 +47,7 @@ class Profile extends Component{
 
   handlePressLabelBtn = () => {
     this.props.navigation.navigate('LabelsList');
+    // this.props.navigation.navigate('LabelsList', {type: 'radioBtnList'});
   };
 
   handleLogOut = () => {

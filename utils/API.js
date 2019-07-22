@@ -365,14 +365,27 @@ export function createNewLabel(labelData){
 export async function getLabelsForUser(){
   const uid = getUIDfromFireBase();
 
-  console.log('loading...');
-
   const snapshotDB = await firebase.database().ref('labels/' + uid).once('value');
 
   return snapshotDB.val() || {};
 
 }
 
+export  function updateUserLabel(labelID, labelData) {
+  const uid = getUIDfromFireBase();
+
+  firebase.database().ref(`labels/${uid}/${labelID}`).update(labelData);
+
+}
+
+
+export async function removeLabelForCurrentUser(labelID){
+  const uid = getUIDfromFireBase();
+
+  let key = labelID;
+  await firebase.database().ref(`labels/${uid}/${key}`).remove();
+
+}
 
 
 //------ END LABEL FLOW --------

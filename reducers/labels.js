@@ -1,9 +1,13 @@
 import {SET_LABELS} from '../actions/labels'
-import {UPDATE_LABELS} from '../actions/labels'
+import {ADD_LABEL} from '../actions/labels'
+import {DELETE_LABEL} from "../actions/labels";
+import {UPDATE_LABEL} from "../actions/labels";
+import {SET_ACTIVE_LABEL} from "../actions/labels";
 
 
 const initialState = {
   labels: {},
+  chosenLabelID: ''
 };
 
 
@@ -19,7 +23,7 @@ function labels(state=initialState, action) {
         }
       );
 
-    case UPDATE_LABELS:
+    case ADD_LABEL:
       const oneLabel = action.label;
       const labelID = oneLabel.id;
 
@@ -32,6 +36,38 @@ function labels(state=initialState, action) {
           labels: labels
         }
       );
+
+
+    case UPDATE_LABEL:
+
+      const updatedLabel = action.label;
+
+      Object.keys(state.labels).filter((item) => {
+        if (state.labels[item].id === updatedLabel.id) {
+          state.labels[item] = updatedLabel;
+        }
+      });
+
+      return {
+        ...state,
+        labels: state.labels
+      };
+
+    case DELETE_LABEL:
+      const deleteLabelID = action.labelID;
+      const allLabels = state.labels;
+      delete allLabels[deleteLabelID];
+
+      return {
+        ...state,
+        labels: allLabels
+      };
+
+    case SET_ACTIVE_LABEL:
+      return {
+        ...state,
+        chosenLabelID: action.chosenLabelID,
+      };
 
 
     default:
