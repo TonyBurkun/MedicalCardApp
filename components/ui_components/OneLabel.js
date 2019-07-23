@@ -17,6 +17,7 @@ class OneLabel extends Component{
 
     const {labelData, hasRadio} = this.props;
 
+
     return(
         <TouchableOpacity
           disabled={!hasRadio}

@@ -167,7 +167,6 @@ class CreateLabel extends Component{
   };
 
   handleCreateLabel = () => {
-    console.log('press create label');
 
     if (this.state.isFormEdit) {
       console.log('edit mode');
@@ -211,8 +210,8 @@ class CreateLabel extends Component{
 
 
   render() {
-    console.log(this.state);
-    console.log(this.props);
+    // console.log(this.state);
+    // console.log(this.props);
     const {colors, isFormEdit} = this.state;
 
 
@@ -228,6 +227,7 @@ class CreateLabel extends Component{
             label="Название метки"
             autoFocus = {isFormEdit}
             value={this.state.formField.labelTitle}
+            maxLength={100}
             onChangeText={this.handleTextChange}
           />
         </View>

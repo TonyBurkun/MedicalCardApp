@@ -26,11 +26,11 @@ class LabelsList extends Component{
 
     this.state = {
       search: '',
-      // activeLabel: {},
       labelsList: [],
       searchDataList: [],
-      refresh: false,
-      isLabelsLoaded: false
+      isLabelsLoaded: true,
+      chosenLabelID: ''
+
     }
   }
 
@@ -38,6 +38,23 @@ class LabelsList extends Component{
   _closeAllSwipes = () => {
     this.swipe.forEach((item) => {
       item.recenter();
+    });
+  };
+
+  _cloneLabelsObjWithCheckedFalse = (labels, chosenLabelID) => {
+    const copyLabels = JSON.parse(JSON.stringify(labels));
+    const labelsListKeys = Object.keys(copyLabels);
+
+
+    return labelsListKeys.map((item) => {
+      copyLabels[item].checked = false;
+
+
+      if (chosenLabelID.length && chosenLabelID === item) {
+        copyLabels[item].checked = true;
+      }
+
+      return copyLabels[item];
     });
   };
 
@@ -81,52 +98,41 @@ class LabelsList extends Component{
   };
 
   componentDidMount(){
+
    getLabelsForUser()
       .then(data => {
         this.props.dispatch(setLabels(data));
-      });
 
+        const {chosenLabelID} = this.state;
+        const labelsList = this._cloneLabelsObjWithCheckedFalse(data, chosenLabelID);
+
+        this.setState({
+          labelsList: labelsList,
+          searchDataList: labelsList,
+        })
+      });
 
   }
 
 
   componentWillReceiveProps(nextProps) {
     console.log('New PROPS', nextProps);
+    console.log(this.state);
     const {labels} = nextProps.labels;
+    const newChosenLabelID = nextProps.labels.chosenLabelID;
 
-    const _cloneLabelsObjWithCheckedFalse = (labels) => {
-      const copyLabels = JSON.parse(JSON.stringify(labels));
-      const labelsListKeys = Object.keys(copyLabels);
+    const newLabelsList = this._cloneLabelsObjWithCheckedFalse(labels, newChosenLabelID);
 
-      return labelsListKeys.map((item) => {
-        copyLabels[item].checked = false;
-        return copyLabels[item];
-      });
-    };
-
-
-    const labelsList = _cloneLabelsObjWithCheckedFalse(labels);
-
-
-    if (labelsList !== this.state.labelsList && labelsList.length !== this.state.labelsList.length) {
-
-      console.log('here');
-
+    if (newLabelsList.length) {
       this.setState({
-        labelsList: labelsList,
-        searchDataList: labelsList,
+        labelsList: newLabelsList,
+        searchDataList: newLabelsList,
+        chosenLabelID: newChosenLabelID,
+        isLabelsLoaded: true
       });
-    }
-
-
-    if (nextProps.labels.chosenLabelID.length === 0) {
-      // when the user tap on the cancel button and checked label should be canceled
-
-      const labelsList = _cloneLabelsObjWithCheckedFalse(labels);
-
+    } else {
       this.setState({
-        labelsList: labelsList,
-        searchDataList: labelsList,
+        isLabelsLoaded: false
       });
     }
 
@@ -134,9 +140,6 @@ class LabelsList extends Component{
 
 
 
-    this.setState({
-      isLabelsLoaded: true
-    });
   }
 
   updateSearch = (search) => {
@@ -173,8 +176,6 @@ class LabelsList extends Component{
 
   handleChoosingLabel = (labelID) => {
 
-    this.props.dispatch(saveChosenLabel(labelID));
-
     const {labelsList} = this.state;
 
     let newLabelsList = labelsList.map((item) => {
@@ -185,8 +186,10 @@ class LabelsList extends Component{
 
     this.setState({
       labelsList: newLabelsList,
-      refresh: !this.state.refresh
-    })
+      chosenLabelID: labelID,
+    });
+
+    this.props.dispatch(saveChosenLabel(labelID));
   };
 
   renderFlatListItem = ({item}) => {
@@ -230,26 +233,22 @@ class LabelsList extends Component{
         />
       </TouchableHighlight>
     ];
-    return (
 
-      <Swipeable rightButtons={rightButtons}
-                 onRef={(swipe) => {
-                   this.swipe.push(swipe);
-                 }}
-                 rightButtonWidth={56}
-                 onSwipeStart={() => { this._closeAllSwipes()}}
-      >
-        <OneLabel  key={item.id} labelData={item} hasRadio={true}  handleChoosingLabel = {this.handleChoosingLabel}/>
-      </Swipeable>
-    )
-  };
 
-  emptyFlatList = () => {
-    return (
-      <View style={{flex: 1, marginTop: '20%', alignItems: 'center', fontSize: 16}}>
-        <Text>{NO_DATA_TO_SHOW}</Text>
-      </View>
-    )
+    if (this.state.isLabelsLoaded) {
+
+      return (
+        <Swipeable rightButtons={rightButtons}
+                   onRef={(swipe) => {
+                     this.swipe.push(swipe);
+                   }}
+                   rightButtonWidth={56}
+                   onSwipeStart={() => { this._closeAllSwipes()}}
+        >
+          <OneLabel  key={item.id} labelData={item} hasRadio={false}  handleChoosingLabel = {this.handleChoosingLabel}/>
+        </Swipeable>
+      )
+    }
   };
 
   handlePressAddButton = () => {
@@ -261,8 +260,8 @@ class LabelsList extends Component{
 
   render() {
 
-    console.log('STATE:', this.state);
-    console.log('PROPS', this.props);
+    // console.log('STATE:', this.state);
+    // console.log('PROPS', this.props);
 
     const { search, searchDataList, isLabelsLoaded } = this.state;
 
@@ -276,6 +275,8 @@ class LabelsList extends Component{
       return 0
 
     });
+
+    console.log(isLabelsLoaded);
 
 
     return (
@@ -291,14 +292,18 @@ class LabelsList extends Component{
           inputStyle={{borderRadius: 10, color: '#8E8E93', fontSize: 14}}
         />
        <View style={[commonStyles.containerIndents, {marginTop: 16} ]}>
-         {isLabelsLoaded  &&
-          <FlatList
-            keyExtractor={(item, index) => index.toString()}
-            data={searchDataList}
-            ListEmptyComponent={this.emptyFlatList}
-            extraData={this.state.refresh}
-            renderItem={this.renderFlatListItem}
-          />
+         {isLabelsLoaded ? (
+           <FlatList
+             keyExtractor={(item, index) => index.toString()}
+             data={searchDataList}
+             renderItem={this.renderFlatListItem}
+           />
+           ) : (
+           <View style={{flex: 1, marginTop: '20%', alignItems: 'center', fontSize: 16}}>
+              <Text>{NO_DATA_TO_SHOW}</Text>
+           </View>
+         )
+
          }
        </View>
         <AddButton handlePress={this.handlePressAddButton}/>
