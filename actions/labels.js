@@ -35,10 +35,10 @@ export function deleteLabel(labelID){
 }
 
 
-export function saveChosenLabel(labelID){
+export function saveChosenLabel(chosenLabelsID){
   return {
     type: SET_ACTIVE_LABEL,
-    chosenLabelID: labelID,
+    chosenLabelsID: chosenLabelsID,
 
   }
 }

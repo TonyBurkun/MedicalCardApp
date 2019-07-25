@@ -10,7 +10,7 @@ import * as Colors from '../../../utils/colors'
 class HeaderCancelBtn extends Component{
 
   handlePressBtn = () => {
-    this.props.dispatch(saveChosenLabel(''));
+    this.props.dispatch(saveChosenLabel([]));
     this.props.navigation.goBack();
   };
 
@@ -34,7 +34,7 @@ class HeaderCancelBtn extends Component{
 function mapStateToProps(state){
   const labels = state.labels;
   return {
-    activeLabel: labels.chosenLabelID
+    chosenLabelsID: labels.chosenLabelsID
   }
 }
 

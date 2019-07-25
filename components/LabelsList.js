@@ -29,7 +29,7 @@ class LabelsList extends Component{
       labelsList: [],
       searchDataList: [],
       isLabelsLoaded: true,
-      chosenLabelID: ''
+      chosenLabelsID: []
 
     }
   }
@@ -41,21 +41,28 @@ class LabelsList extends Component{
     });
   };
 
-  _cloneLabelsObjWithCheckedFalse = (labels, chosenLabelID) => {
+  _cloneLabelsObjWithCheckedFalse = (labels, chosenLabelsID) => {
     const copyLabels = JSON.parse(JSON.stringify(labels));
     const labelsListKeys = Object.keys(copyLabels);
 
 
-    return labelsListKeys.map((item) => {
+    let labelsArr = labelsListKeys.map((item) => {
       copyLabels[item].checked = false;
-
-
-      if (chosenLabelID.length && chosenLabelID === item) {
-        copyLabels[item].checked = true;
-      }
 
       return copyLabels[item];
     });
+
+
+    chosenLabelsID.forEach((id) => {
+      labelsArr.forEach((label) => {
+        if (label.id === id) {
+          label.checked = true;
+        }
+      })
+    });
+
+    return labelsArr;
+
   };
 
 
@@ -103,8 +110,8 @@ class LabelsList extends Component{
       .then(data => {
         this.props.dispatch(setLabels(data));
 
-        const {chosenLabelID} = this.state;
-        const labelsList = this._cloneLabelsObjWithCheckedFalse(data, chosenLabelID);
+        const {chosenLabelsID} = this.state;
+        const labelsList = this._cloneLabelsObjWithCheckedFalse(data, chosenLabelsID);
 
         this.setState({
           labelsList: labelsList,
@@ -116,18 +123,21 @@ class LabelsList extends Component{
 
 
   componentWillReceiveProps(nextProps) {
-    console.log('New PROPS', nextProps);
-    console.log(this.state);
-    const {labels} = nextProps.labels;
-    const newChosenLabelID = nextProps.labels.chosenLabelID;
 
-    const newLabelsList = this._cloneLabelsObjWithCheckedFalse(labels, newChosenLabelID);
+    // console.log('New PROPS', nextProps);
+    // console.log(this.state);
+
+    const {labels} = nextProps.labels;
+    const newChosenLabelsID = nextProps.labels.chosenLabelsID;
+
+
+    const newLabelsList = this._cloneLabelsObjWithCheckedFalse(labels, newChosenLabelsID);
 
     if (newLabelsList.length) {
       this.setState({
         labelsList: newLabelsList,
         searchDataList: newLabelsList,
-        chosenLabelID: newChosenLabelID,
+        // chosenLabelsID: newChosenLabelsID,
         isLabelsLoaded: true
       });
     } else {
@@ -135,10 +145,6 @@ class LabelsList extends Component{
         isLabelsLoaded: false
       });
     }
-
-
-
-
 
   }
 
@@ -157,10 +163,16 @@ class LabelsList extends Component{
         return ~value.indexOf(searchVal.toLowerCase());
       });
 
+      console.log(searchResultArr.length);
+      console.log(Boolean(searchResultArr.length));
+
+
+
       this.setState({
         ...this.state,
         search,
-        searchDataList : searchResultArr
+        searchDataList : searchResultArr,
+        isLabelsLoaded: Boolean(searchResultArr.length)
       })
 
     } else {
@@ -168,28 +180,48 @@ class LabelsList extends Component{
       this.setState({
         ...this.state,
         search,
-        searchDataList : this.state.labelsList
+        searchDataList : this.state.labelsList,
+        isLabelsLoaded: true
       })
     }
 
   };
 
-  handleChoosingLabel = (labelID) => {
-
-    const {labelsList} = this.state;
-
-    let newLabelsList = labelsList.map((item) => {
-      item.checked = labelID === item.id;
-      return item;
-    });
+  handleChoosingLabel = (labelID, hasCheckBox) => {
 
 
-    this.setState({
-      labelsList: newLabelsList,
-      chosenLabelID: labelID,
-    });
+    if (hasCheckBox){
+      this.props.navigation.setParams({
+        chosenLabelsID: this.state.chosenLabelsID
+      });
 
-    this.props.dispatch(saveChosenLabel(labelID));
+      const {labelsList, chosenLabelsID} = this.state;
+
+      let newLabelsList = labelsList.map((item) => {
+        item.checked = labelID === item.id;
+        return item;
+      });
+
+      let indexOfIDiNLabelsArr = chosenLabelsID.indexOf(labelID);
+
+
+      if (indexOfIDiNLabelsArr >= 0){
+        chosenLabelsID.splice(indexOfIDiNLabelsArr, 1);
+      } else {
+        chosenLabelsID.push(labelID);
+      }
+
+
+      this.setState({
+        chosenLabelsID,
+        labelsList: newLabelsList,
+      });
+
+      this.props.dispatch(saveChosenLabel(chosenLabelsID));
+    } else {
+      this.props.navigation.navigate('CreateLabel', {labelID: labelID})
+    }
+
   };
 
   renderFlatListItem = ({item}) => {
@@ -203,10 +235,28 @@ class LabelsList extends Component{
     const handleDeleteBtn = () => {
       this._closeAllSwipes();
 
+      if (item.checked) {
+        const {chosenLabelsID} = this.state;
+
+        chosenLabelsID.forEach((id, index) => {
+          if (id === item.id) {
+            chosenLabelsID.splice(index, 1);
+          }
+        });
+
+        this.setState({
+          chosenLabelsID
+        })
+      }
+
       removeLabelForCurrentUser(item.id)
         .then(() => {
           this.props.dispatch(deleteLabel(item.id));
         });
+
+      this.props.navigation.setParams({
+        chosenLabelsID: this.state.chosenLabelsID
+      });
 
     };
 
@@ -224,7 +274,7 @@ class LabelsList extends Component{
 
       <TouchableHighlight
         underlayColor={'transparent'}
-        style={{height: 56, width: 56, marginLeft: 15, justifyContent: 'center'}}
+        style={{height: 56, width: 56, marginLeft: 15,  justifyContent: 'center'}}
         onPress={handleDeleteBtn}
       >
         <Image
@@ -245,7 +295,7 @@ class LabelsList extends Component{
                    rightButtonWidth={56}
                    onSwipeStart={() => { this._closeAllSwipes()}}
         >
-          <OneLabel  key={item.id} labelData={item} hasRadio={false}  handleChoosingLabel = {this.handleChoosingLabel}/>
+          <OneLabel  key={item.id} labelData={item} hasCheckBox={false}  handleChoosingLabel = {this.handleChoosingLabel}/>
         </Swipeable>
       )
     }
@@ -260,8 +310,8 @@ class LabelsList extends Component{
 
   render() {
 
-    // console.log('STATE:', this.state);
-    // console.log('PROPS', this.props);
+    console.log('STATE:', this.state);
+    console.log('PROPS', this.props);
 
     const { search, searchDataList, isLabelsLoaded } = this.state;
 
@@ -276,9 +326,6 @@ class LabelsList extends Component{
 
     });
 
-    console.log(isLabelsLoaded);
-
-
     return (
       <SafeAreaView style={styles.container}>
         <InternetNotification topDimension={0}/>
@@ -291,7 +338,7 @@ class LabelsList extends Component{
           inputContainerStyle={{borderRadius: 10, backgroundColor: 'rgba(142, 142, 147, 0.12)'}}
           inputStyle={{borderRadius: 10, color: '#8E8E93', fontSize: 14}}
         />
-       <View style={[commonStyles.containerIndents, {marginTop: 16} ]}>
+       <View style={{marginTop: 16, paddingRight: 16}}>
          {isLabelsLoaded ? (
            <FlatList
              keyExtractor={(item, index) => index.toString()}

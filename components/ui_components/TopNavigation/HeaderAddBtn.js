@@ -12,20 +12,19 @@ class HeaderAddBtn extends Component{
     this.props.navigation.goBack();
   };
 
+
   render() {
 
-    const {activeLabel} = this.props;
-
-
+    const {chosenLabelsID} = this.props;
     return(
       <TouchableHighlight
-        disabled={!activeLabel}
+        disabled={!chosenLabelsID.length}
         underlayColor={'transparent'}
         onPress={this.handlePressBtn}
         style={{paddingRight: 8}}
       >
         <Text
-          style={activeLabel ? {fontSize: 17, color: Colors.DARK_GREEN} : {fontSize: 17, color: Colors.DISABLED_BORDER}}
+          style={chosenLabelsID.length ? {fontSize: 17, color: Colors.DARK_GREEN} : {fontSize: 17, color: Colors.DISABLED_BORDER}}
         >Добавить</Text>
       </TouchableHighlight>
     )
@@ -36,7 +35,7 @@ class HeaderAddBtn extends Component{
 function mapStateToProps(state){
   const labels = state.labels;
   return {
-    activeLabel: labels.chosenLabelID
+    chosenLabelsID: labels.chosenLabelsID
   }
 }
 

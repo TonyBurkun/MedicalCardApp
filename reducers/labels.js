@@ -7,15 +7,13 @@ import {SET_ACTIVE_LABEL} from "../actions/labels";
 
 const initialState = {
   labels: {},
-  chosenLabelID: ''
+  chosenLabelsID: []
 };
 
 
 function labels(state=initialState, action) {
   switch(action.type) {
     case SET_LABELS:
-      console.log(state);
-      console.log('loaded');
       return (
         {
           ...state,
@@ -66,7 +64,7 @@ function labels(state=initialState, action) {
     case SET_ACTIVE_LABEL:
       return {
         ...state,
-        chosenLabelID: action.chosenLabelID,
+        chosenLabelsID: action.chosenLabelsID
       };
 
 

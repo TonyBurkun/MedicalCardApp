@@ -227,7 +227,7 @@ class CreateLabel extends Component{
             label="Название метки"
             autoFocus = {isFormEdit}
             value={this.state.formField.labelTitle}
-            maxLength={100}
+            maxLength={20}
             onChangeText={this.handleTextChange}
           />
         </View>

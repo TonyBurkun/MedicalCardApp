@@ -15,15 +15,14 @@ class OneLabel extends Component{
 
   render() {
 
-    const {labelData, hasRadio} = this.props;
+    const {labelData, hasCheckBox} = this.props;
 
 
     return(
         <TouchableOpacity
-          disabled={!hasRadio}
-          onPress={() => {this.props.handleChoosingLabel(labelData.id)}}
-          style={[styles.labelBody, {backgroundColor: labelData.color, position: 'relative'}, !hasRadio ? {paddingLeft: 18} : {paddingLeft: 38} ]}>
-          {hasRadio &&
+          onPress={() => {this.props.handleChoosingLabel(labelData.id, hasCheckBox)}}
+          style={[styles.labelBody, {backgroundColor: labelData.color, position: 'relative'}, !hasCheckBox ? {paddingLeft: 18} : {paddingLeft: 38} ]}>
+          {hasCheckBox &&
           <CheckBox
             checked={labelData.checked}
             iconType='material-community'
@@ -48,6 +47,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     height: 56,
     paddingRight: 18,
+    marginLeft: 16,
+    // marginRight: 16,
     flexDirection: 'row',
     marginBottom: 8
   },
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
 OneLabel.propTypes = {
   labelData: PropTypes.object.isRequired,
   handleChoosingLabel: PropTypes.func.isRequired,
-  hasRadio: PropTypes.bool.isRequired,
+  hasCheckBox: PropTypes.bool.isRequired,
 
 };
 
@@ -77,5 +78,5 @@ OneLabel.defaultProps = {
     color: '#8BC34A',
     checked: false,
   },
-  hasRadio: false
+  hasCheckBox: false
 };
