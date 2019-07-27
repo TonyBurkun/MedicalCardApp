@@ -7,11 +7,11 @@ import ScreenTitle from "./ScreenTitle";
 class GroupButtonsTitle extends Component{
   render() {
 
-    const {title, topMargin} = this.props;
+    const {title, topMargin, paddingLeft} = this.props;
 
     return (
       <View>
-        <Text style={[styles.groupButtonsTitle, {marginTop: topMargin} ]}>{title}</Text>
+        <Text style={[styles.groupButtonsTitle, {marginTop: topMargin, paddingLeft: paddingLeft} ]}>{title}</Text>
       </View>
     )
   }
@@ -34,10 +34,12 @@ const styles = StyleSheet.create({
 GroupButtonsTitle.propTypes = {
   title: PropTypes.string.isRequired,
   topMargin: PropTypes.number,
+  paddingLeft: PropTypes.number,
 };
 
 GroupButtonsTitle.defaultProps = {
   title: 'ЗАГОЛОВОК БЛОКА КНОПОК',
   topMargin: 24,
+  paddingLeft: 0,
 
 };

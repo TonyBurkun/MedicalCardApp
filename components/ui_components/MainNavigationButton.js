@@ -32,6 +32,7 @@ class MainNavigationButton extends Component{
 
       case 3:
         console.log('Doctors Tab');
+        navigation.navigate('CreateDoctor');
         break;
 
       default:

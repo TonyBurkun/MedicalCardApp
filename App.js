@@ -32,6 +32,7 @@ import {NOTES, TESTS, DOCTORS, PILLS} from './utils/textConstants'
 import Notes from './components/Notes'
 import Tests from './components/Tests'
 import Doctors from './components/Doctors'
+import CreateDoctor from "./components/CreateDoctor";
 import Pills from './components/Pills'
 import MainNavigationButton from './components/ui_components/MainNavigationButton'
 import Profile from './components/Profile'
@@ -403,6 +404,10 @@ const MainNavStack = createStackNavigator({
 
   LabelsList: {
     screen: LabelsList,
+  },
+
+  CreateDoctor: {
+    screen: CreateDoctor
   }
 
 });

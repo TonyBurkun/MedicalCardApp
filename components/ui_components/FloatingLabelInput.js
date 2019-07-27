@@ -10,39 +10,50 @@ export default class FloatingLabelInput extends Component {
   state = {
     isFocused: false,
     isEmpty: true,
+    emptyFieldText: 'Введите текст'
   };
 
-  handleFocus = () => this.setState({
-    isEmpty: false,
-    isFocused: true
-  });
+  handleFocus = () => {
+    // console.log('is focus');
+
+    this.setState({
+      isEmpty: false,
+      isFocused: true,
+      emptyFieldText: ''
+    })
+  };
+
   handleBlur = () => {
 
     // console.log('IN BLUR');
-    const {value} = this.props;
+    let {value} = this.props;
 
-    this.setState({
-      isFocused: false
-    });
-
-    if (!value) {
+    if (!value){
       this.setState({
-        isEmpty: true,
-      })
+        emptyFieldText: 'Введите текст',
+        isEmpty: true
+      });
     }
 
-
+    this.setState({
+      isFocused: false,
+    });
   };
 
   render() {
-    const { label, ...props } = this.props;
+    const { label, ...props} = this.props;
     const { isEmpty, isFocused } = this.state;
 
-    // console.log('IS FOCUSED: ', isFocused);
+    let {value} = this.props;
+
+    if (!value) {
+      value = this.state.emptyFieldText
+    }
+
     const labelStyle = {
       position: 'absolute',
       left: 16,
-      top: isEmpty ? 20 : 5,
+      top: isEmpty ? 5 : 5,
       fontSize: 14,
       color: isEmpty ? Colors.BLACK_TITLE : Colors.GRAY_TEXT,
     };
@@ -53,10 +64,15 @@ export default class FloatingLabelInput extends Component {
         </Text>
         <TextInput
           {...props}
-          style={[commonStyles.tableBlockItemText, {fontSize: 16, paddingTop: 8.7, paddingBottom: 10}, isFocused ? {color: Colors.MAIN_GREEN} : {color: Colors.TYPOGRAPHY_COLOR_DARK}]}
+          style={[commonStyles.tableBlockItemText,
+            {fontSize: 16, paddingTop: 8.7, paddingBottom: 10},
+            isEmpty ? {color: Colors.TABLE_TITLE} : {color: Colors.TYPOGRAPHY_COLOR_DARK},
+            isFocused ? {color: Colors.MAIN_GREEN} : {},
+          ]}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
           blurOnSubmit
+          value={value}
         />
       </View>
     );
