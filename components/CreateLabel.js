@@ -126,8 +126,10 @@ class CreateLabel extends Component{
 
   static navigationOptions = ({navigation}) => {
 
+    const isEditForm = Boolean(navigation.state.params);
+
     return {
-      headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Создать метку </Text>,
+      headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>{isEditForm ? ('Редактировать метку') : ('Создать метку')} </Text>,
       headerTintColor: Colors.GRAY_TEXT,
       headerStyle: {
         backgroundColor: Colors.WHITE,
