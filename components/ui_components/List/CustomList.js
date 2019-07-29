@@ -1,15 +1,10 @@
 import React, {Component, Fragment} from 'react'
 import {View, Text, ScrollView} from 'react-native'
 import PropTypes from 'prop-types'
-import {connect} from 'react-redux'
 import {ListItem, CheckBox, Icon, SearchBar} from "react-native-elements";
 import {withNavigation} from 'react-navigation'
 import * as Colors from "../../../utils/colors";
 import commonStyles from '../../../utils/commonStyles'
-import {SafeAreaView} from "react-navigation";
-
-
-
 
 
 
@@ -30,16 +25,12 @@ class CustomList extends Component{
 
   componentDidMount(){
     const {data, chosenItemsID} = this.props;
-    console.log(chosenItemsID);
-
     const dataObj = data.map((item, index) => {
-
       return  {
         id: index,
         value: item,
         checked: false,
       }
-
     });
 
     if (chosenItemsID) {
@@ -47,9 +38,6 @@ class CustomList extends Component{
         dataObj[item].checked = true;
       })
     }
-
-    console.log(dataObj);
-
 
     this.setState({
       doctorSpecializationsOrigin: dataObj,
@@ -60,8 +48,6 @@ class CustomList extends Component{
 
 
   updateSearch = search => {
-
-
     this.setState({ search });
 
     const searchVal = search;
@@ -72,8 +58,6 @@ class CustomList extends Component{
         const value = item.value.toLowerCase();
 
         return ~value.indexOf(searchVal.toLowerCase());
-
-
       });
 
       this.setState({
@@ -81,10 +65,7 @@ class CustomList extends Component{
         search,
         data : searchResultArr
       })
-
-
     } else {
-
       this.setState({
         ...this.state,
         search,
@@ -92,63 +73,37 @@ class CustomList extends Component{
       })
     }
 
-
-
-
   };
 
   onPressListItem = (index) => {
 
     const {data, doctorSpecializationsOrigin, chosenSpecializationIDArr} = this.state;
-    console.log(chosenSpecializationIDArr);
-
-
     data[index].checked =  !data[index].checked;
-
-
-
-    // const indexInArr = chosenSpecializationIDArr.indexOf(data[index].id);
-
-    // if (~indexInArr) {
-    //   chosenSpecializationIDArr.splice(indexInArr, 1)
-    // } else {
-    //   chosenSpecializationIDArr.push(data[index].id);
-    // }
-    //
-    // console.log(data);
-    // console.log(chosenSpecializationIDArr);
-
 
     this.setState({
       data: data,
       chosenSpecializationIDArr: chosenSpecializationIDArr,
     });
 
-    let activeItemsList = doctorSpecializationsOrigin.filter((item) => {
-      return item.checked === true
+    const activeItemsArr = [];
+
+    doctorSpecializationsOrigin.forEach((item) => {
+      if(item.checked) {
+        activeItemsArr.push(item.id)
+      }
     });
-
-    activeItemsList = activeItemsList.map(item => {
-      return item.id
-    });
-
-    console.log(this.state.doctorSpecializationsOrigin);
-
 
 
     const {route} = this.props;
-    this.props.navigation.navigate(route, {data: activeItemsList, prevData: this.props.chosenItemsID})
+    this.props.navigation.navigate(route, {data: activeItemsArr, prevData: this.props.chosenItemsID})
   };
-
-
-
 
   render() {
 
     const {data, search} = this.state;
 
-    console.log(this.state);
-    console.log(this.props);
+    // console.log(this.state);
+    // console.log(this.props);
     return (
 
 
@@ -200,12 +155,7 @@ class CustomList extends Component{
             </View>
           )
         }
-
       </Fragment>
-
-
-
-
     )
   }
 }

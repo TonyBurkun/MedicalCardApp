@@ -1,15 +1,11 @@
 import React, {Component} from 'react'
 import {View, Text, ScrollView} from 'react-native'
 import {connect} from 'react-redux'
-import {ListItem, SearchBar} from "react-native-elements";
-
 import * as Colors from "../utils/colors";
 import CustomList from "./ui_components/List/CustomList";
 import commonStyles from "../utils/commonStyles";
 import {SafeAreaView} from "react-navigation";
 import InternetNotification from "./ui_components/InternetNotification";
-import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
-
 import HeaderAddBtn from "./ui_components/TopNavigation/HeaderAddBtn";
 
 
@@ -19,12 +15,6 @@ import HeaderAddBtn from "./ui_components/TopNavigation/HeaderAddBtn";
 
 
 class ChoseDoctorSpecializations extends Component{
-
-  constructor(props){
-    super(props);
-
-
-  }
 
   static navigationOptions = ({navigation}) => {
     return {
@@ -46,12 +36,11 @@ class ChoseDoctorSpecializations extends Component{
 
   render() {
 
-    console.log(this.state);
-    console.log(this.props);
+    // console.log(this.state);
+    // console.log(this.props);
 
     const doctorSpecializationArr = this.props.doctorSpecializations;
     const {chosenDoctorSpecializations} = this.props;
-
 
     return (
       <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0, backgroundColor: Colors.WHITE}]}>
@@ -64,10 +53,6 @@ class ChoseDoctorSpecializations extends Component{
 
 
 function mapStateToProps (state) {
-
-  console.log(state);
-
-
   return {
     doctorSpecializations: state.doctors.doctorSpecializations,
     chosenDoctorSpecializations: state.doctors.chosenDoctorSpecializations,

@@ -5,9 +5,7 @@ import commonStyles from "../utils/commonStyles";
 import {SafeAreaView} from "react-navigation";
 import InternetNotification from "./ui_components/InternetNotification";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
-import ScreenTitle from "./ui_components/ScreenTitle";
 import GroupButtonsTitle from "./ui_components/GroupButtonsTitle";
-import ProfileListBtn from "./ui_components/ProfileListBtn";
 import FloatingLabelInput from "./ui_components/FloatingLabelInput";
 import {Icon} from "react-native-elements";
 import {connect} from 'react-redux'
@@ -35,8 +33,6 @@ class CreateDoctor extends Component{
 
 
   static navigationOptions = ({navigation}) => {
-
-
     return {
       headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}> Создать Доктора </Text>,
       headerTintColor: Colors.GRAY_TEXT,
@@ -55,14 +51,6 @@ class CreateDoctor extends Component{
         this.props.dispatch(setDoctorSpecializations(data));
       })
   }
-
-  componentWillReceiveProps(newProps){
-    console.log(newProps);
-  }
-
-
-
-
 
   handleFirstNameChange = (newText) => {
     this.setState({
@@ -84,8 +72,6 @@ class CreateDoctor extends Component{
 
   showItemsList = (param, screenTitle) => {
 
-
-
     this.props.navigation.navigate('ChoseDoctorSpecializations', {listType: param, screenTitle: screenTitle, prevData: this.props.chosenDoctorSpecializations});
 
   };
@@ -94,23 +80,13 @@ class CreateDoctor extends Component{
 
   render(){
 
-    console.log(this.state);
-
-
-
+    // console.log(this.state);
     const {doctorSpecializations, chosenDoctorSpecializations} = this.props;
 
-    // console.log(doctorSpecializations);
-    console.log(chosenDoctorSpecializations);
     let chosenDoctorSpecializationsTitle = chosenDoctorSpecializations.map((item) => {
         return doctorSpecializations[item];
 
     });
-
-
-    console.log(this.props);
-
-
 
     function getChosenTitleStr (specializations) {
       let chosenTitlesStr = '';
@@ -179,14 +155,7 @@ class CreateDoctor extends Component{
               </View>
 
               <GroupButtonsTitle title={'ДОПОЛНИТЕЛЬНЫЕ ДАННЫЕ'} paddingLeft={16}/>
-
-
-
-
-
             </View>
-
-
           </ScrollView>
 
         </KeyboardAwareScrollView>
@@ -198,10 +167,6 @@ class CreateDoctor extends Component{
 
 
 function mapStateToProps (state) {
-
-  console.log(state);
-
-
   return {
     doctorSpecializations: state.doctors.doctorSpecializations,
     chosenDoctorSpecializations: state.doctors.chosenDoctorSpecializations,
