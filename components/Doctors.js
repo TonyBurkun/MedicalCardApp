@@ -1,13 +1,17 @@
 import React, {Component} from 'react'
 import {View, Text, Image, StyleSheet, Platform, Dimensions} from 'react-native'
+import {connect} from 'react-redux'
 import {SafeAreaView} from "react-navigation";
 import InternetNotification from "./ui_components/InternetNotification";
 import * as Colors from "../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import {isIphone5} from '../utils/helpers'
 
+import {getDoctorSpecializations} from '../utils/API';
+import {setDoctorSpecializations} from '../actions/doctorSpecializations'
 
-export default class Doctors extends Component{
+
+class Doctors extends Component{
 
   constructor(props){
     super(props);
@@ -15,7 +19,8 @@ export default class Doctors extends Component{
     this.state={
       doctors: [],
     }
-}
+  }
+
 
   render() {
 
@@ -52,6 +57,17 @@ export default class Doctors extends Component{
     )
   }
 }
+
+
+function mapStateToProps (state) {
+  console.log(state);
+
+  return {
+    doctorSpecializations: state.doctors.doctorSpecializations
+  }
+}
+
+export default connect(mapStateToProps)(Doctors);
 
 const styles = StyleSheet.create({
   container: {
@@ -157,3 +173,5 @@ const styles = StyleSheet.create({
   }
 
 });
+
+

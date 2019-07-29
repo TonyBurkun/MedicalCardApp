@@ -11,6 +11,7 @@ import badHabits  from './badHabits'
 import genitalInfections  from './genitalInfections'
 import other  from './other'
 import labels  from './labels'
+import doctors from './doctors'
 
 
 export default combineReducers({
@@ -26,4 +27,5 @@ export default combineReducers({
   genitalInfections,
   other,
   labels,
+  doctors
 })

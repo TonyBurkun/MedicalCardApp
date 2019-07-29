@@ -33,6 +33,7 @@ import Notes from './components/Notes'
 import Tests from './components/Tests'
 import Doctors from './components/Doctors'
 import CreateDoctor from "./components/CreateDoctor";
+import ChoseDoctorSpecializations from "./components/ChoseDoctorSpecializations";
 import Pills from './components/Pills'
 import MainNavigationButton from './components/ui_components/MainNavigationButton'
 import Profile from './components/Profile'
@@ -44,6 +45,7 @@ import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
 import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'
 import CalendarIcon from "./components/ui_components/CalendarIcon";
 import Avatar from "./components/Avatar";
+
 
 // import firebase from 'react-native-firebase';
 
@@ -408,7 +410,12 @@ const MainNavStack = createStackNavigator({
 
   CreateDoctor: {
     screen: CreateDoctor
+  },
+
+  ChoseDoctorSpecializations: {
+    screen: ChoseDoctorSpecializations
   }
+
 
 });
 

@@ -69,7 +69,7 @@ class LabelsList extends Component{
   static navigationOptions = ({navigation}) => {
 
     const isChoseLabel = Boolean(navigation.state.params);
-    if (isChoseLabel && navigation.state.params.type === 'radioBtnList') {
+    if (isChoseLabel && navigation.state.params.type === 'btnList') {
       return {
         headerLeft: () => {
           return (
@@ -218,8 +218,9 @@ class LabelsList extends Component{
       });
 
       this.props.dispatch(saveChosenLabel(chosenLabelsID));
+      this.props.navigation.navigate('LabelsList',{data: this.state.chosenLabelsID});
     } else {
-      this.props.navigation.navigate('CreateLabel', {labelID: labelID})
+      this.props.navigation.navigate('LabelsList',{data: this.state.chosenLabelsID});
     }
 
   };

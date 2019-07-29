@@ -136,7 +136,7 @@ class MedicalCardList extends Component{
           <DatePicker
             locale={'ru'}
             key={index}
-            key={index}
+            // key={index}
             style={[item.date? styles.filledDatePicker : styles.emptyDatePicker]}
             date={item.date} //initial date from state
             // mode="date" //The enum of date, datetime and time

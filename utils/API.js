@@ -296,6 +296,12 @@ export async function getGenitalInfections () {
 }
 
 
+export async function getDoctorSpecializations () {
+  const snapshotDB = await firebase.database().ref('doctor_specializations/').once('value');
+  return snapshotDB.val();
+}
+
+
 
 export function generateUniqID(){
   let myRef = firebase.database().ref().push();
