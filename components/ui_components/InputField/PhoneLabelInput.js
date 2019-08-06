@@ -1,24 +1,23 @@
 import React, {Component} from 'react'
 import {View, Text, TextInput, StyleSheet} from 'react-native'
-import commonStyles from '../../utils/commonStyles'
-import * as Colors from '../../utils/colors'
 import PropTypes from 'prop-types'
-import {MAIN_BACKGROUND} from "../../utils/colors";
-import {MAIN_GREEN} from "../../utils/colors";
+import commonStyles from '../../../utils/commonStyles'
+import * as Colors from '../../../utils/colors'
+import {MAIN_BACKGROUND} from "../../../utils/colors";
+import {MAIN_GREEN} from "../../../utils/colors";
 
 
-export default class FloatingLabelInput extends Component {
+export default class PhoneLabelInput extends Component {
   constructor(props){
     super(props);
 
     this.state = {
       isFocused: false,
       isEmpty: true,
-      emptyFieldText: 'Введите текст'
+      emptyFieldText: '(00) 000 - 00 - 00'
     };
 
   }
-
 
   componentWillReceiveProps(newProps){
 
@@ -26,6 +25,7 @@ export default class FloatingLabelInput extends Component {
       isEmpty: !newProps.value.length
     })
   }
+
 
 
 
@@ -46,7 +46,7 @@ export default class FloatingLabelInput extends Component {
 
     if (!value){
       this.setState({
-        emptyFieldText: 'Введите текст',
+        emptyFieldText: '(00) 000 - 00 - 00',
         isEmpty: true
       });
     }
@@ -57,10 +57,6 @@ export default class FloatingLabelInput extends Component {
   };
 
   render() {
-    // console.log(this.state);
-    // console.log(this.props);
-
-
     const { label, ...props} = this.props;
     const { isEmpty, isFocused } = this.state;
 
@@ -78,23 +74,26 @@ export default class FloatingLabelInput extends Component {
       color: isEmpty ? Colors.BLACK_TITLE : Colors.GRAY_TEXT,
     };
     return (
-      <View style={[commonStyles.tableBlockItem, { paddingTop: 18 }]}>
+      <View style={[commonStyles.tableBlockItem, { paddingTop: 18, paddingLeft: 16 }]}>
         <Text style={labelStyle}>
           {label}
         </Text>
-        <TextInput
-          {...props}
-          style={[commonStyles.tableBlockItemText,
-            {fontSize: 16, paddingTop: 8.7, paddingBottom: 10},
-            isEmpty ? {color: Colors.TABLE_TITLE} : {color: Colors.TYPOGRAPHY_COLOR_DARK},
-            isFocused ? {color: Colors.MAIN_GREEN} : {},
-          ]}
-          onFocus={this.handleFocus}
-          onBlur={this.handleBlur}
-          blurOnSubmit
-          value={value}
-          maxLength={this.props.maxLength}
-        />
+       <View style={{flexDirection: 'row', paddingTop: 8.7, paddingBottom: 10}}>
+         <Text style={{fontSize: 16, fontWeight: 'bold', color: Colors.TYPOGRAPHY_COLOR_DARK}}>+380</Text>
+         <TextInput
+           {...props}
+           style={[{fontSize: 16, marginLeft: 5, flexGrow: 2},
+             isEmpty ? {color: Colors.TABLE_TITLE} : {color: Colors.TYPOGRAPHY_COLOR_DARK},
+             isFocused ? {color: Colors.MAIN_GREEN} : {},
+           ]}
+           maxLength={9}
+           keyboardType={'number-pad'}
+           onFocus={this.handleFocus}
+           onBlur={this.handleBlur}
+           blurOnSubmit
+           value={value}
+         />
+       </View>
       </View>
     );
   }
@@ -105,12 +104,10 @@ const styles = StyleSheet.create({
 });
 
 
-FloatingLabelInput.propTypes = {
-  maxLength: PropTypes.number,
+PhoneLabelInput.propTypes = {
   value: PropTypes.string.isRequired,
 };
 
-FloatingLabelInput.defaultProps = {
+PhoneLabelInput.defaultProps = {
   value: '',
 };
-

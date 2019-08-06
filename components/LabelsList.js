@@ -108,6 +108,7 @@ class LabelsList extends Component{
 
    getLabelsForUser()
       .then(data => {
+        console.log(data);
         this.props.dispatch(setLabels(data));
 
         const {chosenLabelsID} = this.state;
@@ -331,7 +332,7 @@ class LabelsList extends Component{
       <SafeAreaView style={styles.container}>
         <InternetNotification topDimension={0}/>
         <SearchBar
-          placeholder="Имя, фамилия или специализация"
+          placeholder="Имя метки"
           onChangeText={this.updateSearch}
           value={search}
           lightTheme={true}

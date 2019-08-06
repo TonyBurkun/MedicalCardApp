@@ -8,7 +8,8 @@ const commonStyles = StyleSheet.create({
 
   topHeader: {
     height: 80,
-    backgroundColor: Colors.HEADER_BG
+    backgroundColor: Colors.WHITE,
+    borderBottomWidth: 0
   },
 
   container: {

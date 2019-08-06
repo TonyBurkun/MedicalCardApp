@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native'
+import {View, Text, StyleSheet, Image, TouchableOpacity, ScrollView} from 'react-native'
 import { SafeAreaView } from 'react-navigation'
 import {connect} from 'react-redux'
 import * as Colors from '../utils/colors'
@@ -224,51 +224,53 @@ class CreateLabel extends Component{
       <SafeAreaView style={styles.container}>
         <InternetNotification topDimension={0}/>
 
-        <View style={{marginTop: 16}}>
-          <FloatingLabelInput
-            label="Название метки"
-            autoFocus = {isFormEdit}
-            value={this.state.formField.labelTitle}
-            maxLength={20}
-            onChangeText={this.handleTextChange}
-          />
-        </View>
-        <View style={commonStyles.container}>
-          <GroupButtonsTitle title={'ЦВЕТ МЕТКИ'}/>
-          <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between'}}>
-            { colors.length &&
-              colors.map((item, index) => {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={[styles.colorItem, {backgroundColor: item.value}]}
-                    onPress={() => {this.handlePressOnColor(index)}}>
+       <ScrollView>
+         <View style={{marginTop: 16}}>
+           <FloatingLabelInput
+             label="Название метки"
+             autoFocus = {isFormEdit}
+             value={this.state.formField.labelTitle}
+             maxLength={20}
+             onChangeText={this.handleTextChange}
+           />
+         </View>
+         <View style={commonStyles.container}>
+           <GroupButtonsTitle title={'ЦВЕТ МЕТКИ'}/>
+           <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between'}}>
+             { colors.length &&
+             colors.map((item, index) => {
+               return (
+                 <TouchableOpacity
+                   key={index}
+                   style={[styles.colorItem, {backgroundColor: item.value}]}
+                   onPress={() => {this.handlePressOnColor(index)}}>
 
-                    {item.checked &&
-                      <Image
-                        source={require('../assets/general/check-circle.png')}
-                        style={{alignSelf: 'center',  width: 32, height: 32}}
-                      />
-                    }
+                   {item.checked &&
+                   <Image
+                     source={require('../assets/general/check-circle.png')}
+                     style={{alignSelf: 'center',  width: 32, height: 32}}
+                   />
+                   }
 
 
-                  </TouchableOpacity>
-                )
-              })
-            }
-          </View>
-          <TouchableOpacity
-            disabled={!isEnabled}
-            onPress={this.handleCreateLabel}
-            style={ isEnabled ? commonStyles.submitBtn : [commonStyles.submitBtn, commonStyles.disabledSubmitBtn ]}
-          >
-            <Text
-              style={ isEnabled ? commonStyles.submitBtnText : [commonStyles.submitBtnText, commonStyles.disabledSubmitBtnText]}
-            >
-              {isFormEdit ? "СОХРАНИТЬ" : "СОЗДАТЬ"}
-            </Text>
-          </TouchableOpacity>
-        </View>
+                 </TouchableOpacity>
+               )
+             })
+             }
+           </View>
+           <TouchableOpacity
+             disabled={!isEnabled}
+             onPress={this.handleCreateLabel}
+             style={ isEnabled ? [commonStyles.submitBtn, {marginTop: 80}] : [commonStyles.submitBtn, commonStyles.disabledSubmitBtn, {marginTop: 80} ]}
+           >
+             <Text
+               style={ isEnabled ? [commonStyles.submitBtnText] : [commonStyles.submitBtnText, commonStyles.disabledSubmitBtnText]}
+             >
+               {isFormEdit ? "СОХРАНИТЬ" : "СОЗДАТЬ"}
+             </Text>
+           </TouchableOpacity>
+         </View>
+       </ScrollView>
       </SafeAreaView>
     )
   }
@@ -293,7 +295,7 @@ const styles = StyleSheet.create({
   },
 
   colorItem: {
-    width: 104,
+    width: '30%',
     height: 56,
     borderRadius: 12,
     marginTop: 16,

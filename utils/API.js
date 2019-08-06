@@ -390,11 +390,43 @@ export async function removeLabelForCurrentUser(labelID){
 
   let key = labelID;
   await firebase.database().ref(`labels/${uid}/${key}`).remove();
-
 }
 
 
 //------ END LABEL FLOW --------
+
+
+
+
+// --- DOCTORS FLOW --------------
+
+export function createNewDoctor(doctorData){
+  const generatedID = generateUniqID();
+
+  firebase.database().ref('doctors/'+ doctorData.id).set(doctorData);
+}
+
+
+export async function getDoctorsList(){
+
+  const snapshotDB = await firebase.database().ref('doctors/').once('value');
+
+  return snapshotDB.val() || {};
+
+}
+
+
+export  function updateChosenDoctor(doctorID, doctorData) {
+
+  firebase.database().ref(`doctors/${doctorID}`).update(doctorData);
+
+}
+
+
+
+
+
+// --- END DOCTORS FLOW -----------
 
 
 

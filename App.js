@@ -137,7 +137,7 @@ const TabNavigatorConfig = {
     activeTintColor: Platform.OS === "ios" ? 'black' : 'black',
     style: {
       // height: 56,
-      backgroundColor: Platform.OS === "ios" ? Colors.TAB_NAVIGATION_BG :  Colors.TAB_NAVIGATION_BG,
+      backgroundColor: Platform.OS === "ios" ? Colors.WHITE :  Colors.WHITE,
       borderTopWidth: 1,
       borderTopColor: Colors.TAB_NAVIGATION_BORDER,
 

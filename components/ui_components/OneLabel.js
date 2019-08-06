@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   labelBody: {
     borderRadius: 10,
     height: 56,
-    paddingRight: 18,
+    // paddingRight: 18,
     marginLeft: 16,
     // marginRight: 16,
     flexDirection: 'row',

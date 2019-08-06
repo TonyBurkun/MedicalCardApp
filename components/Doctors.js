@@ -1,57 +1,383 @@
-import React, {Component} from 'react'
-import {View, Text, Image, StyleSheet, Platform, Dimensions} from 'react-native'
+import React, {Component, Fragment} from 'react'
+import {View, Text, Image, StyleSheet, Platform, Dimensions, FlatList, TouchableHighlight} from 'react-native'
+import {ButtonGroup, SearchBar} from 'react-native-elements'
 import {connect} from 'react-redux'
-import {SafeAreaView} from "react-navigation";
+import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import InternetNotification from "./ui_components/InternetNotification";
 import * as Colors from "../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import {isIphone5} from '../utils/helpers'
 
-import {getDoctorSpecializations} from '../utils/API';
-import {setDoctorSpecializations} from '../actions/doctorSpecializations'
+import {getDoctorsList, getDoctorSpecializations, getUIDfromFireBase} from '../utils/API';
+import {setDoctors} from '../actions/doctors'
+import Swipeable from "react-native-swipeable";
+import OneDoctor from "./ui_components/ListItems/OneDoctor";
+import {setDoctorSpecializations} from "../actions/doctorSpecializations";
+import CustomButtonGroup from "./ui_components/Buttons/CustomButtonGroup";
+import HeaderCancelBtn from "./ui_components/TopNavigation/HeaderCancelBtn";
+import HeaderAddBtn from "./ui_components/TopNavigation/HeaderAddBtn";
+import {NO_DATA_TO_SHOW} from "../utils/textConstants";
 
 
 class Doctors extends Component{
 
   constructor(props){
     super(props);
+    this.swipe = [];
 
     this.state={
-      doctors: [],
+      search: '',
+      doctorsList: [],
+      doctorsListOrigin: [],
+      isLoaded: true,
+      emptySearch: false,
+      showList: false,
+      selectedIndex: 0
     }
   }
 
 
+
+
+
+  updateChosenTab (selectedIndex) {
+    this._closeAllSwipes();
+
+    this.setState({selectedIndex})
+  }
+
+  _closeAllSwipes = () => {
+    this.swipe.forEach((item) => {
+      item.recenter();
+    });
+  };
+
+
+  _cloneDoctorsObjWithCheckedFalse = (doctors, chosenDoctorsID = []) => {
+    const copyDoctors = JSON.parse(JSON.stringify(doctors));
+    const labelsListKeys = Object.keys(copyDoctors);
+
+
+    let doctorsArr = labelsListKeys.map((item) => {
+      copyDoctors[item].checked = false;
+
+      return copyDoctors[item];
+    });
+
+
+    chosenDoctorsID.forEach((id) => {
+      doctorsArr.forEach((label) => {
+        if (label.id === id) {
+          label.checked = true;
+        }
+      })
+    });
+
+
+    return doctorsArr;
+
+  };
+
+
+
+
+  componentDidMount(){
+
+
+    getDoctorsList()
+      .then(data => {
+        this.props.dispatch(setDoctors(data));
+
+        // const {chosenLabelsID} = this.state;
+        const doctorsList = this._cloneDoctorsObjWithCheckedFalse(data, []);
+
+
+        this.setState({
+          doctorsList: doctorsList,
+          doctorsListOrigin: doctorsList,
+          isLoaded: doctorsList.length,
+          showList: doctorsList.length,
+
+        })
+      });
+
+    getDoctorSpecializations()
+      .then(data => {
+        this.props.dispatch(setDoctorSpecializations(data));
+      })
+  }
+
+  componentWillReceiveProps(nextProps){
+    const data = nextProps.doctorsList;
+
+    const newDoctorsList = this._cloneDoctorsObjWithCheckedFalse(data, []);
+
+    this.setState({
+      doctorsList: newDoctorsList,
+      doctorsListOrigin: newDoctorsList,
+      isLoaded: newDoctorsList.length,
+      showList: newDoctorsList.length,
+      search: '',
+      emptySearch: false,
+    })
+
+  }
+
+  renderFlatListItem = ({item}) => {
+
+    const handleEditBtn = () => {
+      this._closeAllSwipes();
+      this.props.navigation.navigate('CreateDoctor', {doctorID: item.id})
+
+    };
+
+    const handleDeleteBtn = () => {
+      this._closeAllSwipes();
+
+      // if (item.checked) {
+      //   const {chosenLabelsID} = this.state;
+      //
+      //   chosenLabelsID.forEach((id, index) => {
+      //     if (id === item.id) {
+      //       chosenLabelsID.splice(index, 1);
+      //     }
+      //   });
+      //
+      //   this.setState({
+      //     chosenLabelsID
+      //   })
+      // }
+      //
+      // removeLabelForCurrentUser(item.id)
+      //   .then(() => {
+      //     this.props.dispatch(deleteLabel(item.id));
+      //   });
+      //
+      // this.props.navigation.setParams({
+      //   chosenLabelsID: this.state.chosenLabelsID
+      // });
+
+    };
+
+    const rightButtons = [
+      <TouchableHighlight
+        underlayColor={'transparent'}
+        onPress={handleEditBtn}
+        style={{height: 56, width: 56, marginLeft: 15, justifyContent: 'center'}}
+      >
+        <Image
+          style={{width: 40, height: 40}}
+          source={require('../assets/general/edit.png')}
+        />
+      </TouchableHighlight>,
+
+      <TouchableHighlight
+        underlayColor={'transparent'}
+        style={{height: 56, width: 56, marginLeft: 15,  justifyContent: 'center'}}
+        onPress={handleDeleteBtn}
+      >
+        <Image
+          style={{width: 40, height: 40}}
+          source={require('../assets/general/delete.png')}
+        />
+      </TouchableHighlight>
+    ];
+
+
+      return (
+        <Swipeable rightButtons={rightButtons}
+                   onRef={(swipe) => {
+                     this.swipe.push(swipe);
+                   }}
+                   rightButtonWidth={56}
+                   onSwipeStart={() => { this._closeAllSwipes()}}
+        >
+          <OneDoctor  key={item.id} doctorData={item} hasCheckBox={false}  handleChoosingDoctor = {this.handleChoosingDoctor}/>
+        </Swipeable>
+      )
+  };
+
+
+  updateSearch = (search) => {
+
+    this.setState({
+      search
+    });
+
+    const searchVal = search.toLowerCase();
+    const {doctorsListOrigin} = this.state;
+    const {doctorSpecializations} = this.props;
+
+    if (searchVal !== '') {
+      const searchResultArr = doctorsListOrigin.filter((item) => {
+
+        const firstName = item.firstName.toLowerCase();
+        const lastName = item.lastName.toLowerCase();
+        const specializations = item.specializations.map(item => {
+          return doctorSpecializations[item].toLowerCase();
+        });
+
+        const specializationsStr = specializations.join(', ');
+        const concatenatedDataForSearch = firstName + ' ' + lastName + ' ' + specializationsStr;
+
+        return ~concatenatedDataForSearch.indexOf(searchVal)
+      });
+
+      // console.log(searchResultArr.length);
+      // console.log(Boolean(searchResultArr.length));
+
+
+
+      this.setState({
+        ...this.state,
+        search,
+        emptySearch: Boolean(!searchResultArr.length),
+        doctorsList : searchResultArr,
+
+      })
+
+    } else {
+
+      this.setState({
+        ...this.state,
+        search,
+        emptySearch: false,
+        doctorsList : this.state.doctorsListOrigin,
+      })
+    }
+
+  };
+
+  handleChoosingDoctor = (doctorID, hasCheckBox) => {
+
+
+    // if (hasCheckBox){
+    //   this.props.navigation.setParams({
+    //     chosenLabelsID: this.state.chosenLabelsID
+    //   });
+    //
+    //   const {labelsList, chosenLabelsID} = this.state;
+    //
+    //   let newLabelsList = labelsList.map((item) => {
+    //     item.checked = doctorID === item.id;
+    //     return item;
+    //   });
+    //
+    //   let indexOfIDiNLabelsArr = chosenLabelsID.indexOf(doctorID);
+    //
+    //
+    //   if (indexOfIDiNLabelsArr >= 0){
+    //     chosenLabelsID.splice(indexOfIDiNLabelsArr, 1);
+    //   } else {
+    //     chosenLabelsID.push(doctorID);
+    //   }
+    //
+    //
+    //   this.setState({
+    //     chosenLabelsID,
+    //     labelsList: newLabelsList,
+    //   });
+    //
+    //   this.props.dispatch(saveChosenLabel(chosenLabelsID));
+    //   this.props.navigation.navigate('LabelsList',{data: this.state.chosenLabelsID});
+    // } else {
+    //   this.props.navigation.navigate('LabelsList',{data: this.state.chosenLabelsID});
+    // }
+
+  };
+
+
+
+
   render() {
+    // console.log(this.state);
+    // console.log('DOCTOR PROPS ', this.state);
+    //
+    // console.log(isIphone5());
 
 
-    console.log(isIphone5());
+    let {isLoaded, doctorsList, search} = this.state;
+
+    const buttons = ['Все доктора', 'Созданные'];
+    const { selectedIndex } = this.state;
 
 
-    const {doctors} = this.state;
+    switch (selectedIndex) {
+      case 0 :
+        break;
+
+      case 1:
+        const uid = getUIDfromFireBase();
+
+        doctorsList = doctorsList.filter(item => {
+          return item.createdByUser === uid
+        });
+
+        break;
+
+
+      default:
+        break;
+    }
+
 
 
     return(
       <SafeAreaView style={styles.container}>
         <InternetNotification topDimension={0}/>
+        <SearchBar
+          placeholder="Имя, фамилия или специализация"
+          onChangeText={this.updateSearch}
+          value={search}
+          lightTheme={true}
+          containerStyle={{backgroundColor: Colors.WHITE, borderTopWidth: 0}}
+          inputContainerStyle={{borderRadius: 10, backgroundColor: 'rgba(142, 142, 147, 0.12)'}}
+          inputStyle={{borderRadius: 10, color: '#8E8E93', fontSize: 14}}
+        />
 
-        {!doctors.length &&
-        <View style={{flex: 1, position: 'relative'}}>
-          <View style={styles.mainTextWrapper}>
-            <Text style={[!isIphone5()? styles.mainText: styles.mainText__smallPhone]}>Здесь отображаются карточки Докторов которые есть в нашей базе и которых Вы добавили самостоятельно.</Text>
-            <Text style={[!isIphone5()? styles.subText: styles.subText__smallPhone]}>Создавайте, редактируйте или удаляйте Докторов</Text>
-          </View>
-          <Image
-            style={styles.personImage}
-            source={require('../assets/person/pills.png')}/>
-          <View style={styles.tipWrapper}>
-            <Text style={styles.tipText}>Добавить карточку доктора</Text>
+        {isLoaded ?
+          (
+            this.state.showList &&
+            <Fragment>
+              <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
+                <CustomButtonGroup
+                  updateIndex={(selectedIndex) => {this.updateChosenTab(selectedIndex)}}
+                  buttons={buttons}
+                  selectedIndex={selectedIndex}/>
+              </View>
+              {!this.state.emptySearch && doctorsList.length ? (
+                <View style={{flex: 1, marginTop: 10, paddingRight: 16}}>
+                  <FlatList
+                    keyExtractor={(item, index) => index.toString()}
+                    data={doctorsList}
+                    renderItem={this.renderFlatListItem}
+                  />
+                </View>
+              ) : (
+                <View style={{flex: 1, marginTop: '20%', alignItems: 'center', fontSize: 16}}>
+                  <Text>{NO_DATA_TO_SHOW}</Text>
+                </View>
+              )}
+            </Fragment>
+        ) : (
+          <View style={{flex: 1, position: 'relative'}}>
+            <View style={styles.mainTextWrapper}>
+              <Text style={[!isIphone5()? styles.mainText: styles.mainText__smallPhone]}>Здесь отображаются карточки Докторов которые есть в нашей базе и которых Вы добавили самостоятельно.</Text>
+              <Text style={[!isIphone5()? styles.subText: styles.subText__smallPhone]}>Создавайте, редактируйте или удаляйте Докторов</Text>
+            </View>
             <Image
-              style={styles.tipArrow}
-              source={require('../assets/vector/pills_vector.png')}/>
+              style={styles.personImage}
+              source={require('../assets/person/pills.png')}/>
+            <View style={styles.tipWrapper}>
+              <Text style={styles.tipText}>Добавить карточку доктора</Text>
+              <Image
+                style={styles.tipArrow}
+                source={require('../assets/vector/pills_vector.png')}/>
 
+            </View>
           </View>
-        </View>
+        )
+
         }
       </SafeAreaView>
     )
@@ -63,19 +389,20 @@ function mapStateToProps (state) {
   console.log(state);
 
   return {
+    doctorsList: state.doctors.doctorsList,
     doctorSpecializations: state.doctors.doctorSpecializations
   }
 }
 
-export default connect(mapStateToProps)(Doctors);
+export default withNavigationFocus(connect(mapStateToProps)(Doctors));
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     // borderWidth: 1,
     // borderColor: 'green',
-    justifyContent: 'center',
-    backgroundColor: Colors.WHITE
+    // justifyContent: 'center',
+    backgroundColor: Colors.MAIN_BACKGROUND
   },
 
   submitBtn: {
@@ -105,7 +432,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: '100%',
     position: 'absolute',
-    top: '10%',
+    top: '5%',
     paddingLeft: 30,
     paddingRight: 30,
   },

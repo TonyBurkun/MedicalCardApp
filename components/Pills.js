@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: 'green',
     justifyContent: 'center',
-    backgroundColor: Colors.WHITE
+    backgroundColor: Colors.MAIN_BACKGROUND
   },
 
   submitBtn: {

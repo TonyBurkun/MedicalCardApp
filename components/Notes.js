@@ -63,13 +63,6 @@ class Notes extends Component{
     return(
       <SafeAreaView style={styles.container}>
         <InternetNotification topDimension={0}/>
-        {/*<Text style={{textAlign: 'center'}}>HOME component</Text>*/}
-        {/*<TouchableOpacity*/}
-        {/*  onPress={this.handleLogOut}*/}
-        {/*  style={[styles.submitBtn, styles.firstBtn]}*/}
-        {/*>*/}
-        {/*  <Text style={styles.submitBtnText}>Log Out</Text>*/}
-        {/*</TouchableOpacity>*/}
 
         {!notes.length &&
            <View style={{flex: 1, position: 'relative'}}>
@@ -116,7 +109,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: 'green',
     justifyContent: 'center',
-    backgroundColor: Colors.WHITE
+    backgroundColor: Colors.MAIN_BACKGROUND
   },
 
   submitBtn: {
@@ -176,8 +169,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     left: '50%',
-    marginLeft: -140,
-    width: 140,
+    marginLeft: -155,
+    width: 150,
     height: 90,
   },
 

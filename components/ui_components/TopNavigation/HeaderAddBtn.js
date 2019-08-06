@@ -15,7 +15,6 @@ class HeaderAddBtn extends Component{
 
   constructor(props) {
     super(props);
-    console.log(props);
 
     this.state = {
       activeBtn: false,
@@ -46,6 +45,7 @@ class HeaderAddBtn extends Component{
     console.log(this.props.navigation.state.params);
 
     const params = this.props.navigation.state.params;
+    // console.log(params);
 
     if (params){
       const prevActiveBtn = params.prevData.length;
@@ -53,6 +53,7 @@ class HeaderAddBtn extends Component{
       console.log(prevActiveBtn);
       this.setState({
         prevActiveBtn: Boolean(prevActiveBtn),
+        activeItemArr: params.prevData
         // activeItemArr: params.data
       })
     }
@@ -63,12 +64,14 @@ class HeaderAddBtn extends Component{
     //Component has to get param data as array. According to length of the Arr will be activated the button in the header navigation.
     const params = newProps.navigation.state.params;
 
-    if (params){
+    // console.log(params);
+
+    if (params && params.type === "checkItem"){
       const activeBtn = params.data.length;
       const prevActiveBtn = params.prevData.length;
 
-      console.log(activeBtn);
-      console.log(prevActiveBtn);
+      // console.log(activeBtn);
+      // console.log(prevActiveBtn);
       this.setState({
         activeBtn: Boolean(activeBtn),
         prevActiveBtn: Boolean(prevActiveBtn),
@@ -88,8 +91,8 @@ class HeaderAddBtn extends Component{
 
     const {titleBtn} = this.props;
     const {activeBtn, prevActiveBtn} = this.state;
-    console.log(activeBtn);
-    console.log(prevActiveBtn);
+    // console.log(activeBtn);
+    // console.log(prevActiveBtn);
     return(
       <TouchableHighlight
         disabled={!activeBtn && !prevActiveBtn}

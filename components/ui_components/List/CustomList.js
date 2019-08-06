@@ -95,7 +95,7 @@ class CustomList extends Component{
 
 
     const {route} = this.props;
-    this.props.navigation.navigate(route, {data: activeItemsArr, prevData: this.props.chosenItemsID})
+    this.props.navigation.navigate(route, {type: 'checkItem', data: activeItemsArr, prevData: this.props.chosenItemsID})
   };
 
   render() {

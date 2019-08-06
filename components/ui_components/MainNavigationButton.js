@@ -45,11 +45,11 @@ class MainNavigationButton extends Component{
 
     return (
      <View style={styles.addButtonContainer}>
-       <View style={{width: 72, height: 36, backgroundColor: Colors.TAB_NAVIGATION_BG, position: 'absolute', bottom: 0, overflow: 'hidden'}}>
-        <View style={{width: 72, height: 72, borderRadius: 36, borderWidth: 1, backgroundColor: 'white', borderColor: Colors.TAB_NAVIGATION_BORDER, position: 'absolute', top: -36}}>
+       {/*<View style={{width: 80, height: 36, backgroundColor: Colors.TAB_NAVIGATION_BG, position: 'absolute', bottom: 0, overflow: 'hidden'}}>*/}
+       {/* <View style={{width: 72, height: 72, borderTopWidth: 1, backgroundColor: 'transparent', borderColor: Colors.TAB_NAVIGATION_BORDER, position: 'absolute', top: -36}}>*/}
 
-        </View>
-       </View>
+       {/* </View>*/}
+       {/*</View>*/}
        <View style={styles.buttonBorder}>
          <TouchableOpacity
            style={styles.addButton}
@@ -58,13 +58,6 @@ class MainNavigationButton extends Component{
             source={require('../../assets/tab_navigation_ico/add_button_plus.png')}
             style={{position: 'absolute', left: '50%', marginLeft: -10, top: '50%', marginTop: -10, width: 20, height: 20}}
            />
-           {/*<Icon*/}
-           {/*  name='plus'*/}
-           {/*  type='font-awesome'*/}
-           {/*  color={Colors.WHITE}*/}
-           {/*  size={20}*/}
-           {/*  containerStyle={{position: 'absolute', left: '50%', marginLeft: -8, top: '50%', marginTop: -10}}*/}
-           {/*/>*/}
 
          </TouchableOpacity>
 
@@ -80,37 +73,39 @@ const styles = StyleSheet.create({
   addButtonContainer: {
     position: 'absolute',
     left: '50%',
-    top: -36,
+    top: -1,
     marginLeft: -36,
-    backgroundColor: 'white',
-    height: 72,
+    backgroundColor: 'transparent',
+    height: 36,
     width: 72,
-    borderRadius: 72,
+    borderTopWidth: 1,
+    borderTopColor: Colors.WHITE,
+    // borderRadius: 72,
   },
 
   buttonBorder: {
     position: 'absolute',
     left: '50%',
-    marginLeft: -30,
-    top: '50%',
-    marginTop: -30,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    marginLeft: -36,
+    top: 0,
+    marginTop: -36,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     backgroundColor: "rgba(95, 218, 156, 0.2)",
   },
 
   addButton: {
     position: 'absolute',
     left: '50%',
-    marginLeft: -26,
+    marginLeft: -32,
     top: '50%',
-    marginTop: -26,
-    width: 52,
-    height: 52,
+    marginTop: -32,
+    width: 64,
+    height: 64,
     zIndex: 100,
     backgroundColor: Colors.GREEN_ADD_BTN,
-    borderRadius: 26,
+    borderRadius: 32,
   },
 
 });
