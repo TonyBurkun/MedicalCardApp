@@ -63,6 +63,17 @@ function doctorSpecializations  (state = initialState, action) {
         doctorsList: state.doctorsList
       };
 
+    case DELETE_DOCTOR:
+      let deletedDoctorID = action.doctorID;
+      const doctorsList = state.doctorsList;
+      delete doctorsList[deletedDoctorID];
+
+
+      return {
+        ...state,
+        doctorsList: doctorsList
+      };
+
 
 
 

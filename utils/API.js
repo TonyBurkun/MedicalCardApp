@@ -423,6 +423,13 @@ export  function updateChosenDoctor(doctorID, doctorData) {
 }
 
 
+export async function deleteDoctorByID(doctorID){
+
+  let key = doctorID;
+  await firebase.database().ref(`doctors/${key}`).remove();
+}
+
+
 
 
 

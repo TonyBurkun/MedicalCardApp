@@ -8,8 +8,8 @@ import * as Colors from "../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import {isIphone5} from '../utils/helpers'
 
-import {getDoctorsList, getDoctorSpecializations, getUIDfromFireBase} from '../utils/API';
-import {setDoctors} from '../actions/doctors'
+import {getDoctorsList, getDoctorSpecializations, getUIDfromFireBase, deleteDoctorByID} from '../utils/API';
+import {setDoctors, deleteDoctor} from '../actions/doctors'
 import Swipeable from "react-native-swipeable";
 import OneDoctor from "./ui_components/ListItems/OneDoctor";
 import {setDoctorSpecializations} from "../actions/doctorSpecializations";
@@ -32,7 +32,7 @@ class Doctors extends Component{
       isLoaded: true,
       emptySearch: false,
       showList: false,
-      selectedIndex: 0
+      selectedIndex: 0,
     }
   }
 
@@ -108,9 +108,14 @@ class Doctors extends Component{
   }
 
   componentWillReceiveProps(nextProps){
-    const data = nextProps.doctorsList;
+    // const data = nextProps.doctorsList;
+    const data = this.props.doctorsList;
+    console.log(data);
+    console.log(this.props.doctorsList);
 
     const newDoctorsList = this._cloneDoctorsObjWithCheckedFalse(data, []);
+
+    console.log(newDoctorsList);
 
     this.setState({
       doctorsList: newDoctorsList,
@@ -124,6 +129,7 @@ class Doctors extends Component{
   }
 
   renderFlatListItem = ({item}) => {
+    console.log('render Flat list');
 
     const handleEditBtn = () => {
       this._closeAllSwipes();
@@ -133,6 +139,22 @@ class Doctors extends Component{
 
     const handleDeleteBtn = () => {
       this._closeAllSwipes();
+
+      deleteDoctorByID(item.id)
+        .then(() => {
+          this.props.dispatch(deleteDoctor(item.id));
+          const newDoctorsList = this._cloneDoctorsObjWithCheckedFalse(this.props.doctorsList, []);
+
+
+          this.setState({
+            doctorsList: newDoctorsList,
+            doctorsListOrigin: newDoctorsList,
+            isLoaded: newDoctorsList.length,
+            showList: newDoctorsList.length,
+          })
+        });
+
+
 
       // if (item.checked) {
       //   const {chosenLabelsID} = this.state;
@@ -290,7 +312,7 @@ class Doctors extends Component{
 
 
   render() {
-    // console.log(this.state);
+    console.log(this.state);
     // console.log('DOCTOR PROPS ', this.state);
     //
     // console.log(isIphone5());

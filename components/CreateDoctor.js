@@ -7,7 +7,7 @@ import InternetNotification from "./ui_components/InternetNotification";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import GroupButtonsTitle from "./ui_components/GroupButtonsTitle";
 import FloatingLabelInput from "./ui_components/FloatingLabelInput";
-import {Icon,  Rating, AirbnbRating} from "react-native-elements";
+import {Icon, Rating, AirbnbRating} from "react-native-elements";
 import {connect} from 'react-redux'
 import {generateUniqID, getDoctorSpecializations} from "../utils/API";
 import {getUIDfromFireBase, createNewDoctor, updateChosenDoctor} from '../utils/API'
@@ -349,7 +349,7 @@ class CreateDoctor extends Component{
                 />
               </View>
             </View>
-            <View style={[commonStyles.containerIndents, {marginTop: 62}]}>
+            <View style={[commonStyles.containerIndents, {borderWidth: 0}]}>
               <SubmitButton isEnabled={isEnabled}  title={isFormEdit ? "СОХРАНИТЬ" : "СОЗДАТЬ"}   handleSubmitForm={this.handleSubmitForm}/>
             </View>
           </KeyboardAwareScrollView>
