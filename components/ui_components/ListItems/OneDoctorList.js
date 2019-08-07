@@ -9,7 +9,7 @@ import {setDoctorSpecializations} from '../../../actions/doctorSpecializations'
 
 
 
-class OneDoctor extends Component{
+class OneDoctorList extends Component{
 
   constructor(props){
     super(props);
@@ -64,7 +64,7 @@ class OneDoctor extends Component{
 
     return(
       <TouchableOpacity
-        onPress={() => {this.props.handleChoosingLabel(doctorData.id, hasCheckBox)}}
+        onPress={() => {this.props.handleChoosingDoctor(doctorData.id, hasCheckBox)}}
         style={[styles.doctorBody, {position: 'relative'}, !hasCheckBox ? {paddingLeft: 18} : {paddingLeft: 38} ]}>
         {hasCheckBox &&
         <CheckBox
@@ -99,7 +99,7 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(OneDoctor)
+export default connect(mapStateToProps)(OneDoctorList)
 
 const styles = StyleSheet.create({
   doctorBody: {
@@ -129,14 +129,14 @@ const styles = StyleSheet.create({
 });
 
 
-OneDoctor.propTypes = {
+OneDoctorList.propTypes = {
   doctorData: PropTypes.object.isRequired,
   handleChoosingDoctor: PropTypes.func.isRequired,
   hasCheckBox: PropTypes.bool.isRequired,
 
 };
 
-OneDoctor.defaultProps = {
+OneDoctorList.defaultProps = {
   doctorData: {
     id: 'doctor-id',
     firstName: 'Название доктора',

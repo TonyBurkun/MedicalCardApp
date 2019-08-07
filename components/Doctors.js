@@ -11,7 +11,7 @@ import {isIphone5} from '../utils/helpers'
 import {getDoctorsList, getDoctorSpecializations, getUIDfromFireBase, deleteDoctorByID} from '../utils/API';
 import {setDoctors, deleteDoctor} from '../actions/doctors'
 import Swipeable from "react-native-swipeable";
-import OneDoctor from "./ui_components/ListItems/OneDoctor";
+import OneDoctorList from "./ui_components/ListItems/OneDoctorList";
 import {setDoctorSpecializations} from "../actions/doctorSpecializations";
 import CustomButtonGroup from "./ui_components/Buttons/CustomButtonGroup";
 import HeaderCancelBtn from "./ui_components/TopNavigation/HeaderCancelBtn";
@@ -110,12 +110,8 @@ class Doctors extends Component{
   componentWillReceiveProps(nextProps){
     // const data = nextProps.doctorsList;
     const data = this.props.doctorsList;
-    console.log(data);
-    console.log(this.props.doctorsList);
-
     const newDoctorsList = this._cloneDoctorsObjWithCheckedFalse(data, []);
 
-    console.log(newDoctorsList);
 
     this.setState({
       doctorsList: newDoctorsList,
@@ -129,7 +125,9 @@ class Doctors extends Component{
   }
 
   renderFlatListItem = ({item}) => {
+
     console.log('render Flat list');
+    const uid = getUIDfromFireBase();
 
     const handleEditBtn = () => {
       this._closeAllSwipes();
@@ -181,29 +179,37 @@ class Doctors extends Component{
 
     };
 
-    const rightButtons = [
-      <TouchableHighlight
-        underlayColor={'transparent'}
-        onPress={handleEditBtn}
-        style={{height: 56, width: 56, marginLeft: 15, justifyContent: 'center'}}
-      >
-        <Image
-          style={{width: 40, height: 40}}
-          source={require('../assets/general/edit.png')}
-        />
-      </TouchableHighlight>,
+    let rightButtons = null;
 
-      <TouchableHighlight
-        underlayColor={'transparent'}
-        style={{height: 56, width: 56, marginLeft: 15,  justifyContent: 'center'}}
-        onPress={handleDeleteBtn}
-      >
-        <Image
-          style={{width: 40, height: 40}}
-          source={require('../assets/general/delete.png')}
-        />
-      </TouchableHighlight>
-    ];
+    if (uid === item.createdByUser) {
+      console.log('here');
+      rightButtons = [
+        <TouchableHighlight
+          underlayColor={'transparent'}
+          onPress={handleEditBtn}
+          style={{height: 56, width: 56, marginLeft: 15, justifyContent: 'center'}}
+        >
+          <Image
+            style={{width: 40, height: 40}}
+            source={require('../assets/general/edit.png')}
+          />
+        </TouchableHighlight>,
+
+        <TouchableHighlight
+          underlayColor={'transparent'}
+          style={{height: 56, width: 56, marginLeft: 15,  justifyContent: 'center'}}
+          onPress={handleDeleteBtn}
+        >
+          <Image
+            style={{width: 40, height: 40}}
+            source={require('../assets/general/delete.png')}
+          />
+        </TouchableHighlight>
+      ];
+    }
+
+
+
 
 
       return (
@@ -214,7 +220,7 @@ class Doctors extends Component{
                    rightButtonWidth={56}
                    onSwipeStart={() => { this._closeAllSwipes()}}
         >
-          <OneDoctor  key={item.id} doctorData={item} hasCheckBox={false}  handleChoosingDoctor = {this.handleChoosingDoctor}/>
+          <OneDoctorList  key={item.id} doctorData={item} hasCheckBox={false}  handleChoosingDoctor = {this.handleChoosingDoctor}/>
         </Swipeable>
       )
   };
@@ -270,7 +276,11 @@ class Doctors extends Component{
 
   };
 
-  handleChoosingDoctor = (doctorID, hasCheckBox) => {
+  handleChoosingDoctor = (doctorID) => {
+    const {doctorsList} = this.props;
+    const currentDoctor = doctorsList[doctorID];
+
+    this.props.navigation.navigate('OneDoctor', {doctorID: doctorID, currentDoctor: currentDoctor})
 
 
     // if (hasCheckBox){

@@ -47,7 +47,7 @@ class HeaderAddBtn extends Component{
     const params = this.props.navigation.state.params;
     // console.log(params);
 
-    if (params){
+    if (params && params.prevData){
       const prevActiveBtn = params.prevData.length;
 
       console.log(prevActiveBtn);

@@ -45,6 +45,7 @@ import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
 import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'
 import CalendarIcon from "./components/ui_components/CalendarIcon";
 import Avatar from "./components/Avatar";
+import OneDoctor from "./components/OneDoctor";
 
 
 // import firebase from 'react-native-firebase';
@@ -414,7 +415,13 @@ const MainNavStack = createStackNavigator({
 
   ChoseDoctorSpecializations: {
     screen: ChoseDoctorSpecializations
+  },
+
+  OneDoctor: {
+    screen: OneDoctor
   }
+
+
 
 
 });

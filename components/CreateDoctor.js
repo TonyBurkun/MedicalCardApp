@@ -196,7 +196,8 @@ class CreateDoctor extends Component{
       updateChosenDoctor(id, doctorData);
       this.props.dispatch(updateDoctor(doctorData));
       this.props.dispatch(setChosenDoctorSpecializations([]));
-      this.props.navigation.navigate('DoctorsTab');
+      // this.props.navigation.navigate('DoctorsTab');
+      this.props.navigation.goBack();
 
 
     } else {
