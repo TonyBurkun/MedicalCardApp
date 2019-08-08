@@ -68,8 +68,7 @@ class LabelsList extends Component{
 
   static navigationOptions = ({navigation}) => {
 
-    const isChoseLabel = Boolean(navigation.state.params);
-    if (isChoseLabel && navigation.state.params.type === 'btnList') {
+    if (navigation.state.params && navigation.state.params.navType === 'showAddCancelBtn') {
       return {
         headerLeft: () => {
           return (
@@ -86,7 +85,7 @@ class LabelsList extends Component{
 
         },
         headerRight: (
-          <HeaderAddBtn/>
+          <HeaderAddBtn type={'chosenLabels'}/>
         )
       }
     } else {
@@ -125,27 +124,43 @@ class LabelsList extends Component{
 
   componentWillReceiveProps(nextProps) {
 
-    // console.log('New PROPS', nextProps);
+    console.log('New PROPS', nextProps);
     // console.log(this.state);
+    const nextLabels = nextProps.labels.labels;
+    const {labelsList} = this.state;
 
-    const {labels} = nextProps.labels;
-    const newChosenLabelsID = nextProps.labels.chosenLabelsID;
+    console.log(nextLabels);
+    console.log(labelsList);
 
 
-    const newLabelsList = this._cloneLabelsObjWithCheckedFalse(labels, newChosenLabelsID);
+    if (Object.keys(nextLabels).length !== labelsList.length) {
 
-    if (newLabelsList.length) {
-      this.setState({
-        labelsList: newLabelsList,
-        searchDataList: newLabelsList,
-        // chosenLabelsID: newChosenLabelsID,
-        isLabelsLoaded: true
-      });
-    } else {
-      this.setState({
-        isLabelsLoaded: false
-      });
+      const {labels} = nextProps.labels;
+      const chosenLabelsID = nextProps.labels.chosenLabelsID;
+
+
+      const newLabelsList = this._cloneLabelsObjWithCheckedFalse(labels, chosenLabelsID);
+
+      if (newLabelsList.length) {
+        this.setState({
+          labelsList: newLabelsList,
+          searchDataList: newLabelsList,
+          search: '',
+          chosenLabelsID: chosenLabelsID,
+          isLabelsLoaded: true
+        });
+      } else {
+        this.setState({
+          isLabelsLoaded: false,
+          search: '',
+        });
+      }
+
     }
+
+
+
+
 
   }
 
@@ -192,36 +207,52 @@ class LabelsList extends Component{
 
 
     if (hasCheckBox){
-      this.props.navigation.setParams({
-        chosenLabelsID: this.state.chosenLabelsID
-      });
+      // this.props.navigation.setParams({
+      //   chosenLabelsID: this.state.chosenLabelsID
+      // });
 
-      const {labelsList, chosenLabelsID} = this.state;
+      const {labelsList, searchDataList, chosenLabelsID} = this.state;
 
-      let newLabelsList = labelsList.map((item) => {
-        item.checked = labelID === item.id;
+      let newLabelsList = JSON.parse(JSON.stringify(labelsList));
+      let newSearchDataList = JSON.parse(JSON.stringify(searchDataList));
+
+
+
+      newLabelsList = newLabelsList.map((item) => {
+        if (labelID === item.id) {
+          item.checked = !item.checked;
+        }
         return item;
       });
 
-      let indexOfIDiNLabelsArr = chosenLabelsID.indexOf(labelID);
-
-
-      if (indexOfIDiNLabelsArr >= 0){
-        chosenLabelsID.splice(indexOfIDiNLabelsArr, 1);
-      } else {
-        chosenLabelsID.push(labelID);
-      }
-
-
-      this.setState({
-        chosenLabelsID,
-        labelsList: newLabelsList,
+      newSearchDataList = newSearchDataList.map((item) => {
+        if (labelID === item.id) {
+          item.checked = !item.checked;
+        }
+        return item;
       });
 
-      this.props.dispatch(saveChosenLabel(chosenLabelsID));
-      this.props.navigation.navigate('LabelsList',{data: this.state.chosenLabelsID});
+
+      const newChosenLabelsID = [];
+
+      newLabelsList.forEach(item => {
+        if (item.checked) {
+          newChosenLabelsID.push(item.id)
+        }
+      });
+
+      const prevChosenLabels = this.props.labels.chosenLabelsID;
+      console.log(prevChosenLabels);
+
+      this.setState({
+        labelsList: newLabelsList,
+        searchDataList: newSearchDataList,
+        chosenLabelsID: newChosenLabelsID
+      });
+
+      this.props.navigation.navigate('LabelsList',{type: 'AddItemsWithBack', chosenItemsID: newChosenLabelsID, prevData: prevChosenLabels});
     } else {
-      this.props.navigation.navigate('LabelsList',{data: this.state.chosenLabelsID});
+      this.props.navigation.navigate('CreateLabel', {labelID: labelID});
     }
 
   };
@@ -297,7 +328,7 @@ class LabelsList extends Component{
                    rightButtonWidth={56}
                    onSwipeStart={() => { this._closeAllSwipes()}}
         >
-          <OneLabel  key={item.id} labelData={item} hasCheckBox={false}  handleChoosingLabel = {this.handleChoosingLabel}/>
+          <OneLabel  key={item.id} labelData={item} hasCheckBox={true}  handleChoosingLabel = {this.handleChoosingLabel}/>
         </Swipeable>
       )
     }
@@ -316,6 +347,7 @@ class LabelsList extends Component{
     console.log('PROPS', this.props);
 
     const { search, searchDataList, isLabelsLoaded } = this.state;
+    const {navigation} = this.props;
 
     searchDataList.sort((a,b) => {
       if (a.dateModified < b.dateModified) {
@@ -355,7 +387,10 @@ class LabelsList extends Component{
 
          }
        </View>
-        <AddButton handlePress={this.handlePressAddButton}/>
+
+        {!navigation.state.params &&
+          <AddButton handlePress={this.handlePressAddButton}/>
+        }
       </SafeAreaView>
     )
   }

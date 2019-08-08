@@ -47,32 +47,11 @@ class OneDoctor extends Component{
       }
     }
 
-    // const handleEditBtn = () => {
-    //   console.log('press');
-    //
-    //   navigation.navigate('CreateDoctor', {doctorID: currentDoctor.id});
-    // };
-
     function handleEditBtn(){
       navigation.navigate('CreateDoctor', {doctorID: currentDoctor.id});
     }
 
-
-
-
-
-
-
-
-
-
-
     return {
-      // headerLeft: () => {
-      //   return (
-      //     <HeaderCancelBtn/>
-      //   )
-      // },
       headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Карточка доктора</Text>,
       headerTintColor: Colors.GRAY_TEXT,
       headerStyle: {

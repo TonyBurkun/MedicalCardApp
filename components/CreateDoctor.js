@@ -68,12 +68,10 @@ class CreateDoctor extends Component{
 
 
     if (isFormEdit) {
-      console.log(this.state);
+      // console.log(this.state);
       const id = this.props.navigation.state.params.doctorID;
       const editedDoctor = this.props.doctorsList[id];
 
-      console.log(id);
-      console.log(editedDoctor);
 
 
       await this.setState({
@@ -224,7 +222,8 @@ class CreateDoctor extends Component{
       createNewDoctor(data);
       this.props.dispatch(addDoctor(data));
       this.props.dispatch(setChosenDoctorSpecializations([]));
-      this.props.navigation.navigate('DoctorsTab');
+      // this.props.navigation.navigate('DoctorsTab');
+      this.props.navigation.goBack();
 
       // this.props.navigation.goBack();
     }

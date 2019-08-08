@@ -18,7 +18,8 @@ class MainNavigationButton extends Component{
 
     switch (tabIndex) {
       case 0:
-        navigation.navigate('CreateNote');
+        // navigation.navigate('CreateNote');
+        navigation.navigate('ChoseDoctor');
         break;
 
       case 1:

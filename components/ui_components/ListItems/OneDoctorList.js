@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'
+import {View, Text, StyleSheet, TouchableOpacity,  Image} from 'react-native'
 import {connect} from 'react-redux'
 import {CheckBox} from 'react-native-elements'
 import PropTypes from 'prop-types'
@@ -56,26 +56,26 @@ class OneDoctorList extends Component{
 
 
 
-    const {doctorData, hasCheckBox} = this.props;
+    const {doctorData, hasCheckBox, index} = this.props;
     const {specializations} = this.state;
 
     getSpecializationsTitleStr(specializations, doctorData.specializations);
 
-
     return(
       <TouchableOpacity
-        onPress={() => {this.props.handleChoosingDoctor(doctorData.id, hasCheckBox)}}
-        style={[styles.doctorBody, {position: 'relative'}, !hasCheckBox ? {paddingLeft: 18} : {paddingLeft: 38} ]}>
+        onPress={() => {this.props.handleChoosingDoctor(doctorData.id, hasCheckBox, index)}}
+        style={[styles.doctorBody, {position: 'relative'}, !hasCheckBox ? {paddingRight: 18} : {paddingRight: 38} ]}>
         {hasCheckBox &&
         <CheckBox
           checked={doctorData.checked}
-          iconType='material-community'
-          checkedIcon='check-circle'
-          uncheckedIcon='checkbox-blank-circle-outline'
+          iconType='material'
+          checkedIcon='done'
+          uncheckedIcon='done'
           uncheckedColor={Colors.WHITE}
-          checkedColor={Colors.WHITE}
+          checkedColor={Colors.MAIN_GREEN}
           size={20}
-          containerStyle={{margin: 0, padding: 0, alignSelf: 'center', position: 'absolute', left: 0, top: '50%', marginTop: -10}}
+          containerStyle={{margin: 0, padding: 0, alignSelf: 'center', position: 'absolute', right: 0, top: '50%', marginTop: -10}}
+          onPress={() => {this.props.handleChoosingDoctor(doctorData.id, hasCheckBox, index)}}
         />
         }
        <View style={{flexDirection: 'column', justifyContent: 'center', paddingTop: 10, paddingBottom: 10}}>
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.WHITE,
     borderRadius: 10,
     minHeight: 64,
-    paddingRight: 18,
+    paddingLeft: 18,
     marginLeft: 16,
     // marginRight: 16,
     flexDirection: 'row',

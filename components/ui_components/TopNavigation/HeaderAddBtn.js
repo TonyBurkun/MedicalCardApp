@@ -6,6 +6,8 @@ import {withNavigation} from 'react-navigation'
 import * as Colors from '../../../utils/colors'
 import GroupButtonsTitle from "../GroupButtonsTitle";
 import {setChosenDoctorSpecializations} from '../../../actions/doctorSpecializations'
+import {setChosenDoctors} from "../../../actions/doctors";
+import {saveChosenLabel} from "../../../actions/labels";
 
 
 
@@ -33,6 +35,13 @@ class HeaderAddBtn extends Component{
         this.props.dispatch(setChosenDoctorSpecializations(this.state.activeItemArr));
         break;
 
+      case 'chosenDoctors':
+        this.props.dispatch(setChosenDoctors(this.state.activeItemArr));
+        break;
+
+      case 'chosenLabels':
+        this.props.dispatch(saveChosenLabel(this.state.activeItemArr));
+
       default:
         break;
     }
@@ -45,17 +54,24 @@ class HeaderAddBtn extends Component{
     console.log(this.props.navigation.state.params);
 
     const params = this.props.navigation.state.params;
-    // console.log(params);
 
     if (params && params.prevData){
+      // console.log('HERE');
       const prevActiveBtn = params.prevData.length;
 
-      console.log(prevActiveBtn);
       this.setState({
         prevActiveBtn: Boolean(prevActiveBtn),
         activeItemArr: params.prevData
         // activeItemArr: params.data
       })
+    }
+
+    if (params && params.chosenLabelsID){
+      console.log('here');
+      console.log(params);
+      this.setState({
+        activeItemArr: params.chosenLabelsID
+      });
     }
 
   }
@@ -64,18 +80,31 @@ class HeaderAddBtn extends Component{
     //Component has to get param data as array. According to length of the Arr will be activated the button in the header navigation.
     const params = newProps.navigation.state.params;
 
-    // console.log(params);
+    console.log(params);
 
-    if (params && params.type === "checkItem"){
-      const activeBtn = params.data.length;
+
+    if (params && params.type === "AddItemsWithBack"){
+      console.log('here');
+
+      const activeBtn = params.chosenItemsID.length;
       const prevActiveBtn = params.prevData.length;
 
-      // console.log(activeBtn);
-      // console.log(prevActiveBtn);
       this.setState({
         activeBtn: Boolean(activeBtn),
         prevActiveBtn: Boolean(prevActiveBtn),
-        activeItemArr: params.data
+        activeItemArr: params.chosenItemsID
+      })
+    }
+
+    if (params && params.type === 'onlyAddItem'){
+      console.log('here');
+      const activeBtn = params.chosenItemsID.length;
+      const prevActiveBtn = true;
+
+      this.setState({
+        activeBtn: Boolean(activeBtn),
+        prevActiveBtn: Boolean(prevActiveBtn),
+        activeItemArr: params.chosenItemsID
       })
     }
 

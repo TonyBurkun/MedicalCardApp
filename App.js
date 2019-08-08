@@ -33,6 +33,7 @@ import Notes from './components/Notes'
 import Tests from './components/Tests'
 import Doctors from './components/Doctors'
 import CreateDoctor from "./components/CreateDoctor";
+import ChoseDoctor from "./components/ChoseDoctor";
 import ChoseDoctorSpecializations from "./components/ChoseDoctorSpecializations";
 import Pills from './components/Pills'
 import MainNavigationButton from './components/ui_components/MainNavigationButton'
@@ -419,6 +420,10 @@ const MainNavStack = createStackNavigator({
 
   OneDoctor: {
     screen: OneDoctor
+  },
+
+  ChoseDoctor: {
+    screen: ChoseDoctor
   }
 
 

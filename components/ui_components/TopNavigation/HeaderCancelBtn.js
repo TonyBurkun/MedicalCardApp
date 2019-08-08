@@ -4,14 +4,31 @@ import {connect} from 'react-redux'
 import {withNavigation} from 'react-navigation'
 import {saveChosenLabel} from '../../../actions/labels'
 import * as Colors from '../../../utils/colors'
+import {setChosenDoctors} from "../../../actions/doctors";
 
 
 
 class HeaderCancelBtn extends Component{
 
   handlePressBtn = () => {
-    this.props.dispatch(saveChosenLabel([]));
-    this.props.navigation.goBack();
+
+    console.log(this.props.navigation.state.routeName);
+
+    switch (this.props.navigation.state.routeName) {
+      case 'ChoseDoctor':
+        this.props.dispatch(setChosenDoctors([]));
+        this.props.navigation.goBack();
+        break;
+
+      case 'LabelsList':
+        this.props.dispatch(saveChosenLabel([]));
+        this.props.navigation.goBack();
+        break;
+
+      default:
+        break;
+    }
+
   };
 
   render() {

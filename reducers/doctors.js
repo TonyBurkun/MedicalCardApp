@@ -5,12 +5,14 @@ import {SET_DOCTORS} from '../actions/doctors'
 import {ADD_DOCTOR} from '../actions/doctors'
 import {UPDATE_DOCTOR} from '../actions/doctors'
 import {DELETE_DOCTOR} from '../actions/doctors'
+import {SET_CHOSEN_DOCTORS} from '../actions/doctors'
 
 
 const initialState = {
   doctorSpecializations: [],
   chosenDoctorSpecializations:[],
-  doctorsList: {}
+  doctorsList: {},
+  chosenDoctorsID: []
 };
 
 function doctorSpecializations  (state = initialState, action) {
@@ -73,6 +75,13 @@ function doctorSpecializations  (state = initialState, action) {
         ...state,
         doctorsList: doctorsList
       };
+
+    case SET_CHOSEN_DOCTORS:
+      return {
+        ...state,
+        chosenDoctorsID: action.chosenDoctorsID
+      };
+
 
 
 
