@@ -282,40 +282,6 @@ class Doctors extends Component{
 
     this.props.navigation.navigate('OneDoctor', {doctorID: doctorID, currentDoctor: currentDoctor})
 
-
-    // if (hasCheckBox){
-    //   this.props.navigation.setParams({
-    //     chosenLabelsID: this.state.chosenLabelsID
-    //   });
-    //
-    //   const {labelsList, chosenLabelsID} = this.state;
-    //
-    //   let newLabelsList = labelsList.map((item) => {
-    //     item.checked = doctorID === item.id;
-    //     return item;
-    //   });
-    //
-    //   let indexOfIDiNLabelsArr = chosenLabelsID.indexOf(doctorID);
-    //
-    //
-    //   if (indexOfIDiNLabelsArr >= 0){
-    //     chosenLabelsID.splice(indexOfIDiNLabelsArr, 1);
-    //   } else {
-    //     chosenLabelsID.push(doctorID);
-    //   }
-    //
-    //
-    //   this.setState({
-    //     chosenLabelsID,
-    //     labelsList: newLabelsList,
-    //   });
-    //
-    //   this.props.dispatch(saveChosenLabel(chosenLabelsID));
-    //   this.props.navigation.navigate('LabelsList',{data: this.state.chosenLabelsID});
-    // } else {
-    //   this.props.navigation.navigate('LabelsList',{data: this.state.chosenLabelsID});
-    // }
-
   };
 
 
@@ -332,6 +298,26 @@ class Doctors extends Component{
 
     const buttons = ['Все доктора', 'Созданные'];
     const { selectedIndex } = this.state;
+
+    doctorsList.sort((a,b) => {
+
+      let fullNameA = a.firstName + ' ' + a.lastName;
+      let fullNameB = b.firstName + ' ' + b.lastName;
+
+      fullNameA = fullNameA.toLowerCase();
+      fullNameB = fullNameB.toLowerCase();
+
+
+
+      if (fullNameA < fullNameB) {
+        return -1;
+      }
+      if (fullNameA > fullNameA) {
+        return 1;
+      }
+      return 0
+
+    });
 
 
     switch (selectedIndex) {

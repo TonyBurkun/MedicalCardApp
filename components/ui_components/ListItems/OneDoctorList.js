@@ -63,7 +63,7 @@ class OneDoctorList extends Component{
 
     return(
       <TouchableOpacity
-        onPress={() => {this.props.handleChoosingDoctor(doctorData.id, hasCheckBox, index)}}
+        onPress={() => {this.props.handleChoosingDoctor(doctorData.id, hasCheckBox)}}
         style={[styles.doctorBody, {position: 'relative'}, !hasCheckBox ? {paddingRight: 18} : {paddingRight: 38} ]}>
         {hasCheckBox &&
         <CheckBox

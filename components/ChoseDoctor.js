@@ -61,14 +61,6 @@ class ChoseDoctor extends Component{
   };
 
 
-
-  // _closeAllSwipes = () => {
-  //   this.swipe.forEach((item) => {
-  //     item.recenter();
-  //   });
-  // };
-
-
   _cloneDoctorsObjWithCheckedFalse = (doctors, chosenDoctorsID) => {
     const copyDoctors = JSON.parse(JSON.stringify(doctors));
     const labelsListKeys = Object.keys(copyDoctors);
@@ -162,67 +154,7 @@ class ChoseDoctor extends Component{
 
 
   renderFlatListItem = ({item, index}) => {
-
-    // console.log(item);
-    // console.log(index);
-
     console.log('render Flat list');
-    // const uid = getUIDfromFireBase();
-
-    // const handleEditBtn = () => {
-    //   this._closeAllSwipes();
-    //   this.props.navigation.navigate('CreateDoctor', {doctorID: item.id})
-    //
-    // };
-    //
-    // const handleDeleteBtn = () => {
-    //   this._closeAllSwipes();
-    //
-    //   deleteDoctorByID(item.id)
-    //     .then(() => {
-    //       this.props.dispatch(deleteDoctor(item.id));
-    //       const newDoctorsList = this._cloneDoctorsObjWithCheckedFalse(this.props.doctorsList, []);
-    //
-    //
-    //       this.setState({
-    //         doctorsList: newDoctorsList,
-    //         doctorsListOrigin: newDoctorsList,
-    //         isLoaded: newDoctorsList.length,
-    //         showList: newDoctorsList.length,
-    //       })
-    //     });
-    // };
-
-    // let rightButtons = null;
-    //
-    // if (uid === item.createdByUser) {
-    //   rightButtons = [
-    //     <TouchableHighlight
-    //       underlayColor={'transparent'}
-    //       onPress={handleEditBtn}
-    //       style={{height: 56, width: 56, marginLeft: 15, justifyContent: 'center'}}
-    //     >
-    //       <Image
-    //         style={{width: 40, height: 40}}
-    //         source={require('../assets/general/edit.png')}
-    //       />
-    //     </TouchableHighlight>,
-    //
-    //     <TouchableHighlight
-    //       underlayColor={'transparent'}
-    //       style={{height: 56, width: 56, marginLeft: 15,  justifyContent: 'center'}}
-    //       onPress={handleDeleteBtn}
-    //     >
-    //       <Image
-    //         style={{width: 40, height: 40}}
-    //         source={require('../assets/general/delete.png')}
-    //       />
-    //     </TouchableHighlight>
-    //   ];
-    // }
-
-
-
 
 
     return (
@@ -230,7 +162,7 @@ class ChoseDoctor extends Component{
     )
   };
 
-  handleChoosingDoctor = (doctorID, hasCheckBox, index) => {
+  handleChoosingDoctor = (doctorID, hasCheckBox) => {
 
     if (hasCheckBox){
 
@@ -347,7 +279,25 @@ class ChoseDoctor extends Component{
 
     let {isLoaded, doctorsList, search} = this.state;
 
-    console.log('I WILL UPDATE STATE: ', this.state);
+    doctorsList.sort((a,b) => {
+
+      let fullNameA = a.firstName + ' ' + a.lastName;
+      let fullNameB = b.firstName + ' ' + b.lastName;
+
+      fullNameA = fullNameA.toLowerCase();
+      fullNameB = fullNameB.toLowerCase();
+
+
+
+      if (fullNameA < fullNameB) {
+        return -1;
+      }
+      if (fullNameA > fullNameA) {
+        return 1;
+      }
+      return 0
+
+    });
 
 
 
