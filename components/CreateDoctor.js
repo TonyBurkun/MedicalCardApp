@@ -15,6 +15,7 @@ import {setDoctorSpecializations, setChosenDoctorSpecializations} from "../actio
 import {addDoctor, updateDoctor} from "../actions/doctors";
 import PhoneLabelInput from "./ui_components/InputField/PhoneLabelInput";
 import SubmitButton from './ui_components/Buttons/SubmitButton'
+import {isIphone5} from "../utils/helpers";
 
 
 
@@ -271,8 +272,12 @@ class CreateDoctor extends Component{
     return (
       <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0}]}>
         <InternetNotification/>
-        <ScrollView>
-          <KeyboardAwareScrollView>
+        <ScrollView
+          contentContainerStyle={{flexGrow: 1}}
+          scrollEnabled={isIphone5()}
+        >
+          <KeyboardAwareScrollView
+            contentContainerStyle={{justifyContent: 'space-between', flexGrow: 1}}>
             <View>
               <View>
                 <GroupButtonsTitle title={'ОСНОВНЫЕ ДАННЫЕ'} paddingLeft={16}/>
