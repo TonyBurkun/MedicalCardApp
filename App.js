@@ -22,13 +22,11 @@ import StepTwo from './components/StepTwo'
 import MedicalCardStart from './components/MedicalCardStart'
 import MedicalCardCreate from './components/MedicalCardCreate'
 import MedicalCardList from './components/MedicalCardList'
-import Home from './components/Home'
 import CreateNote from './components/CreateNote'
 import CreateTest from './components/CreateTest'
 import CreateLabel from './components/CreateLabel'
 import LabelsList from './components/LabelsList'
 
-import {NOTES, TESTS, DOCTORS, PILLS} from './utils/textConstants'
 import Notes from './components/Notes'
 import Tests from './components/Tests'
 import Doctors from './components/Doctors'
@@ -38,15 +36,20 @@ import ChoseDoctorSpecializations from "./components/ChoseDoctorSpecializations"
 import Pills from './components/Pills'
 import MainNavigationButton from './components/ui_components/MainNavigationButton'
 import Profile from './components/Profile'
-
-
-
-import {createSwitchNavigator, createStackNavigator, createBottomTabNavigator, createMaterialTopTabNavigator} from 'react-navigation'
-import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
-import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'
 import CalendarIcon from "./components/ui_components/CalendarIcon";
 import Avatar from "./components/Avatar";
 import OneDoctor from "./components/OneDoctor";
+import CreatePill from "./components/CreatePill";
+import ChosePillsType from "./components/ChosePillsType";
+
+
+import {createSwitchNavigator, createStackNavigator, createBottomTabNavigator, createMaterialTopTabNavigator} from 'react-navigation'
+
+
+
+import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
+import {NOTES, TESTS, DOCTORS, PILLS} from './utils/textConstants'
+import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'
 
 
 // import firebase from 'react-native-firebase';
@@ -424,7 +427,16 @@ const MainNavStack = createStackNavigator({
 
   ChoseDoctor: {
     screen: ChoseDoctor
+  },
+
+  CreatePill: {
+    screen: CreatePill
+  },
+
+  ChosePillsType: {
+    screen: ChosePillsType
   }
+
 
 
 

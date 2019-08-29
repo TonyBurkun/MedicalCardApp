@@ -8,6 +8,7 @@ import GroupButtonsTitle from "../GroupButtonsTitle";
 import {setChosenDoctorSpecializations} from '../../../actions/doctorSpecializations'
 import {setChosenDoctors} from "../../../actions/doctors";
 import {saveChosenLabel} from "../../../actions/labels";
+import {saveChosenPillsType} from "../../../actions/pills"
 
 
 
@@ -29,6 +30,7 @@ class HeaderAddBtn extends Component{
   handlePressBtn = () => {
 
     const {type} = this.props;
+    console.log(type);
 
     switch (type) {
       case 'doctorSpecializations':
@@ -41,6 +43,12 @@ class HeaderAddBtn extends Component{
 
       case 'chosenLabels':
         this.props.dispatch(saveChosenLabel(this.state.activeItemArr));
+        break;
+
+      case 'chosePillsType':
+        console.log('press save pills');
+        this.props.dispatch(saveChosenPillsType(this.state.activeItemArr));
+        break;
 
       default:
         break;

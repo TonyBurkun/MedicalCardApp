@@ -17,13 +17,14 @@ class CustomList extends Component{
 
     this.state = {
       search: '',
-      doctorSpecializationsOrigin: [],
+      originData: [],
       data: [],
-      chosenSpecializationIDArr: [],
+      chosenIDArr: [],
     }
   }
 
   componentDidMount(){
+    console.log(this.props);
     const {data, chosenItemsID} = this.props;
     const dataObj = data.map((item, index) => {
       return  {
@@ -40,18 +41,18 @@ class CustomList extends Component{
     }
 
     this.setState({
-      doctorSpecializationsOrigin: dataObj,
+      originData: dataObj,
       data: dataObj,
     });
   }
 
 
 
-  updateSearch = search => {
+    updateSearch = search => {
     this.setState({ search });
 
     const searchVal = search;
-    const listArr = this.state.doctorSpecializationsOrigin;
+    const listArr = this.state.originData;
 
     if (searchVal !== '') {
       const searchResultArr = listArr.filter((item) => {
@@ -69,7 +70,7 @@ class CustomList extends Component{
       this.setState({
         ...this.state,
         search,
-        data : this.state.doctorSpecializationsOrigin
+        data : this.state.originData
       })
     }
 
@@ -77,17 +78,27 @@ class CustomList extends Component{
 
   onPressListItem = (index) => {
 
-    const {data, doctorSpecializationsOrigin, chosenSpecializationIDArr} = this.state;
+    let {data, originData, chosenIDArr} = this.state;
+    const {radio} = this.props;
+
+    if (radio) {
+      data = data.map((item) => {
+        item.checked = false;
+        return item;
+      })
+    }
+
+
     data[index].checked =  !data[index].checked;
 
     this.setState({
       data: data,
-      chosenSpecializationIDArr: chosenSpecializationIDArr,
+      chosenIDArr: chosenIDArr,
     });
 
     const activeItemsArr = [];
 
-    doctorSpecializationsOrigin.forEach((item) => {
+    originData.forEach((item) => {
       if(item.checked) {
         activeItemsArr.push(item.id)
       }
@@ -101,22 +112,26 @@ class CustomList extends Component{
   render() {
 
     const {data, search} = this.state;
+    const {searchField} = this.props;
 
-    // console.log(this.state);
-    // console.log(this.props);
+
+    console.log(this.state);
+    console.log(this.props);
     return (
 
 
       <Fragment>
-        <SearchBar
-          placeholder="Поиск по названию"
-          onChangeText={this.updateSearch}
-          value={search}
-          lightTheme={true}
-          containerStyle={{backgroundColor: Colors.WHITE, borderTopWidth: 0 }}
-          inputContainerStyle={{borderRadius: 10, backgroundColor: 'rgba(142, 142, 147, 0.12)'}}
-          inputStyle={{borderRadius: 10, color: '#8E8E93', fontSize: 14}}
-        />
+        {searchField &&
+          <SearchBar
+            placeholder="Поиск по названию"
+            onChangeText={this.updateSearch}
+            value={search}
+            lightTheme={true}
+            containerStyle={{backgroundColor: Colors.WHITE, borderTopWidth: 0 }}
+            inputContainerStyle={{borderRadius: 10, backgroundColor: 'rgba(142, 142, 147, 0.12)'}}
+            inputStyle={{borderRadius: 10, color: '#8E8E93', fontSize: 14}}
+          />
+        }
         {
           data.length ? (
             <ScrollView style={{backgroundColor: Colors.WHITE, paddingLeft: 16}}>
@@ -164,11 +179,15 @@ CustomList.propTypes = {
   data: PropTypes.array.isRequired,
   route: PropTypes.string.isRequired,
   chosenItemsID: PropTypes.array.isRequired,
+  searchField: PropTypes.bool.isRequired,
+  radio: PropTypes.bool.isRequired,
 };
 
 CustomList.defaultProps = {
   data: [],
   chosenItemsID: [],
+  searchField: true,
+  radio: false,
 };
 
 

@@ -182,7 +182,6 @@ class Doctors extends Component{
     let rightButtons = null;
 
     if (uid === item.createdByUser) {
-      console.log('here');
       rightButtons = [
         <TouchableHighlight
           underlayColor={'transparent'}
@@ -290,8 +289,6 @@ class Doctors extends Component{
   render() {
     console.log(this.state);
     // console.log('DOCTOR PROPS ', this.state);
-    //
-    // console.log(isIphone5());
 
 
     let {isLoaded, doctorsList, search} = this.state;
@@ -312,7 +309,7 @@ class Doctors extends Component{
       if (fullNameA < fullNameB) {
         return -1;
       }
-      if (fullNameA > fullNameA) {
+      if (fullNameA > fullNameB) {
         return 1;
       }
       return 0
@@ -419,7 +416,6 @@ const styles = StyleSheet.create({
     flex: 1,
     // borderWidth: 1,
     // borderColor: 'green',
-    // justifyContent: 'center',
     backgroundColor: Colors.MAIN_BACKGROUND
   },
 

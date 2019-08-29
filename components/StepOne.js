@@ -340,26 +340,26 @@ export default class StepOne extends Component {
 
             </View>
           </View>
-          <View style={{flexGrow: 1, justifyContent: 'flex-end'}}>
-            {/*<TouchableOpacity*/}
-            {/*  onPress={this.handleLogOut}*/}
-            {/*  style={[commonStyles.submitBtn, commonStyles.firstBtn]}*/}
-            {/*>*/}
-            {/*  <Text style={commonStyles.submitBtnText}>Log Out</Text>*/}
-            {/*</TouchableOpacity>*/}
+          {/*<View style={{flexGrow: 1, justifyContent: 'flex-end'}}>*/}
+          {/*  <TouchableOpacity*/}
+          {/*    onPress={this.handleLogOut}*/}
+          {/*    style={[commonStyles.submitBtn, commonStyles.firstBtn]}*/}
+          {/*  >*/}
+          {/*    <Text style={commonStyles.submitBtnText}>Log Out</Text>*/}
+          {/*  </TouchableOpacity>*/}
 
-            <TouchableOpacity
-              onPress={this.handleSubmitForm}
-              style={ isEnabled
-                ? [commonStyles.submitBtn, commonStyles.firstBtn]
-                : [commonStyles.submitBtn, commonStyles.firstBtn, commonStyles.disabledSubmitBtn ]}
-              disabled={!isEnabled}
-            >
-              <Text style={ isEnabled
-                ? commonStyles.submitBtnText
-                : [commonStyles.submitBtnText, commonStyles.disabledSubmitBtnText]}>СОХРАНИТЬ</Text>
-            </TouchableOpacity>
-          </View>
+          {/*  <TouchableOpacity*/}
+          {/*    onPress={this.handleSubmitForm}*/}
+          {/*    style={ isEnabled*/}
+          {/*      ? [commonStyles.submitBtn, commonStyles.firstBtn]*/}
+          {/*      : [commonStyles.submitBtn, commonStyles.firstBtn, commonStyles.disabledSubmitBtn ]}*/}
+          {/*    disabled={!isEnabled}*/}
+          {/*  >*/}
+          {/*    <Text style={ isEnabled*/}
+          {/*      ? commonStyles.submitBtnText*/}
+          {/*      : [commonStyles.submitBtnText, commonStyles.disabledSubmitBtnText]}>СОХРАНИТЬ</Text>*/}
+          {/*  </TouchableOpacity>*/}
+          {/*</View>*/}
         </ScrollView>
       </SafeAreaView>
     )

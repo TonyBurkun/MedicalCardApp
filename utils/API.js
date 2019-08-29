@@ -99,6 +99,7 @@ export async function saveUserAvatarToStorage (localUri){
   return downloadURL;
 
 }
+
 export function updateUserData (fieldsForUpdateObj){
   const uid = getUIDfromFireBase();
 
@@ -296,11 +297,6 @@ export async function getGenitalInfections () {
 }
 
 
-export async function getDoctorSpecializations () {
-  const snapshotDB = await firebase.database().ref('doctor_specializations/').once('value');
-  return snapshotDB.val();
-}
-
 
 
 export function generateUniqID(){
@@ -400,33 +396,28 @@ export async function removeLabelForCurrentUser(labelID){
 
 // --- DOCTORS FLOW --------------
 
-export function createNewDoctor(doctorData){
-  const generatedID = generateUniqID();
 
+export async function getDoctorSpecializations () {
+  const snapshotDB = await firebase.database().ref('doctor_specializations/').once('value');
+  return snapshotDB.val();
+}
+
+export function createNewDoctor(doctorData){
   firebase.database().ref('doctors/'+ doctorData.id).set(doctorData);
 }
 
 
 export async function getDoctorsList(){
-
   const snapshotDB = await firebase.database().ref('doctors/').once('value');
-
   return snapshotDB.val() || {};
-
 }
-
 
 export  function updateChosenDoctor(doctorID, doctorData) {
-
   firebase.database().ref(`doctors/${doctorID}`).update(doctorData);
-
 }
 
-
 export async function deleteDoctorByID(doctorID){
-
-  let key = doctorID;
-  await firebase.database().ref(`doctors/${key}`).remove();
+  await firebase.database().ref(`doctors/${doctorID}`).remove();
 }
 
 
@@ -434,6 +425,69 @@ export async function deleteDoctorByID(doctorID){
 
 
 // --- END DOCTORS FLOW -----------
+///////////////////////////////////
+// -- PILLS FLOW -----------------
+
+export async function getPillsType(){
+  const snapshotDB = await firebase.database().ref('pills_type/').once('value');
+  return snapshotDB.val();
+}
+
+export async function getPillsList(){
+  const snapshotDB = await firebase.database().ref('pills/').once('value');
+  return snapshotDB.val() || {};
+}
+
+export function createNewPill(pillData){
+  firebase.database().ref('pills/'+ pillData.id).set(pillData);
+}
+
+export async function deletePillByID(pillID){
+  await firebase.database().ref(`pills/${pillID}`).remove();
+}
+
+export  function updateChosenPill(pillID, pillData) {
+  firebase.database().ref(`pills/${pillID}`).update(pillData);
+}
+
+
+
+export async function savePillImageToStorage (localUri, pillID, imageName){
+  //localUri - local link on the image from device
+
+  const downloadURL = await firebase
+    .storage()
+    .ref(`pill-images/${pillID}/${imageName}.jpg`)
+    .putFile(
+      localUri
+    );
+
+  console.log(downloadURL);
+
+  return downloadURL;
+
+}
+
+export async function removePillImages(pillID, imagesArr) {
+
+  // let index = 0;
+
+  if (imagesArr.length) {
+    for (const item of imagesArr) {
+      await firebase.storage()
+        .ref(`pill-images/${pillID}/${item.name}.jpg`).delete();
+
+      // index = ++index;
+    }
+  }
+
+  return true
+
+}
+
+
+
+// -- END PILLS FLOW --------------
 
 
 

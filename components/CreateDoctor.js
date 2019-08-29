@@ -16,6 +16,7 @@ import {addDoctor, updateDoctor} from "../actions/doctors";
 import PhoneLabelInput from "./ui_components/InputField/PhoneLabelInput";
 import SubmitButton from './ui_components/Buttons/SubmitButton'
 import {isIphone5} from "../utils/helpers";
+import {saveChosenPillsType} from "../actions/pills";
 
 
 
@@ -55,27 +56,22 @@ class CreateDoctor extends Component{
     }
   };
 
-  async componentDidMount() {
-    const {doctorSpecializations} = this.props;
+  componentWillReceiveProps(newProps) {
     const {isFormEdit} = this.state;
 
-    if (!doctorSpecializations.length) {
-      getDoctorSpecializations()
-        .then(data => {
-          // console.log(data);
-          this.props.dispatch(setDoctorSpecializations(data));
-        });
-    }
-
+    this.setState({
+      formField: {
+        ...this.state.formField,
+        specializations: newProps.chosenDoctorSpecializations
+      }
+    });
 
     if (isFormEdit) {
-      // console.log(this.state);
       const id = this.props.navigation.state.params.doctorID;
       const editedDoctor = this.props.doctorsList[id];
 
 
-
-      await this.setState({
+      this.setState({
         ...this.state,
         formField: {
           firstName: editedDoctor.firstName,
@@ -91,16 +87,10 @@ class CreateDoctor extends Component{
 
       this.props.dispatch(setChosenDoctorSpecializations(editedDoctor.specializations));
     }
-
   }
 
-  componentWillReceiveProps(newProps) {
-    this.setState({
-      formField: {
-        ...this.state.formField,
-        specializations: newProps.chosenDoctorSpecializations
-      }
-    })
+  componentWillMount(){
+    this.props.dispatch(setChosenDoctorSpecializations([]));
   }
 
   handleFirstNameChange = (newText) => {
@@ -226,7 +216,6 @@ class CreateDoctor extends Component{
       // this.props.navigation.navigate('DoctorsTab');
       this.props.navigation.goBack();
 
-      // this.props.navigation.goBack();
     }
 
   };

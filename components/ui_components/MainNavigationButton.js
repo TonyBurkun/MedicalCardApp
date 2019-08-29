@@ -29,6 +29,7 @@ class MainNavigationButton extends Component{
 
       case 2:
         console.log('Pills Tab');
+        navigation.navigate('CreatePill');
         break;
 
       case 3:

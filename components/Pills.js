@@ -1,58 +1,373 @@
-import React, {Component} from 'react'
-import {View, Text, Image, StyleSheet, Platform} from 'react-native'
-import {SafeAreaView} from "react-navigation";
+import React, {Component, Fragment} from 'react'
+import {View, Text, Image, StyleSheet, Platform, FlatList, TouchableHighlight} from 'react-native'
+import {connect} from 'react-redux'
+import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import InternetNotification from "./ui_components/InternetNotification";
 import * as Colors from "../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import {isIphone5} from "../utils/helpers";
+import {
+  deleteDoctorByID, deletePillByID,
+  getDoctorsList,
+  getDoctorSpecializations,
+  getPillsList,
+  getPillsType,
+  getUIDfromFireBase, removePillImages
+} from "../utils/API";
+import {deleteDoctor, setDoctors} from "../actions/doctors";
+import {setDoctorSpecializations} from "../actions/doctorSpecializations";
+import {deletePill, setPills, setPillsTypeList} from "../actions/pills";
+import {SearchBar} from "react-native-elements";
+import CustomButtonGroup from "./ui_components/Buttons/CustomButtonGroup";
+import {NO_DATA_TO_SHOW} from "../utils/textConstants";
+import Swipeable from "react-native-swipeable";
+import OneDoctorList from "./ui_components/ListItems/OneDoctorList";
+import OnePillList from "./ui_components/ListItems/OnePillList";
 
 
-export default class Pills extends Component{
+class Pills extends Component{
   constructor(props){
     super(props);
+    this.swipe = [];
 
     this.state={
-      pills: []
+      search: '',
+      pillsList: [],
+      pillsListOrigin: [],
+      isLoaded: true,
+      emptySearch: false,
+      showList: false,
+      selectedIndex: 0,
     }
   }
 
+  updateChosenTab (selectedIndex) {
+    this._closeAllSwipes();
+
+    this.setState({selectedIndex})
+  }
+
+  _closeAllSwipes = () => {
+    this.swipe.forEach((item) => {
+      item.recenter();
+    });
+  };
+
+
+  _clonePillsObjWithCheckedFalse = (pills, chosenPillsID = []) => {
+    const copyPills = JSON.parse(JSON.stringify(pills));
+    const pillsListKeys = Object.keys(copyPills);
+
+
+    let pillsArr = pillsListKeys.map((item) => {
+      copyPills[item].checked = false;
+
+      return copyPills[item];
+    });
+
+
+    chosenPillsID.forEach((id) => {
+      pillsArr.forEach((label) => {
+        if (label.id === id) {
+          label.checked = true;
+        }
+      })
+    });
+
+
+    return pillsArr;
+
+  };
+
+
+  componentDidMount(){
+
+    getPillsList()
+      .then(data => {
+        this.props.dispatch(setPills(data));
+
+        // const {chosenLabelsID} = this.state;
+        const pillsList = this._clonePillsObjWithCheckedFalse(data, []);
+
+
+        this.setState({
+          pillsList: pillsList,
+          pillsListOrigin: pillsList,
+          isLoaded: pillsList.length,
+          showList: pillsList.length,
+        })
+      });
+
+
+    getPillsType()
+      .then(data => {
+        this.props.dispatch(setPillsTypeList(data));
+      })
+  }
+
+  componentWillReceiveProps(nextProps){
+    // const data = nextProps.doctorsList;
+    const data = this.props.pillsList;
+    const newPillsList = this._clonePillsObjWithCheckedFalse(data, []);
+
+
+    this.setState({
+      pillsList: newPillsList,
+      pillsListOrigin: newPillsList,
+      isLoaded: newPillsList.length,
+      showList: newPillsList.length,
+      search: '',
+      emptySearch: false,
+    })
+
+  }
+
+  renderFlatListItem = ({item}) => {
+
+    console.log('render Flat list');
+    const uid = getUIDfromFireBase();
+
+    const handleEditBtn = () => {
+      console.log('here');
+      this._closeAllSwipes();
+      this.props.navigation.navigate('CreatePill', {pillID: item.id})
+
+    };
+
+    const handleDeleteBtn = () => {
+      this._closeAllSwipes();
+
+      deletePillByID(item.id)
+        .then(() => {
+          removePillImages(item);
+          this.props.dispatch(deletePill(item.id));
+          const newPillsList = this._clonePillsObjWithCheckedFalse(this.props.pillsList, []);
+
+
+          this.setState({
+            pillsList: newPillsList,
+            pillsListOrigin: newPillsList,
+            isLoaded: newPillsList.length,
+            showList: newPillsList.length,
+          })
+        });
+
+    };
+
+    let rightButtons = null;
+
+    if (uid === item.createdByUser) {
+      rightButtons = [
+        <TouchableHighlight
+          underlayColor={'transparent'}
+          onPress={handleEditBtn}
+          style={{height: 56, width: 56, marginLeft: 15, justifyContent: 'center'}}
+        >
+          <Image
+            style={{width: 40, height: 40}}
+            source={require('../assets/general/edit.png')}
+          />
+        </TouchableHighlight>,
+
+        <TouchableHighlight
+          underlayColor={'transparent'}
+          style={{height: 56, width: 56, marginLeft: 15,  justifyContent: 'center'}}
+          onPress={handleDeleteBtn}
+        >
+          <Image
+            style={{width: 40, height: 40}}
+            source={require('../assets/general/delete.png')}
+          />
+        </TouchableHighlight>
+      ];
+    }
+
+
+
+
+
+    return (
+      <Swipeable rightButtons={rightButtons}
+                 onRef={(swipe) => {
+                   this.swipe.push(swipe);
+                 }}
+                 rightButtonWidth={56}
+                 onSwipeStart={() => { this._closeAllSwipes()}}
+      >
+        <OnePillList key={item.id} pillData={item} hasCheckBox={false}  handleChoosingPill = {this.handleChoosingPill}/>
+      </Swipeable>
+    )
+  };
+
+  updateSearch = (search) => {
+
+    this.setState({
+      search
+    });
+
+    const searchVal = search.toLowerCase();
+    const {pillsListOrigin} = this.state;
+
+    if (searchVal !== '') {
+
+      const searchResultArr = pillsListOrigin.filter((item) => {
+        const pillTitle = item.pillTitle.toLowerCase();
+        return ~pillTitle.indexOf(searchVal)
+
+      });
+
+      this.setState({
+        ...this.state,
+        search,
+        emptySearch: Boolean(!searchResultArr.length),
+        pillsList : searchResultArr,
+      })
+
+    } else {
+
+      this.setState({
+        ...this.state,
+        search,
+        emptySearch: false,
+        pillsList : this.state.pillsListOrigin,
+      })
+    }
+
+  };
+
+
+  handleChoosingPill = (pillID) => {
+    const {pillsList} = this.props;
+    const currentPill = pillsList[pillID];
+
+    this.props.navigation.navigate('OnePill', {pillID: pillID, currentPill: currentPill})
+
+  };
+
+
+
   render() {
 
-    const {pills} = this.state;
+    console.log(this.state);
+
+    const buttons = ['Все препараты', 'Созданные'];
+
+    let {isLoaded, pillsList, search} = this.state;
+    const { selectedIndex } = this.state;
+
+    pillsList.sort((a,b) => {
+
+      if (a.pillTitle.toLowerCase() < b.pillTitle.toLowerCase()) {
+        return -1;
+      }
+      if (a.pillTitle.toLowerCase() > b.pillTitle.toLowerCase()) {
+        return 1;
+      }
+      return 0
+
+    });
+
+    switch (selectedIndex) {
+      case 0 :
+        break;
+
+      case 1:
+        const uid = getUIDfromFireBase();
+
+        pillsList = pillsList.filter(item => {
+          return item.createdByUser === uid
+        });
+
+        break;
+
+
+      default:
+        break;
+    }
+
+
 
     return(
       <SafeAreaView style={styles.container}>
         <InternetNotification topDimension={0}/>
+        <SearchBar
+          placeholder="Название препарата"
+          onChangeText={this.updateSearch}
+          value={search}
+          lightTheme={true}
+          containerStyle={{backgroundColor: Colors.WHITE, borderTopWidth: 0}}
+          inputContainerStyle={{borderRadius: 10, backgroundColor: 'rgba(142, 142, 147, 0.12)'}}
+          inputStyle={{borderRadius: 10, color: '#8E8E93', fontSize: 14}}
+        />
 
-        {!pills.length &&
-        <View style={{flex: 1, position: 'relative'}}>
-          <View style={styles.mainTextWrapper}>
-            <Text style={[!isIphone5()? styles.mainText: styles.mainText__smallPhone]}>Здесь отображаются Препараты, которые Вы добавили самостоятельно.</Text>
-            <Text style={[!isIphone5()? styles.subText: styles.subText__smallPhone]}>Создавайте, редактируйте или удаляйте Препараты.</Text>
-          </View>
-          <Image
-            style={styles.personImage}
-            source={require('../assets/person/pills.png')}/>
-          <View style={styles.tipWrapper}>
-            <Text style={styles.tipText}>Добавить препарат</Text>
-            <Image
-              style={styles.tipArrow}
-              source={require('../assets/vector/pills_vector.png')}/>
+        {isLoaded ?
+          (
+            this.state.showList &&
+              <Fragment>
+                <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
+                  <CustomButtonGroup
+                    updateIndex={(selectedIndex) => {this.updateChosenTab(selectedIndex)}}
+                    buttons={buttons}
+                    selectedIndex={selectedIndex}/>
+                </View>
+                {!this.state.emptySearch && pillsList.length ? (
+                  <View style={{flex: 1, marginTop: 10, paddingRight: 16}}>
+                    <FlatList
+                      keyExtractor={(item, index) => index.toString()}
+                      data={pillsList}
+                      renderItem={this.renderFlatListItem}
+                    />
+                  </View>
+                ) : (
+                  <View style={{flex: 1, marginTop: '20%', alignItems: 'center', fontSize: 16}}>
+                    <Text>{NO_DATA_TO_SHOW}</Text>
+                  </View>
+                )}
+              </Fragment>
+          ) : (
+            <View style={{flex: 1, position: 'relative'}}>
+              <View style={styles.mainTextWrapper}>
+                <Text style={[!isIphone5()? styles.mainText: styles.mainText__smallPhone]}>Здесь отображаются Препараты, которые Вы добавили самостоятельно.</Text>
+                <Text style={[!isIphone5()? styles.subText: styles.subText__smallPhone]}>Создавайте, редактируйте или удаляйте Препараты.</Text>
+              </View>
+              <Image
+                style={styles.personImage}
+                source={require('../assets/person/pills.png')}/>
+              <View style={styles.tipWrapper}>
+                <Text style={styles.tipText}>Добавить препарат</Text>
+                <Image
+                  style={styles.tipArrow}
+                  source={require('../assets/vector/pills_vector.png')}/>
 
-          </View>
-        </View>
+              </View>
+            </View>
+          )
         }
       </SafeAreaView>
     )
   }
 }
 
+
+function mapStateToProps (state) {
+  console.log(state);
+  const pills = state.pills;
+  return {
+    pillsList: pills.pillsList,
+    pillsTypeList: pills.pillsTypeList,
+    chosenPillsType: pills.chosenPillsType,
+  }
+}
+
+
+export default withNavigationFocus(connect(mapStateToProps)(Pills))
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     // borderWidth: 1,
     // borderColor: 'green',
-    justifyContent: 'center',
     backgroundColor: Colors.MAIN_BACKGROUND
   },
 
