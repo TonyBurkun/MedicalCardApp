@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react'
 import {View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator} from 'react-native'
 import {connect} from 'react-redux'
 import * as Colors from "../utils/colors";
-import {SafeAreaView} from "react-navigation";
+import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import commonStyles from "../utils/commonStyles";
 import InternetNotification from "./ui_components/InternetNotification";
 import {isIphone5} from "../utils/helpers";
@@ -12,17 +12,16 @@ import FloatingLabelInput from "./ui_components/FloatingLabelInput";
 import {Icon, Image, Overlay} from "react-native-elements";
 import SubmitButton from "./ui_components/Buttons/SubmitButton";
 import {
+  checkRelationsImgToPills,
   createNewPill,
-  generateUniqID,
+  generateUniqID, getPillsRelatedToImg,
   getPillsType,
-  getUIDfromFireBase, removePillImages,
-  savePillImageToStorage, testUpload,
+  getUIDfromFireBase, relImgToPill, removePillImages, removeRelationImgToPill,
+  savePillImageToStorage,
   updateChosenPill
 } from '../utils/API'
 import {addPill, saveChosenPillsType, setPillsTypeList, updatePill} from '../actions/pills'
 import ImagePicker from "react-native-image-picker";
-import {BooleanLiteral} from "@babel/types";
-
 
 
 
@@ -31,11 +30,11 @@ async function _uploadImagesToStore(pillImagesArr, generatedID) {
 
   for (const item of pillImagesArr) {
 
-    const imageName = generateUniqID();
+    const imageID = generateUniqID();
 
-    await savePillImageToStorage(item.url, generatedID, imageName)
+    await savePillImageToStorage(imageID, item.url)
       .then(success => {
-        uploadedFilesUrlArr.push({name: imageName, url: success.downloadURL});
+        uploadedFilesUrlArr.push({name: imageID, url: success.downloadURL});
       })
       .catch(error => {
         console.log('Upload user data and img to server was rejected with error: ', error);
@@ -44,6 +43,26 @@ async function _uploadImagesToStore(pillImagesArr, generatedID) {
   console.log('DONE');
 
   return uploadedFilesUrlArr;
+}
+
+
+async function _setRelationImageToPill(imagesArr, pillID) {
+  console.log(imagesArr);
+  for (let item of imagesArr) {
+
+    const pillsRelatedToImgArr = await getPillsRelatedToImg(item.name);
+
+    console.log(pillsRelatedToImgArr);
+    pillsRelatedToImgArr.push(pillID);
+
+
+    await relImgToPill(item.name, pillsRelatedToImgArr)
+      .catch(error => {
+        console.log('SET RELATION IMAGES TO PILL FINISHED WITH ERROR: ', error);
+      });
+
+    console.log('DONE');
+  }
 }
 
 class CreatePill extends Component {
@@ -58,6 +77,7 @@ class CreatePill extends Component {
         pillTitle: '',
         pillType: [],
         pillImagesArr: [],
+        prevImagesArr: []
       }
     }
 
@@ -69,7 +89,11 @@ class CreatePill extends Component {
 
 
     return {
-      headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}> {isEditForm ? ('Редактировать Препарат') : ('Создать Препарат')} </Text>,
+      headerTitle: () => <Text style={{
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: Colors.BLACK_TITLE
+      }}> {isEditForm ? ('Редактировать Препарат') : ('Создать Препарат')} </Text>,
       headerTintColor: Colors.GRAY_TEXT,
       headerStyle: {
         backgroundColor: Colors.WHITE,
@@ -79,14 +103,19 @@ class CreatePill extends Component {
     }
   };
 
-  async componentDidMount(){
+  async componentDidMount() {
+    console.log(this.state);
     console.log('DID MOUNT');
     const {isFormEdit} = this.state;
 
-    if (isFormEdit){
+    if (isFormEdit) {
       const id = this.props.navigation.state.params.pillID;
       const editedPill = this.props.pillsList[id];
       console.log(editedPill);
+      let prevImagesArr = [];
+      if (editedPill.images) {
+        prevImagesArr = JSON.parse(JSON.stringify(editedPill.images));
+      }
 
       await this.setState({
         ...this.state,
@@ -94,7 +123,7 @@ class CreatePill extends Component {
           pillTitle: editedPill.pillTitle,
           pillType: editedPill.pillType,
           pillImagesArr: editedPill.images || [],
-          prevImagesArr: JSON.parse(JSON.stringify(editedPill.images))  || [],
+          prevImagesArr: prevImagesArr,
         }
       });
 
@@ -102,12 +131,9 @@ class CreatePill extends Component {
 
 
     }
-
-
-
   }
 
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps) {
     console.log(nextProps);
 
     this.setState({
@@ -118,10 +144,13 @@ class CreatePill extends Component {
     });
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
+    console.log('COMPONENT WILL UNMOUNT');
     this.props.dispatch(saveChosenPillsType([]));
+    this.setState({
+      formField: {}
+    });
   }
-
 
 
   handlePillTitle = (newText) => {
@@ -136,10 +165,18 @@ class CreatePill extends Component {
   showItemsList = (param, screenTitle) => {
     // console.log(this.props.chosenPillsTypeArr);
 
-    if (this.state.isFormEdit){
-      this.props.navigation.navigate('ChosePillsType', {listType: param, screenTitle: screenTitle, prevData: this.state.formField.pillType});
+    if (this.state.isFormEdit) {
+      this.props.navigation.navigate('ChosePillsType', {
+        listType: param,
+        screenTitle: screenTitle,
+        prevData: this.state.formField.pillType
+      });
     } else {
-      this.props.navigation.navigate('ChosePillsType', {listType: param, screenTitle: screenTitle, prevData: this.props.chosenPillsTypeArr});
+      this.props.navigation.navigate('ChosePillsType', {
+        listType: param,
+        screenTitle: screenTitle,
+        prevData: this.props.chosenPillsTypeArr
+      });
     }
 
   };
@@ -167,7 +204,7 @@ class CreatePill extends Component {
 
 
         this.setState({
-          formField:{
+          formField: {
             ...this.state.formField,
             pillImagesArr: updatedPillImagesArr,
           }
@@ -182,16 +219,21 @@ class CreatePill extends Component {
 
     let {pillImagesArr} = this.state.formField;
 
+    let newPillImagesArr = JSON.parse(JSON.stringify(pillImagesArr));
 
-    pillImagesArr.splice(index, 1);
+
+    newPillImagesArr.splice(index, 1);
 
     this.setState({
       ...this.state,
       formField: {
         ...this.state.formField,
-        pillImagesArr: pillImagesArr
+        pillImagesArr: newPillImagesArr
       }
     });
+
+    console.log(this.state);
+    console.log(this.props);
   };
 
 
@@ -204,6 +246,8 @@ class CreatePill extends Component {
     if (isFormEdit) {
       // Edit exist Pill
 
+      console.log('EDIT FORM STATE: ', this.state);
+
       const id = this.props.navigation.state.params.pillID;
       const editedPill = this.props.pillsList[id];
       const createdByUserID = editedPill.createdByUser;
@@ -213,63 +257,77 @@ class CreatePill extends Component {
       // console.log(createdByUserID);
       // console.log(uid);
 
-      let uploadedFilesUrlArr = [];
+      // let uploadedFilesUrlArr = [];
       let alreadyUploadedImgArr = [];
       let shouldBeRemovedImgArr = [];
       let shouldBeUploadedImgArr = [];
+
+      let imagesAfterEditArr = [];
 
 
       const prevImageUrlArr = prevImagesArr.map(item => item.url);
       const pillImageUrlArr = pillImagesArr.map(item => item.url);
 
 
-      if (JSON.stringify(pillImagesArr) !== JSON.stringify(prevImagesArr)){
+      if (JSON.stringify(pillImagesArr) !== JSON.stringify(prevImagesArr)) {
         prevImageUrlArr.forEach((item, index) => {
-         if (pillImageUrlArr.includes(item)) {
-           alreadyUploadedImgArr.push(pillImagesArr[index])
-         }
+          if (pillImageUrlArr.includes(item)) {
+            alreadyUploadedImgArr.push(pillImagesArr[index])
+          }
 
-         if (!pillImageUrlArr.includes(item)) {
-           shouldBeRemovedImgArr.push(prevImagesArr[index])
-         }
-       });
+          if (!pillImageUrlArr.includes(item)) {
+            shouldBeRemovedImgArr.push(prevImagesArr[index])
+          }
+        });
 
         pillImageUrlArr.forEach((item, index) => {
-          if (!prevImageUrlArr.includes(item)){
+          if (!prevImageUrlArr.includes(item)) {
             shouldBeUploadedImgArr.push(pillImagesArr[index])
           }
         });
 
-        // console.log(pillImagesArr);
-        // console.log(prevImagesArr);
+        console.log(pillImagesArr);
+        console.log(prevImagesArr);
         //
-        // console.log('ALREADY UPLOADED ' , alreadyUploadedImgArr);
-        // console.log('NEED TO REMOVE ' , shouldBeRemovedImgArr);
-        // console.log('NEED TO UPLOAD ' ,shouldBeUploadedImgArr);
+        console.log('ALREADY UPLOADED ', alreadyUploadedImgArr);
+        console.log('NEED TO REMOVE ', shouldBeRemovedImgArr);
+        console.log('NEED TO UPLOAD ', shouldBeUploadedImgArr);
 
         if (createdByUserID === uid) {
-          this.setState({
-            uploadingImages: true
-          });
-          const isRemovedImages = await removePillImages(id, shouldBeRemovedImgArr);
-          if (isRemovedImages) {
-            uploadedFilesUrlArr = alreadyUploadedImgArr;
-            console.log('AFTER REMOVE', uploadedFilesUrlArr);
+          if (shouldBeRemovedImgArr.length) {
+            console.log('AFTER REMOVE', shouldBeRemovedImgArr);
+            removeRelationImgToPill(shouldBeRemovedImgArr, id)
+              .then( async (success) => {
+                if (success) {
+                  // images relations was removed.
+                  for (let image of shouldBeRemovedImgArr) {
+                    // await removePillImages(image.name);
+                    await checkRelationsImgToPills(image.name)
+                  }
+                  console.log('DONE REMOVE IMAGE');
+                }
+              });
+            imagesAfterEditArr = alreadyUploadedImgArr;
+            console.log(imagesAfterEditArr);
           }
-
 
           if (shouldBeUploadedImgArr.length) {
             console.log('upload...');
-            uploadedFilesUrlArr = await _uploadImagesToStore(shouldBeUploadedImgArr, id);
-
-            uploadedFilesUrlArr = [...alreadyUploadedImgArr, ...uploadedFilesUrlArr];
-            console.log('AFTER UPLOAD', uploadedFilesUrlArr);
+            this.setState({
+              uploadingImages: true
+            });
+            const uploadedFilesUrlArr = await _uploadImagesToStore(shouldBeUploadedImgArr, id);
+            this.setState({
+              uploadingImages: false
+            });
+            _setRelationImageToPill(uploadedFilesUrlArr, id);
+            imagesAfterEditArr = [...alreadyUploadedImgArr, ...uploadedFilesUrlArr];
           }
 
-      }
+        }
 
       } else {
-        uploadedFilesUrlArr = prevImagesArr;
+        imagesAfterEditArr = prevImagesArr;
       }
 
       const pillData = {
@@ -277,9 +335,11 @@ class CreatePill extends Component {
         createdByUser: uid,
         pillTitle: pillTitle,
         pillType: pillType,
-        images: uploadedFilesUrlArr,
+        images: imagesAfterEditArr,
         dateModified: new Date().getTime(),
       };
+
+      console.log('EDIT DATA FOR SAVE: ', pillData);
 
       updateChosenPill(id, pillData);
       this.props.dispatch(updatePill(pillData));
@@ -289,8 +349,6 @@ class CreatePill extends Component {
       });
       this.props.navigation.goBack();
     }
-
-
 
 
     if (!isFormEdit) {
@@ -320,6 +378,7 @@ class CreatePill extends Component {
         };
 
         createNewPill(pillData);
+        _setRelationImageToPill(uploadedFilesUrlArr, generatedID);
         this.props.dispatch(addPill(pillData));
         this.props.dispatch(saveChosenPillsType([]));
         this.setState({
@@ -332,14 +391,10 @@ class CreatePill extends Component {
   };
 
 
-
-
-
-
-
   render() {
 
     console.log(this.state);
+    console.log(this.props);
 
     const {pillTitle, pillType} = this.state.formField;
     const {isFormEdit} = this.state;
@@ -351,8 +406,6 @@ class CreatePill extends Component {
     // console.log(this.props);
     // console.log(pillsTypeList);
     // console.log(pillType);
-
-
 
 
     let chosenPillsTitle = pillType.map((item) => {
@@ -368,8 +421,7 @@ class CreatePill extends Component {
     // console.log(chosenPillsTitle);
 
 
-
-    function getChosenTitleStr (pillsType) {
+    function getChosenTitleStr(pillsType) {
       let chosenTitlesStr = '';
 
       if (pillsType.length) {
@@ -383,17 +435,14 @@ class CreatePill extends Component {
     }
 
 
-
-
-
-
     return (
-      <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0, position: 'relative'}]}>
+      <SafeAreaView
+        style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0, position: 'relative'}]}>
         <Overlay
           isVisible={this.state.uploadingImages}
           width="auto"
           height="auto">
-          <ActivityIndicator />
+          <ActivityIndicator/>
         </Overlay>
         <InternetNotification topDimension={0}/>
         <ScrollView
@@ -444,7 +493,13 @@ class CreatePill extends Component {
                   />
                 </View>
 
-                <View style={{backgroundColor: Colors.WHITE, marginTop: 24, paddingLeft: 16, paddingRight: 16, paddingTop: 9}}>
+                <View style={{
+                  backgroundColor: Colors.WHITE,
+                  marginTop: 24,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  paddingTop: 9
+                }}>
                   <Text style={{fontSize: 14, color: Colors.GRAY_TEXT, marginBottom: 9}}>Прикрепить фото</Text>
                   <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
                     {
@@ -454,30 +509,39 @@ class CreatePill extends Component {
                             key={index}
                             style={{position: 'relative', justifyContent: 'center', marginRight: 16, marginBottom: 16}}
                           >
-                           <TouchableOpacity
-                             style={{position: 'absolute', top: -10, right: -10, zIndex: 100}}
-                             onPress={() => {this.handleRemoveImage(index)}}
-                           >
-                             <Image
-                               style={{width: 20, height: 20}}
-                               source={require('../assets/general/close_round.png')}
-                             />
-                           </TouchableOpacity>
-                           <View
-                             style={{borderRadius: 12, overflow: 'hidden' }}
-                           >
-                             <Image
-                               style={{width: 80, height: 80 }}
-                               source={{uri: item.url}}
-                               resizeMode={'cover'}
-                             />
-                           </View>
+                            <TouchableOpacity
+                              style={{position: 'absolute', top: -10, right: -10, zIndex: 100}}
+                              onPress={() => {
+                                this.handleRemoveImage(index)
+                              }}
+                            >
+                              <Image
+                                style={{width: 20, height: 20}}
+                                source={require('../assets/general/close_round.png')}
+                              />
+                            </TouchableOpacity>
+                            <View
+                              style={{borderRadius: 12, overflow: 'hidden'}}
+                            >
+                              <Image
+                                style={{width: 80, height: 80}}
+                                source={{uri: item.url}}
+                                resizeMode={'cover'}
+                              />
+                            </View>
                           </View>
                         )
                       })
                     }
                     <TouchableOpacity
-                      style={{width: 80, height: 80, borderRadius: 12,  marginBottom: 16, backgroundColor: Colors.TABLE_BORDER, justifyContent: 'center'}}
+                      style={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: 12,
+                        marginBottom: 16,
+                        backgroundColor: Colors.TABLE_BORDER,
+                        justifyContent: 'center'
+                      }}
                       onPress={this.handleAddImage}
                     >
                       <Image
@@ -490,7 +554,8 @@ class CreatePill extends Component {
 
             </View>
             <View style={[commonStyles.containerIndents, {borderWidth: 0}]}>
-              <SubmitButton isEnabled={isEnabled}  title={isFormEdit ? "СОХРАНИТЬ" : "СОЗДАТЬ"}   handleSubmitForm={this.handleSubmitForm}/>
+              <SubmitButton isEnabled={isEnabled} title={isFormEdit ? "СОХРАНИТЬ" : "СОЗДАТЬ"}
+                            handleSubmitForm={this.handleSubmitForm}/>
             </View>
           </KeyboardAwareScrollView>
         </ScrollView>

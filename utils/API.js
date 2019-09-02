@@ -41,12 +41,12 @@ export function removeTokeFromAsyncStorage(key){
 export function sentVerificationEmail() {
   firebase.auth().currentUser.sendEmailVerification()
     .then(function() {
-    // Email sent.
-  }, function(error) {
-    // An error happened.
+      // Email sent.
+    }, function(error) {
+      // An error happened.
 
-    console.log('Error happened in sent Verification Email process: ', error);
-  });
+      console.log('Error happened in sent Verification Email process: ', error);
+    });
 }
 
 // export function writeUserDataToDB (uid, email, fname = '',lname= '', displayName='', photoURL =''){
@@ -73,7 +73,7 @@ export function createUserbyIDinDB (){
     setUpProfile: false
   })
     .then((data)=>{
-    console.log('user successfully created in DB: ', data)
+      console.log('user successfully created in DB: ', data)
       //success callback
     }).catch((error)=>{
     //error callback
@@ -252,9 +252,9 @@ export function isUserAuth(){
 
 
 export async function getMetricsByTitle(nameMetric){
- const snapshotDB = await firebase.database().ref('Metrics/'+ nameMetric).once('value');
+  const snapshotDB = await firebase.database().ref('Metrics/'+ nameMetric).once('value');
 
- return snapshotDB.val();
+  return snapshotDB.val();
 }
 
 
@@ -452,12 +452,12 @@ export  function updateChosenPill(pillID, pillData) {
 
 
 
-export async function savePillImageToStorage (localUri, pillID, imageName){
+export async function savePillImageToStorage (imageID, localUri){
   //localUri - local link on the image from device
 
   const downloadURL = await firebase
     .storage()
-    .ref(`pill-images/${pillID}/${imageName}.jpg`)
+    .ref(`pill-images/${imageID}/${imageID}.jpg`)
     .putFile(
       localUri
     );
@@ -468,23 +468,66 @@ export async function savePillImageToStorage (localUri, pillID, imageName){
 
 }
 
-export async function removePillImages(pillID, imagesArr) {
-
-  // let index = 0;
-
-  if (imagesArr.length) {
-    for (const item of imagesArr) {
-      await firebase.storage()
-        .ref(`pill-images/${pillID}/${item.name}.jpg`).delete();
-
-      // index = ++index;
-    }
-  }
-
-  return true
+export async function removePillImages(imageName) {
+  await firebase.storage()
+    .ref(`pill-images/${imageName}/${imageName}.jpg`).delete();
 
 }
 
+export async function getPillsRelatedToImg (imageID) {
+  console.log('here');
+  const snapshotDB = await firebase.database().ref(`image-to-pill/${imageID}`).once('value');
+  return snapshotDB.val() || [];
+}
+
+
+export async function relImgToPill(imageID, pillIDArr) {
+  await firebase.database().ref(`image-to-pill/${imageID}`).set(pillIDArr);
+}
+
+export async function removeRelationImgToPill(imageArr, pillID) {
+  let removedPillArr = [];
+
+  for (let image of imageArr) {
+    const snapshotDB = await firebase.database().ref(`image-to-pill/${image.name}`).once('value');
+    console.log(snapshotDB._value);
+
+    if (!snapshotDB._value) {
+      console.log('NO RELATION IN DB');
+      return false;
+    }
+
+
+    removedPillArr = snapshotDB._value.filter(item => {
+      return item !== pillID;
+    });
+
+    await firebase.database().ref(`image-to-pill/${image.name}`).remove();
+    await firebase.database().ref(`image-to-pill/${image.name}`).set(removedPillArr);
+  }
+
+  return true;
+
+
+
+}
+
+export async function checkRelationsImgToPills(imageID) {
+  const snapshotDB = await firebase.database().ref(`image-to-pill/${imageID}`).once('value');
+  console.log(snapshotDB);
+  console.log(snapshotDB._value);
+
+  if (!snapshotDB._value) {
+    removePillImages(imageID)
+      .then(() => {
+        console.log('IMG WAS REMOVED');
+      })
+      .catch((error) => {
+        console.log('IMG WAS NOT REMOVED WITH ERROR ', error);
+      })
+
+  }
+}
 
 
 // -- END PILLS FLOW --------------
