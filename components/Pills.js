@@ -7,12 +7,13 @@ import * as Colors from "../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import {isIphone5} from "../utils/helpers";
 import {
-  deleteDoctorByID, deletePillByID,
+  checkRelationsImgToPills,
+  deleteDoctorByID, deletePillByID, getAppPillsList,
   getDoctorsList,
   getDoctorSpecializations,
   getPillsList,
   getPillsType,
-  getUIDfromFireBase, removePillImages
+  getUIDfromFireBase, removePillImages, removeRelationImgToPill
 } from "../utils/API";
 import {deleteDoctor, setDoctors} from "../actions/doctors";
 import {setDoctorSpecializations} from "../actions/doctorSpecializations";
@@ -82,14 +83,37 @@ class Pills extends Component{
 
   componentDidMount(){
 
-    getPillsList()
-      .then(data => {
+    let appPills = getAppPillsList();
+    let customPills = getPillsList();
+    const uid = getUIDfromFireBase();
+
+
+    Promise.all([appPills, customPills])
+      .then(resolve => {
+        let currentUserPills = resolve[1];
+
+        console.log(currentUserPills);
+
+
+        for (let key in currentUserPills) {
+          console.log(currentUserPills[key]);
+
+          console.log(key);
+          console.log(uid);
+          console.log(currentUserPills[key].createdByUser);
+
+          if (currentUserPills[key].createdByUser !== uid) {
+            delete(currentUserPills[key]);
+          }
+
+        }
+
+        let data = {...resolve[0], ...resolve[1]};
+
+
+        console.log(currentUserPills);
         this.props.dispatch(setPills(data));
-
-        // const {chosenLabelsID} = this.state;
         const pillsList = this._clonePillsObjWithCheckedFalse(data, []);
-
-
         this.setState({
           pillsList: pillsList,
           pillsListOrigin: pillsList,
@@ -97,6 +121,23 @@ class Pills extends Component{
           showList: pillsList.length,
         })
       });
+
+    // getPillsList()
+    //   .then(data => {
+    //     console.log(data);
+    //     this.props.dispatch(setPills(data));
+    //
+    //     // const {chosenLabelsID} = this.state;
+    //     const pillsList = this._clonePillsObjWithCheckedFalse(data, []);
+    //
+    //
+    //     this.setState({
+    //       pillsList: pillsList,
+    //       pillsListOrigin: pillsList,
+    //       isLoaded: pillsList.length,
+    //       showList: pillsList.length,
+    //     })
+    //   });
 
 
     getPillsType()
@@ -137,9 +178,31 @@ class Pills extends Component{
     const handleDeleteBtn = () => {
       this._closeAllSwipes();
 
+      console.log(item.images);
+
+      const shouldBeRemovedImgArr = item.images || [];
+      const id = item.id;
+
+      if (shouldBeRemovedImgArr.length) {
+        console.log('AFTER REMOVE', shouldBeRemovedImgArr);
+        removeRelationImgToPill(shouldBeRemovedImgArr, id)
+          .then( async (success) => {
+            if (success) {
+              // images relations was removed.
+              for (let image of shouldBeRemovedImgArr) {
+                // await removePillImages(image.name);
+                await checkRelationsImgToPills(image.name)
+              }
+              console.log('DONE REMOVE IMAGE');
+            }
+          });
+      }
+
+
+
       deletePillByID(item.id)
         .then(() => {
-          removePillImages(item);
+          // removePillImages(item);
           this.props.dispatch(deletePill(item.id));
           const newPillsList = this._clonePillsObjWithCheckedFalse(this.props.pillsList, []);
 
@@ -177,6 +240,21 @@ class Pills extends Component{
           <Image
             style={{width: 40, height: 40}}
             source={require('../assets/general/delete.png')}
+          />
+        </TouchableHighlight>
+      ];
+    }
+
+    if (uid !== item.createdByUser) {
+      rightButtons = [
+        <TouchableHighlight
+          underlayColor={'transparent'}
+          onPress={handleEditBtn}
+          style={{height: 56, width: 56, marginLeft: 15, justifyContent: 'center'}}
+        >
+          <Image
+            style={{width: 40, height: 40}}
+            source={require('../assets/general/edit.png')}
           />
         </TouchableHighlight>
       ];
@@ -250,6 +328,8 @@ class Pills extends Component{
 
     console.log(this.state);
 
+    const uid = getUIDfromFireBase();
+
     const buttons = ['Все препараты', 'Созданные'];
 
     let {isLoaded, pillsList, search} = this.state;
@@ -268,16 +348,17 @@ class Pills extends Component{
     });
 
     switch (selectedIndex) {
+
       case 0 :
+        pillsList = pillsList.filter(item => {
+          return item.createdByUser !== uid
+        });
         break;
 
       case 1:
-        const uid = getUIDfromFireBase();
-
         pillsList = pillsList.filter(item => {
           return item.createdByUser === uid
         });
-
         break;
 
 

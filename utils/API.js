@@ -438,8 +438,14 @@ export async function getPillsList(){
   return snapshotDB.val() || {};
 }
 
+export async function getAppPillsList(){
+  const snapshotDB = await firebase.database().ref('app_pills/').once('value');
+  return snapshotDB.val() || {};
+}
+
 export function createNewPill(pillData){
   firebase.database().ref('pills/'+ pillData.id).set(pillData);
+  // firebase.database().ref('app_pills/'+ pillData.id).set(pillData);
 }
 
 export async function deletePillByID(pillID){

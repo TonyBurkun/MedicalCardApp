@@ -45,16 +45,12 @@ async function _uploadImagesToStore(pillImagesArr, generatedID) {
   return uploadedFilesUrlArr;
 }
 
-
 async function _setRelationImageToPill(imagesArr, pillID) {
-  console.log(imagesArr);
   for (let item of imagesArr) {
 
     const pillsRelatedToImgArr = await getPillsRelatedToImg(item.name);
 
-    console.log(pillsRelatedToImgArr);
     pillsRelatedToImgArr.push(pillID);
-
 
     await relImgToPill(item.name, pillsRelatedToImgArr)
       .catch(error => {
@@ -73,6 +69,7 @@ class CreatePill extends Component {
     this.state = {
       isFormEdit: Boolean(this.props.navigation.state.params),
       uploadingImages: false,
+      isCreateByAdmin: false,
       formField: {
         pillTitle: '',
         pillType: [],
@@ -104,13 +101,27 @@ class CreatePill extends Component {
   };
 
   async componentDidMount() {
-    console.log(this.state);
     console.log('DID MOUNT');
     const {isFormEdit} = this.state;
 
     if (isFormEdit) {
+
+
+
+
       const id = this.props.navigation.state.params.pillID;
       const editedPill = this.props.pillsList[id];
+
+
+      if (editedPill.createdByUser === 'admin') {
+       await this.setState({
+          isCreateByAdmin: true
+        });
+      }
+
+
+
+
       console.log(editedPill);
       let prevImagesArr = [];
       if (editedPill.images) {
@@ -128,8 +139,6 @@ class CreatePill extends Component {
       });
 
       this.props.dispatch(saveChosenPillsType(editedPill.pillType));
-
-
     }
   }
 
@@ -200,6 +209,7 @@ class CreatePill extends Component {
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
         let updatedPillImagesArr = this.state.formField.pillImagesArr;
+        updatedPillImagesArr = JSON.parse(JSON.stringify(updatedPillImagesArr));
         updatedPillImagesArr.push({name: '', url: response.uri});
 
 
@@ -257,7 +267,7 @@ class CreatePill extends Component {
       // console.log(createdByUserID);
       // console.log(uid);
 
-      // let uploadedFilesUrlArr = [];
+      let uploadedFilesUrlArr = [];
       let alreadyUploadedImgArr = [];
       let shouldBeRemovedImgArr = [];
       let shouldBeUploadedImgArr = [];
@@ -293,61 +303,89 @@ class CreatePill extends Component {
         console.log('NEED TO REMOVE ', shouldBeRemovedImgArr);
         console.log('NEED TO UPLOAD ', shouldBeUploadedImgArr);
 
-        if (createdByUserID === uid) {
-          if (shouldBeRemovedImgArr.length) {
-            console.log('AFTER REMOVE', shouldBeRemovedImgArr);
-            removeRelationImgToPill(shouldBeRemovedImgArr, id)
-              .then( async (success) => {
-                if (success) {
-                  // images relations was removed.
-                  for (let image of shouldBeRemovedImgArr) {
-                    // await removePillImages(image.name);
-                    await checkRelationsImgToPills(image.name)
-                  }
-                  console.log('DONE REMOVE IMAGE');
-                }
-              });
-            imagesAfterEditArr = alreadyUploadedImgArr;
-            console.log(imagesAfterEditArr);
-          }
-
-          if (shouldBeUploadedImgArr.length) {
-            console.log('upload...');
-            this.setState({
-              uploadingImages: true
-            });
-            const uploadedFilesUrlArr = await _uploadImagesToStore(shouldBeUploadedImgArr, id);
-            this.setState({
-              uploadingImages: false
-            });
-            _setRelationImageToPill(uploadedFilesUrlArr, id);
-            imagesAfterEditArr = [...alreadyUploadedImgArr, ...uploadedFilesUrlArr];
-          }
-
+        if (shouldBeUploadedImgArr.length) {
+          console.log('upload...');
+          this.setState({
+            uploadingImages: true
+          });
+          uploadedFilesUrlArr = await _uploadImagesToStore(shouldBeUploadedImgArr, id);
+          this.setState({
+            uploadingImages: false
+          });
         }
+
+        imagesAfterEditArr = [...alreadyUploadedImgArr, ...uploadedFilesUrlArr];
 
       } else {
         imagesAfterEditArr = prevImagesArr;
       }
 
-      const pillData = {
-        id: id,
-        createdByUser: uid,
-        pillTitle: pillTitle,
-        pillType: pillType,
-        images: imagesAfterEditArr,
-        dateModified: new Date().getTime(),
-      };
 
-      console.log('EDIT DATA FOR SAVE: ', pillData);
+      if (createdByUserID === uid) {
+        if (shouldBeRemovedImgArr.length) {
+          console.log('AFTER REMOVE', shouldBeRemovedImgArr);
+          removeRelationImgToPill(shouldBeRemovedImgArr, id)
+            .then( async (success) => {
+              if (success) {
+                // images relations was removed.
+                for (let image of shouldBeRemovedImgArr) {
+                  // await removePillImages(image.name);
+                  await checkRelationsImgToPills(image.name)
+                }
+                console.log('DONE REMOVE IMAGE');
+              }
+            });
+        }
 
-      updateChosenPill(id, pillData);
-      this.props.dispatch(updatePill(pillData));
-      this.props.dispatch(saveChosenPillsType([]));
-      this.setState({
-        uploadingImages: false
-      });
-      this.props.navigation.goBack();
+
+
+        const pillData = {
+          id: id,
+          createdByUser: uid,
+          pillTitle: pillTitle,
+          pillType: pillType,
+          images: imagesAfterEditArr,
+          dateModified: new Date().getTime(),
+        };
+
+        console.log('EDIT DATA FOR SAVE: ', pillData);
+
+        updateChosenPill(id, pillData);
+        _setRelationImageToPill(uploadedFilesUrlArr, id);
+        this.props.dispatch(updatePill(pillData));
+        this.props.dispatch(saveChosenPillsType([]));
+        this.setState({
+          uploadingImages: false
+        });
+        this.props.navigation.goBack();
+      }
+
+      if (createdByUserID !== uid) {
+        console.log('create new one');
+        const generatedID = generateUniqID();
+
+        const pillData = {
+          id: generatedID,
+          createdByUser: uid,
+          pillTitle: pillTitle,
+          pillType: pillType,
+          images: imagesAfterEditArr,
+          dateModified: new Date().getTime(),
+        };
+
+        console.log('EDIT DATA FOR SAVE: ', pillData);
+
+        createNewPill(pillData);
+        _setRelationImageToPill(imagesAfterEditArr, generatedID);
+        this.props.dispatch(addPill(pillData));
+        this.props.dispatch(saveChosenPillsType([]));
+        this.setState({
+          uploadingImages: false
+        });
+        this.props.navigation.goBack();
+      }
+
+
     }
 
 
@@ -394,7 +432,7 @@ class CreatePill extends Component {
   render() {
 
     console.log(this.state);
-    console.log(this.props);
+    // console.log(this.props);
 
     const {pillTitle, pillType} = this.state.formField;
     const {isFormEdit} = this.state;
@@ -452,6 +490,10 @@ class CreatePill extends Component {
             contentContainerStyle={{justifyContent: 'space-between', flexGrow: 1}}>
             <View>
               <View>
+                {this.state.isCreateByAdmin &&
+                <Text style={{fontSize: 14, color: Colors.GRAY_TEXT, paddingRight: 16, paddingLeft: 16, paddingTop: 16}}>
+                  При изменении препарата из общего списка, он добавится в Созданные препараты. В дальнейшем Вы сможете редактировать или удалить препарат
+                </Text>}
                 <GroupButtonsTitle title={'ОСНОВНЫЕ ДАННЫЕ'} paddingLeft={16}/>
                 <FloatingLabelInput
                   label="Название (обязательно)"
@@ -554,8 +596,16 @@ class CreatePill extends Component {
 
             </View>
             <View style={[commonStyles.containerIndents, {borderWidth: 0}]}>
-              <SubmitButton isEnabled={isEnabled} title={isFormEdit ? "СОХРАНИТЬ" : "СОЗДАТЬ"}
-                            handleSubmitForm={this.handleSubmitForm}/>
+              {this.state.isCreateByAdmin ?
+                <SubmitButton isEnabled={isEnabled}
+                              title={isFormEdit ? "СОХРАНИТЬ В СОЗДАННЫЕ" : "СОЗДАТЬ"}
+                              handleSubmitForm={this.handleSubmitForm}/>
+                              :
+                <SubmitButton isEnabled={isEnabled}
+                              title={isFormEdit ? "СОХРАНИТЬ" : "СОЗДАТЬ"}
+                              handleSubmitForm={this.handleSubmitForm}/>
+
+              }
             </View>
           </KeyboardAwareScrollView>
         </ScrollView>
