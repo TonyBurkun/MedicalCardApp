@@ -14,7 +14,7 @@ export default class FloatingLabelInput extends Component {
     this.state = {
       isFocused: false,
       isEmpty: true,
-      emptyFieldText: 'Введите текст'
+      emptyFieldText: this.props.placeholder
     };
 
   }
@@ -46,7 +46,7 @@ export default class FloatingLabelInput extends Component {
 
     if (!value){
       this.setState({
-        emptyFieldText: 'Введите текст',
+        emptyFieldText: this.props.placeholder,
         isEmpty: true
       });
     }
@@ -57,9 +57,6 @@ export default class FloatingLabelInput extends Component {
   };
 
   render() {
-    // console.log(this.state);
-    // console.log(this.props);
-
 
     const { label, ...props} = this.props;
     const { isEmpty, isFocused } = this.state;
@@ -78,12 +75,13 @@ export default class FloatingLabelInput extends Component {
       color: isEmpty ? Colors.BLACK_TITLE : Colors.GRAY_TEXT,
     };
     return (
-      <View style={[commonStyles.tableBlockItem, { paddingTop: 18 }]}>
+      <View style={[commonStyles.tableBlockItem, { paddingTop: 25 }]}>
         <Text style={labelStyle}>
           {label}
         </Text>
         <TextInput
           {...props}
+          multiline={this.props.multiline}
           style={[commonStyles.tableBlockItemText,
             {fontSize: 16, paddingTop: 8.7, paddingBottom: 10},
             isEmpty ? {color: Colors.TABLE_TITLE} : {color: Colors.TYPOGRAPHY_COLOR_DARK},
@@ -108,9 +106,13 @@ const styles = StyleSheet.create({
 FloatingLabelInput.propTypes = {
   maxLength: PropTypes.number,
   value: PropTypes.string.isRequired,
+  multiline: PropTypes.bool,
+  placeholder: PropTypes.string,
 };
 
 FloatingLabelInput.defaultProps = {
   value: '',
+  multiline: false,
+  placeholder: 'Введите текст'
 };
 

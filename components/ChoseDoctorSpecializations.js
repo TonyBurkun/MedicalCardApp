@@ -42,6 +42,8 @@ class ChoseDoctorSpecializations extends Component{
     const doctorSpecializationArr = this.props.doctorSpecializations;
     const {chosenDoctorSpecializations} = this.props;
 
+    
+
     return (
       <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0, backgroundColor: Colors.WHITE}]}>
         <InternetNotification topDimension={0}/>

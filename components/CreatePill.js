@@ -106,9 +106,6 @@ class CreatePill extends Component {
 
     if (isFormEdit) {
 
-
-
-
       const id = this.props.navigation.state.params.pillID;
       const editedPill = this.props.pillsList[id];
 
@@ -280,19 +277,19 @@ class CreatePill extends Component {
 
 
       if (JSON.stringify(pillImagesArr) !== JSON.stringify(prevImagesArr)) {
-        prevImageUrlArr.forEach((item, index) => {
-          if (pillImageUrlArr.includes(item)) {
+        pillImageUrlArr.forEach((item, index) => {
+          if (prevImageUrlArr.includes(item)) {
             alreadyUploadedImgArr.push(pillImagesArr[index])
           }
 
-          if (!pillImageUrlArr.includes(item)) {
-            shouldBeRemovedImgArr.push(prevImagesArr[index])
+          if (!prevImageUrlArr.includes(item)) {
+            shouldBeUploadedImgArr.push(pillImagesArr[index])
           }
         });
 
-        pillImageUrlArr.forEach((item, index) => {
-          if (!prevImageUrlArr.includes(item)) {
-            shouldBeUploadedImgArr.push(pillImagesArr[index])
+        prevImageUrlArr.forEach((item, index) => {
+          if (!pillImageUrlArr.includes(item)) {
+            shouldBeRemovedImgArr.push(prevImagesArr[index])
           }
         });
 
@@ -569,6 +566,7 @@ class CreatePill extends Component {
                                 style={{width: 80, height: 80}}
                                 source={{uri: item.url}}
                                 resizeMode={'cover'}
+                                PlaceholderContent={<ActivityIndicator />}
                               />
                             </View>
                           </View>

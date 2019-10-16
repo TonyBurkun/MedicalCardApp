@@ -1,4 +1,4 @@
-import {SET_PILLS} from '../actions/pills'
+import {REMOVE_CHOSEN_PILL, SET_PILLS} from '../actions/pills'
 import {ADD_PILL} from '../actions/pills'
 import {UPDATE_PILL} from '../actions/pills'
 import {DELETE_PILL} from '../actions/pills'
@@ -62,7 +62,7 @@ function pills  (state = initialState, action) {
 
       return {
         ...state,
-        doctorsList: state.doctorsList
+        pillsList: state.pillsList
       };
 
     case DELETE_PILL:
@@ -75,20 +75,20 @@ function pills  (state = initialState, action) {
         ...state,
         pillsList: pillsList
       };
-    //
-    // case SET_CHOSEN_DOCTORS:
-    //   return {
-    //     ...state,
-    //     chosenDoctorsID: action.chosenDoctorsID
-    //   };
 
+    case SET_CHOSEN_PILLS:
+      return {
+        ...state,
+        chosenPillsID: action.chosenPillsID
+      };
 
-
-
-
-
-
-
+    case REMOVE_CHOSEN_PILL:
+      return {
+        ...state,
+        chosenPillsID: state.chosenPillsID.filter(item => {
+          return item !== action.pillID
+        })
+      };
 
     default:
       return state

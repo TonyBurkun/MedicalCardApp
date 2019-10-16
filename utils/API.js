@@ -542,6 +542,54 @@ export async function checkRelationsImgToPills(imageID) {
 
 
 
+// -- NOTES FLOW ---------
+
+
+export async function saveNoteImageToStorage (noteID, imageName, localUri){
+  //localUri - local link on the image from device
+
+  const downloadURL = await firebase
+    .storage()
+    .ref(`note-images/${noteID}/${imageName}.jpg`)
+    .putFile(
+      localUri
+    );
+
+  return downloadURL;
+
+}
+
+export function createNewNote(noteData){
+  const uid = getUIDfromFireBase();
+  firebase.database().ref(`notes/${uid}/${noteData.id}`).set(noteData);
+}
+
+export  function updateChosenNote(noteID, noteData) {
+  const uid = getUIDfromFireBase();
+  firebase.database().ref(`notes/${uid}/${noteID}`).update(noteData);
+}
+
+export async function deleteNoteByID(noteID){
+  const uid = getUIDfromFireBase();
+  await firebase.database().ref(`notes/${uid}/${noteID}`).remove();
+}
+
+export async function getNotesListByCurrentUser(){
+  const uid = getUIDfromFireBase();
+  const snapshotDB = await firebase.database().ref(`notes/${uid}`).once('value');
+  return snapshotDB.val() || {};
+}
+
+export async function removeNoteImages(noteID, imageName) {
+  await firebase.storage()
+    .ref(`note-images/${noteID}/${imageName}.jpg`).delete();
+
+}
+
+
+// -- END NOTES FLOW ---------
+
+
 
 
 //-- End FireBase  -----------------------------

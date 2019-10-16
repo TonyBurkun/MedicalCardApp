@@ -22,10 +22,12 @@ export const HEADER_BG = '#FAFAFA';
 export const TAB_NAVIGATION_BG = '#FCFCFC';
 export const TAB_NAVIGATION_BORDER = '#F0F0F0';
 export const MAIN_BACKGROUND = '#F8F8F8';
+export const BACKGROUND_COLOR = '#F3F5F9';
 export const TABLE_TITLE = '#CDD6E0';
 export const BORDER_COLOR = '#DADADA';
 export const TABLE_BORDER = '#EAEAEA';
 export const GRAY_TEXT = '#89969F';
+export const NOTE_GREY_TEXT = '#979797';
 
 
 export const DISABLED_TEXT = '#BDBDBD';
@@ -47,5 +49,8 @@ export const AVATAR_TEXT_BLOCK = '#62DE5B';
 export const FB_COLOR = '#3B5998';
 export const TW_COLOR = '#1DA1F2';
 export const BLUE = '#4A90E2';
+
+
+export const REMOVE_BTN = '#D66775';
 
 

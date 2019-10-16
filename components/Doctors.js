@@ -55,10 +55,10 @@ class Doctors extends Component{
 
   _cloneDoctorsObjWithCheckedFalse = (doctors, chosenDoctorsID = []) => {
     const copyDoctors = JSON.parse(JSON.stringify(doctors));
-    const labelsListKeys = Object.keys(copyDoctors);
+    const doctorsListKeys = Object.keys(copyDoctors);
 
 
-    let doctorsArr = labelsListKeys.map((item) => {
+    let doctorsArr = doctorsListKeys.map((item) => {
       copyDoctors[item].checked = false;
 
       return copyDoctors[item];
@@ -66,9 +66,9 @@ class Doctors extends Component{
 
 
     chosenDoctorsID.forEach((id) => {
-      doctorsArr.forEach((label) => {
-        if (label.id === id) {
-          label.checked = true;
+      doctorsArr.forEach((item) => {
+        if (item.id === id) {
+          item.checked = true;
         }
       })
     });

@@ -1,12 +1,10 @@
-
-
 export const SET_PILLS_TYPE = 'SET_PILLS_TYPE';
-
 export const SET_PILLS = 'SET_PILLS';
 export const ADD_PILL = 'ADD_PILL';
 export const UPDATE_PILL = 'UPDATE_PILL';
 export const DELETE_PILL = 'DELETE_PILL';
 export const SET_CHOSEN_PILLS = 'SET_CHOSEN_PILLS';
+export const REMOVE_CHOSEN_PILL = 'REMOVE_CHOSEN_PILL';
 export const SET_CHOSEN_PILLS_TYPE = 'SET_CHOSEN_PILLS_TYPE';
 
 
@@ -51,3 +49,21 @@ export function updatePill(pill){
     pill: pill
   }
 }
+
+
+export function setChosenPills(chosenPillsID){
+  return {
+    type: SET_CHOSEN_PILLS,
+    chosenPillsID: chosenPillsID,
+
+  }
+}
+
+export function removeChosePill(pillID) {
+  return  {
+    type: REMOVE_CHOSEN_PILL,
+    pillID: pillID
+  }
+}
+
+

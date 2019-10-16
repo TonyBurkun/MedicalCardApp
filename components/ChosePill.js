@@ -1,32 +1,32 @@
 import React, {Component, Fragment} from 'react'
-import {View, Text, Image, StyleSheet, Platform, FlatList, TouchableHighlight} from 'react-native'
-import {connect} from 'react-redux'
-import {SafeAreaView, withNavigationFocus} from "react-navigation";
-import InternetNotification from "./ui_components/InternetNotification";
+import {View, Text, StyleSheet, TouchableHighlight, Image, FlatList, Platform, ScrollView} from 'react-native'
+import HeaderCancelBtn from "./ui_components/TopNavigation/HeaderCancelBtn";
 import * as Colors from "../utils/colors";
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import {isIphone5} from "../utils/helpers";
+import HeaderAddBtn from "./ui_components/TopNavigation/HeaderAddBtn";
 import {
-  checkRelationsImgToPills,
-  deleteDoctorByID, deletePillByID, getAppPillsList,
-  getDoctorsList,
-  getDoctorSpecializations,
+  checkRelationsImgToPills, deletePillByID,
+  getAppPillsList,
   getPillsList,
   getPillsType,
-  getUIDfromFireBase, removePillImages, removeRelationImgToPill
+  getUIDfromFireBase,
+  removeRelationImgToPill
 } from "../utils/API";
-import {deleteDoctor, setDoctors} from "../actions/doctors";
-import {setDoctorSpecializations} from "../actions/doctorSpecializations";
 import {deletePill, setPills, setPillsTypeList} from "../actions/pills";
+import Swipeable from "react-native-swipeable";
+import OnePillList from "./ui_components/ListItems/OnePillList";
+import {SafeAreaView, withNavigationFocus} from "react-navigation";
+import InternetNotification from "./ui_components/InternetNotification";
 import {SearchBar} from "react-native-elements";
 import CustomButtonGroup from "./ui_components/Buttons/CustomButtonGroup";
 import {NO_DATA_TO_SHOW} from "../utils/textConstants";
-import Swipeable from "react-native-swipeable";
-import OneDoctorList from "./ui_components/ListItems/OneDoctorList";
-import OnePillList from "./ui_components/ListItems/OnePillList";
+import {isIphone5} from "../utils/helpers";
+import {connect} from "react-redux";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import GroupButtonsTitle from "./ui_components/GroupButtonsTitle";
+import AddButton from "./ui_components/AddButton";
 
+class ChosePill extends Component {
 
-class Pills extends Component{
   constructor(props){
     super(props);
     this.swipe = [];
@@ -38,15 +38,34 @@ class Pills extends Component{
       isLoaded: true,
       emptySearch: false,
       showList: false,
-      selectedIndex: 0,
+      chosenPillsID: []
     }
   }
 
-  updateChosenTab (selectedIndex) {
-    this._closeAllSwipes();
+  static navigationOptions = ({navigation}) => {
 
-    this.setState({selectedIndex})
-  }
+    const screenTitle = navigation.state.params.screenTitle;
+    return {
+      headerLeft: () => {
+        return (
+          <HeaderCancelBtn />
+        )
+      },
+      headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>{screenTitle}</Text>,
+      headerTintColor: Colors.GRAY_TEXT,
+      headerStyle: {
+        backgroundColor: Colors.WHITE,
+        elevation: 0,
+        shadowOpacity: 0,
+        borderBottomWidth: 0
+
+      },
+      headerRight: (
+        <HeaderAddBtn type={'chosenPills'}/>
+      )
+    }
+  };
+
 
   _closeAllSwipes = () => {
     this.swipe.forEach((item) => {
@@ -54,8 +73,10 @@ class Pills extends Component{
     });
   };
 
+  _clonePillsObjWithCheckedFalse = (pills, chosenPillsID) => {
 
-  _clonePillsObjWithCheckedFalse = (pills, chosenPillsID = []) => {
+    console.log(chosenPillsID);
+
     const copyPills = JSON.parse(JSON.stringify(pills));
     const pillsListKeys = Object.keys(copyPills);
 
@@ -68,9 +89,9 @@ class Pills extends Component{
 
 
     chosenPillsID.forEach((id) => {
-      pillsArr.forEach((item) => {
-        if (item.id === id) {
-          item.checked = true;
+      pillsArr.forEach((label) => {
+        if (label.id === id) {
+          label.checked = true;
         }
       })
     });
@@ -92,15 +113,15 @@ class Pills extends Component{
       .then(resolve => {
         let currentUserPills = resolve[1];
 
-        // console.log(currentUserPills);
+        console.log(currentUserPills);
 
 
         for (let key in currentUserPills) {
-          // console.log(currentUserPills[key]);
+          console.log(currentUserPills[key]);
 
-          // console.log(key);
-          // console.log(uid);
-          // console.log(currentUserPills[key].createdByUser);
+          console.log(key);
+          console.log(uid);
+          console.log(currentUserPills[key].createdByUser);
 
           if (currentUserPills[key].createdByUser !== uid) {
             delete(currentUserPills[key]);
@@ -111,9 +132,10 @@ class Pills extends Component{
         let data = {...resolve[0], ...resolve[1]};
 
 
-        // console.log(currentUserPills);
+        console.log(currentUserPills);
         this.props.dispatch(setPills(data));
-        const pillsList = this._clonePillsObjWithCheckedFalse(data, []);
+        const {chosenPillsID} = this.state;
+        const pillsList = this._clonePillsObjWithCheckedFalse(data, chosenPillsID);
         this.setState({
           pillsList: pillsList,
           pillsListOrigin: pillsList,
@@ -122,7 +144,6 @@ class Pills extends Component{
         })
       });
 
-
     getPillsType()
       .then(data => {
         this.props.dispatch(setPillsTypeList(data));
@@ -130,19 +151,31 @@ class Pills extends Component{
   }
 
   componentWillReceiveProps(nextProps){
-    // const data = nextProps.doctorsList;
-    const data = this.props.pillsList;
-    const newPillsList = this._clonePillsObjWithCheckedFalse(data, []);
+    console.log(nextProps);
+    // const data = this.props.pillsList;
 
 
-    this.setState({
-      pillsList: newPillsList,
-      pillsListOrigin: newPillsList,
-      isLoaded: newPillsList.length,
-      showList: newPillsList.length,
-      search: '',
-      emptySearch: false,
-    })
+    const nextPillsList = nextProps.pillsList;
+    const {pillsListOrigin} = this.state;
+
+    if (Object.keys(nextPillsList).length !== pillsListOrigin.length) {
+
+      const chosenPillsID = nextProps.chosenPillsID;
+      const data = nextProps.pillsList;
+
+      const newPillsList = this._clonePillsObjWithCheckedFalse(data, chosenPillsID);
+
+      this.setState({
+        pillsList: newPillsList,
+        pillsListOrigin: newPillsList,
+        isLoaded: newPillsList.length,
+        showList: newPillsList.length,
+        search: '',
+        emptySearch: false,
+        chosenPillsID,
+      })
+
+    }
 
   }
 
@@ -255,7 +288,7 @@ class Pills extends Component{
                  rightButtonWidth={56}
                  onSwipeStart={() => { this._closeAllSwipes()}}
       >
-        <OnePillList key={item.id} pillData={item} hasCheckBox={false}  handleChoosingPill = {this.handleChoosingPill}/>
+        <OnePillList key={item.id} pillData={item} hasCheckBox={true} handleChoosingPill = {this.handleChoosingPill}/>
       </Swipeable>
     )
   };
@@ -297,14 +330,67 @@ class Pills extends Component{
   };
 
 
-  handleChoosingPill = (pillID) => {
-    const {pillsList} = this.props;
-    const currentPill = pillsList[pillID];
+  handleChoosingPill = (pillID, hasCheckBox) => {
 
-    // this.props.navigation.navigate('OnePill', {pillID: pillID, currentPill: currentPill})
-    this.props.navigation.navigate('CreatePill', {pillID: pillID})
+
+    if (hasCheckBox){
+
+      const {pillsList, pillsListOrigin} = this.state;
+
+      let newPillsList = JSON.parse(JSON.stringify(pillsList));
+      let newPillsListOrigin = JSON.parse(JSON.stringify(pillsListOrigin));
+
+      newPillsList = newPillsList.map((item) => {
+        if (pillID === item.id) {
+          item.checked = !item.checked;
+        }
+        return item;
+      });
+
+      newPillsListOrigin = newPillsListOrigin.map((item) => {
+        if (pillID === item.id) {
+          item.checked = !item.checked;
+        }
+        return item;
+      });
+
+
+      const newChosenPillsID = [];
+
+      newPillsListOrigin.forEach(item => {
+        if (item.checked) {
+          newChosenPillsID.push(item.id)
+        }
+      });
+
+      const prevChosenPills = this.props.chosenPillsID;
+
+
+      this.setState({
+        pillsList: newPillsList,
+        pillsListOrigin: newPillsListOrigin,
+        chosenPillsID: newChosenPillsID,
+      });
+
+
+      // this.props.dispatch(setChosenDoctors(newChosenDoctorsID));
+
+      this.props.navigation.navigate('ChosePill',{type: 'AddItemsWithBack', chosenItemsID: newChosenPillsID, prevData: prevChosenPills});
+    } else {
+      const {pillsList} = this.props;
+      const currentPill = pillsList[pillID];
+
+      this.props.navigation.navigate('OnePill', {pillID: pillID, currentPill: currentPill})
+
+    }
 
   };
+
+  handlePressAddButton = () => {
+    this.props.navigation.navigate('CreatePill');
+  };
+
+
 
 
 
@@ -314,10 +400,7 @@ class Pills extends Component{
 
     const uid = getUIDfromFireBase();
 
-    const buttons = ['Все препараты', 'Созданные'];
-
-    let {isLoaded, pillsList, search} = this.state;
-    const { selectedIndex } = this.state;
+    let {isLoaded, pillsList, search, showList} = this.state;
 
     pillsList.sort((a,b) => {
 
@@ -331,24 +414,15 @@ class Pills extends Component{
 
     });
 
-    switch (selectedIndex) {
+    console.log(pillsList);
 
-      case 0 :
-        pillsList = pillsList.filter(item => {
-          return item.createdByUser !== uid
-        });
-        break;
+    const popularPillsList = pillsList.filter(item => {
+      return item.createdByUser !== uid
+    });
 
-      case 1:
-        pillsList = pillsList.filter(item => {
-          return item.createdByUser === uid
-        });
-        break;
-
-
-      default:
-        break;
-    }
+    const createdPillsList = pillsList.filter(item => {
+      return item.createdByUser === uid
+    });
 
 
 
@@ -365,54 +439,45 @@ class Pills extends Component{
           inputStyle={{borderRadius: 10, color: '#8E8E93', fontSize: 14}}
         />
 
-        {isLoaded ?
-          (
-            this.state.showList &&
-              <Fragment>
-                <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
-                  <CustomButtonGroup
-                    updateIndex={(selectedIndex) => {this.updateChosenTab(selectedIndex)}}
-                    buttons={buttons}
-                    selectedIndex={selectedIndex}/>
-                </View>
-                {!this.state.emptySearch && pillsList.length ? (
-                  <View style={{flex: 1, marginTop: 10, paddingRight: 16}}>
-                    <FlatList
-                      keyExtractor={(item, index) => index.toString()}
-                      data={pillsList}
-                      renderItem={this.renderFlatListItem}
-                    />
-                  </View>
-                ) : (
-                  <View style={{flex: 1, marginTop: '20%', alignItems: 'center', fontSize: 16}}>
-                    <Text>{NO_DATA_TO_SHOW}</Text>
-                  </View>
-                )}
-              </Fragment>
-          ) : (
-            <View style={{flex: 1, position: 'relative'}}>
-              <View style={styles.mainTextWrapper}>
-                <Text style={[!isIphone5()? styles.mainText: styles.mainText__smallPhone]}>Здесь отображаются Препараты, которые Вы добавили самостоятельно.</Text>
-                <Text style={[!isIphone5()? styles.subText: styles.subText__smallPhone]}>Создавайте, редактируйте или удаляйте Препараты.</Text>
-              </View>
-              <Image
-                style={styles.personImage}
-                source={require('../assets/person/pills.png')}/>
-              <View style={styles.tipWrapper}>
-                <Text style={styles.tipText}>Добавить препарат</Text>
-                <Image
-                  style={styles.tipArrow}
-                  source={require('../assets/vector/pills_vector.png')}/>
+        <ScrollView style={{paddingRight: 16}}>
+          {createdPillsList.length !==0 &&
+            <Fragment>
+              <GroupButtonsTitle title={'СОЗДАННЫЕ'} paddingLeft={16}/>
+              <FlatList
+                keyExtractor={(item, index) => index.toString()}
+                data={createdPillsList}
+                renderItem={this.renderFlatListItem}
+                scrollEnabled={false}
+              />
+            </Fragment>
+          }
+          {popularPillsList.length !== 0 &&
+            <Fragment>
+              <GroupButtonsTitle title={'ПОПУЛЯРНЫЕ'} paddingLeft={16}/>
+              <FlatList
+                keyExtractor={(item, index) => index.toString()}
+                data={popularPillsList}
+                renderItem={this.renderFlatListItem}
+                scrollEnabled={false}
+              />
+            </Fragment>
+          }
 
-              </View>
+          {popularPillsList.length ===0 && createdPillsList.length === 0 && Boolean(showList) &&
+            <View style={{flex: 1, marginTop: '20%', alignItems: 'center', fontSize: 16}}>
+              <Text>{NO_DATA_TO_SHOW}</Text>
             </View>
-          )
-        }
+          }
+
+        </ScrollView>
+
+        <AddButton handlePress={this.handlePressAddButton}/>
       </SafeAreaView>
     )
   }
-}
 
+
+}
 
 function mapStateToProps (state) {
   console.log(state);
@@ -421,11 +486,12 @@ function mapStateToProps (state) {
     pillsList: pills.pillsList,
     pillsTypeList: pills.pillsTypeList,
     chosenPillsType: pills.chosenPillsType,
+    chosenPillsID: pills.chosenPillsID,
   }
 }
 
 
-export default withNavigationFocus(connect(mapStateToProps)(Pills))
+export default withNavigationFocus(connect(mapStateToProps)(ChosePill))
 
 
 const styles = StyleSheet.create({
@@ -531,3 +597,4 @@ const styles = StyleSheet.create({
   }
 
 });
+

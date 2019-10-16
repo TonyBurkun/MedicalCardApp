@@ -53,6 +53,8 @@ class OnePillList extends Component {
 
     getTypeTitleStr(pillsType, pillData.pillType);
 
+    console.log(pillData.checked);
+
 
 
 

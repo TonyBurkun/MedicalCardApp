@@ -23,6 +23,7 @@ import MedicalCardStart from './components/MedicalCardStart'
 import MedicalCardCreate from './components/MedicalCardCreate'
 import MedicalCardList from './components/MedicalCardList'
 import CreateNote from './components/CreateNote'
+import OneNote from "./components/OneNote";
 import CreateTest from './components/CreateTest'
 import CreateLabel from './components/CreateLabel'
 import LabelsList from './components/LabelsList'
@@ -41,6 +42,8 @@ import Avatar from "./components/Avatar";
 import OneDoctor from "./components/OneDoctor";
 import CreatePill from "./components/CreatePill";
 import ChosePillsType from "./components/ChosePillsType";
+import ChosePill from "./components/ChosePill";
+import ChoseLabel from './components/ChoseLabel'
 
 
 import {createSwitchNavigator, createStackNavigator, createBottomTabNavigator, createMaterialTopTabNavigator} from 'react-navigation'
@@ -50,6 +53,7 @@ import {createSwitchNavigator, createStackNavigator, createBottomTabNavigator, c
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
 import {NOTES, TESTS, DOCTORS, PILLS} from './utils/textConstants'
 import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'
+
 
 
 // import firebase from 'react-native-firebase';
@@ -390,6 +394,11 @@ const MainNavStack = createStackNavigator({
     }
   },
 
+  OneNote: {
+    screen: OneNote,
+    navigationOptions: {}
+  },
+
   CreateTest: {
     screen: CreateTest,
     navigationOptions: {
@@ -435,6 +444,14 @@ const MainNavStack = createStackNavigator({
 
   ChosePillsType: {
     screen: ChosePillsType
+  },
+
+  ChosePill: {
+    screen: ChosePill
+  },
+
+  ChoseLabel: {
+    screen: ChoseLabel
   }
 
 

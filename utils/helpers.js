@@ -5,3 +5,78 @@ export function isIphone5() {
 
   return windowHeight === 568;
 }
+
+
+export function getCurrentDate() {
+  let today = new Date();
+  let dd = String(today.getDate()).padStart(2, '0');
+  let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  let yyyy = today.getFullYear();
+  today = `${dd}-${mm}-${yyyy}`;
+
+  return today;
+}
+
+
+export function convertObjToArr (obj){
+  const copyObj = JSON.parse(JSON.stringify(obj));
+  const objListKeys = Object.keys(copyObj);
+
+
+  // chosenNotesID.forEach((id) => {
+  //   notesArr.forEach((item) => {
+  //     if (item.id === id) {
+  //       item.checked = true;
+  //     }
+  //   })
+  // });
+
+  return objListKeys.map((item) => {
+    return copyObj[item];
+  });
+
+}
+
+export function addCheckFieldToArr(arr){
+  const copyArr = JSON.parse(JSON.stringify(arr));
+
+  return copyArr.map((item) => {
+    item.checked = false;
+    return item;
+  });
+}
+
+export function setChosenItemInArr(arr, chosenIdArr){
+  const copyArr = JSON.parse(JSON.stringify(arr));
+
+  chosenIdArr.forEach((id) => {
+    copyArr.forEach((item) => {
+      if (item.id === id) {
+        item.checked = true;
+      }
+    })
+  });
+
+  return copyArr;
+}
+
+export function setInverseChosenItemInArr(arr, id){
+  const copyArr = JSON.parse(JSON.stringify(arr));
+  //
+  // chosenIdArr.forEach((id) => {
+  //   copyArr.forEach((item) => {
+  //     if (item.id === id) {
+  //       item.checked = !item.checked;
+  //     }
+  //   })
+  // });
+
+
+  copyArr.forEach((item) => {
+    if (item.id === id) {
+      item.checked = !item.checked;
+    }
+  });
+
+  return copyArr;
+}

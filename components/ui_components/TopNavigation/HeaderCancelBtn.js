@@ -16,12 +16,17 @@ class HeaderCancelBtn extends Component{
 
     switch (this.props.navigation.state.routeName) {
       case 'ChoseDoctor':
-        this.props.dispatch(setChosenDoctors([]));
+        // this.props.dispatch(setChosenDoctors([]));
         this.props.navigation.goBack();
         break;
 
-      case 'LabelsList':
-        this.props.dispatch(saveChosenLabel([]));
+      case 'ChoseLabel':
+        // this.props.dispatch(saveChosenLabel([]));
+        this.props.navigation.goBack();
+        break;
+
+      case 'ChosePill':
+        // this.props.dispatch(saveChosenLabel([]));
         this.props.navigation.goBack();
         break;
 

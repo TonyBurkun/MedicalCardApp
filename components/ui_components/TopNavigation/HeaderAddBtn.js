@@ -8,7 +8,7 @@ import GroupButtonsTitle from "../GroupButtonsTitle";
 import {setChosenDoctorSpecializations} from '../../../actions/doctorSpecializations'
 import {setChosenDoctors} from "../../../actions/doctors";
 import {saveChosenLabel} from "../../../actions/labels";
-import {saveChosenPillsType} from "../../../actions/pills"
+import {saveChosenPillsType, setChosenPills} from "../../../actions/pills"
 
 
 
@@ -50,6 +50,11 @@ class HeaderAddBtn extends Component{
         this.props.dispatch(saveChosenPillsType(this.state.activeItemArr));
         break;
 
+      case 'chosenPills':
+        console.log('add Pills');
+        this.props.dispatch(setChosenPills(this.state.activeItemArr));
+        break;
+
       default:
         break;
     }
@@ -84,7 +89,7 @@ class HeaderAddBtn extends Component{
 
   }
 
-  componentWillReceiveProps(newProps){
+  async componentWillReceiveProps(newProps){
     //Component has to get param data as array. According to length of the Arr will be activated the button in the header navigation.
     const params = newProps.navigation.state.params;
 
@@ -97,7 +102,7 @@ class HeaderAddBtn extends Component{
       const activeBtn = params.chosenItemsID.length;
       const prevActiveBtn = params.prevData.length;
 
-      this.setState({
+      await this.setState({
         activeBtn: Boolean(activeBtn),
         prevActiveBtn: Boolean(prevActiveBtn),
         activeItemArr: params.chosenItemsID

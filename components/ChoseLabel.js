@@ -1,24 +1,20 @@
-import React, {Component} from 'react'
-import {FlatList, Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native'
-import {SafeAreaView, withNavigationFocus} from 'react-navigation'
+import React, {Component, Fragment} from 'react'
+import {View, Text, StyleSheet, TouchableHighlight, Image, FlatList} from 'react-native'
+import HeaderCancelBtn from "./ui_components/TopNavigation/HeaderCancelBtn";
+import * as Colors from "../utils/colors";
+import HeaderAddBtn from "./ui_components/TopNavigation/HeaderAddBtn";
+import {getLabelsForUser, removeLabelForCurrentUser} from "../utils/API";
+import {deleteLabel, setLabels} from "../actions/labels";
+import Swipeable from "react-native-swipeable";
+import OneLabel from "./ui_components/OneLabel";
+import {SafeAreaView} from "react-navigation";
+import InternetNotification from "./ui_components/InternetNotification";
 import {SearchBar} from "react-native-elements";
+import {NO_DATA_TO_SHOW} from "../utils/textConstants";
+import AddButton from "./ui_components/AddButton";
 import {connect} from 'react-redux'
 
-import * as Colors from '../utils/colors'
-import {NO_DATA_TO_SHOW} from '../utils/textConstants'
-import InternetNotification from '../components/ui_components/InternetNotification'
-import commonStyles from "../utils/commonStyles";
-import OneLabel from '../components/ui_components/OneLabel'
-import AddButton from '../components/ui_components/AddButton'
-
-import HeaderCancelBtn from './ui_components/TopNavigation/HeaderCancelBtn'
-import HeaderAddBtn from './ui_components/TopNavigation/HeaderAddBtn'
-import {getLabelsForUser, removeLabelForCurrentUser} from '../utils/API'
-import {deleteLabel, saveChosenLabel, setLabels} from '../actions/labels'
-import Swipeable from 'react-native-swipeable';
-
-
-class LabelsList extends Component{
+class ChoseLabel extends Component {
 
   constructor(props){
     super(props);
@@ -65,47 +61,32 @@ class LabelsList extends Component{
 
   };
 
-
   static navigationOptions = ({navigation}) => {
-
-    if (navigation.state.params && navigation.state.params.navType === 'showAddCancelBtn') {
-      return {
-        headerLeft: () => {
-          return (
-            <HeaderCancelBtn/>
-          )
-        },
-        headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Метки</Text>,
-        headerTintColor: Colors.GRAY_TEXT,
-        headerStyle: {
-          backgroundColor: Colors.WHITE,
-          elevation: 0,
-          shadowOpacity: 0,
-          borderBottomWidth: 0
-
-        },
-        headerRight: (
-          <HeaderAddBtn type={'chosenLabels'}/>
+    return {
+      headerLeft: () => {
+        return (
+          <HeaderCancelBtn/>
         )
-      }
-    } else {
-      return {
-        headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Метки</Text>,
-        headerTintColor: Colors.GRAY_TEXT,
-        headerStyle: {
-          backgroundColor: Colors.WHITE,
-          elevation: 0,
-          shadowOpacity: 0,
-          borderBottomWidth: 0
+      },
+      headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Метки</Text>,
+      headerTintColor: Colors.GRAY_TEXT,
+      headerStyle: {
+        backgroundColor: Colors.WHITE,
+        elevation: 0,
+        shadowOpacity: 0,
+        borderBottomWidth: 0
 
-        }
-      }
+      },
+      headerRight: (
+        <HeaderAddBtn type={'chosenLabels'}/>
+      )
     }
   };
 
+
   componentDidMount(){
 
-   getLabelsForUser()
+    getLabelsForUser()
       .then(data => {
         console.log(data);
         this.props.dispatch(setLabels(data));
@@ -120,7 +101,6 @@ class LabelsList extends Component{
       });
 
   }
-
 
   componentWillReceiveProps(nextProps) {
 
@@ -157,12 +137,8 @@ class LabelsList extends Component{
       }
 
     }
-
-
-
-
-
   }
+
 
   updateSearch = (search) => {
 
@@ -204,7 +180,7 @@ class LabelsList extends Component{
   };
 
   handleChoosingLabel = (labelID, hasCheckBox) => {
-    console.log('tab on label');
+    console.log('!!!!!');
 
 
     if (hasCheckBox){
@@ -251,7 +227,7 @@ class LabelsList extends Component{
         chosenLabelsID: newChosenLabelsID
       });
 
-      this.props.navigation.navigate('LabelsList',{type: 'AddItemsWithBack', chosenItemsID: newChosenLabelsID, prevData: prevChosenLabels});
+      this.props.navigation.navigate('ChoseLabel',{type: 'AddItemsWithBack', chosenItemsID: newChosenLabelsID, prevData: prevChosenLabels});
     } else {
       this.props.navigation.navigate('CreateLabel', {labelID: labelID});
     }
@@ -329,7 +305,7 @@ class LabelsList extends Component{
                    rightButtonWidth={56}
                    onSwipeStart={() => { this._closeAllSwipes()}}
         >
-          <OneLabel  key={item.id} labelData={item} hasCheckBox={false}  handleChoosingLabel = {this.handleChoosingLabel}/>
+          <OneLabel  key={item.id} labelData={item} hasCheckBox={true}  handleChoosingLabel = {this.handleChoosingLabel}/>
         </Swipeable>
       )
     }
@@ -338,8 +314,6 @@ class LabelsList extends Component{
   handlePressAddButton = () => {
     this.props.navigation.navigate('CreateLabel');
   };
-
-
 
 
   render() {
@@ -373,28 +347,28 @@ class LabelsList extends Component{
           inputContainerStyle={{borderRadius: 10, backgroundColor: 'rgba(142, 142, 147, 0.12)'}}
           inputStyle={{borderRadius: 10, color: '#8E8E93', fontSize: 14}}
         />
-       <View style={{marginTop: 16, paddingRight: 16, marginBottom: 60}}>
-         {isLabelsLoaded ? (
-           <FlatList
-             keyExtractor={(item, index) => index.toString()}
-             data={searchDataList}
-             renderItem={this.renderFlatListItem}
-           />
-           ) : (
-           <View style={{flex: 1, marginTop: '20%', alignItems: 'center', fontSize: 16}}>
+        <View style={{marginTop: 16, paddingRight: 16}}>
+          {isLabelsLoaded ? (
+            <FlatList
+              keyExtractor={(item, index) => index.toString()}
+              data={searchDataList}
+              renderItem={this.renderFlatListItem}
+            />
+          ) : (
+            <View style={{flex: 1, marginTop: '20%', alignItems: 'center', fontSize: 16}}>
               <Text>{NO_DATA_TO_SHOW}</Text>
-           </View>
-         )
+            </View>
+          )
 
-         }
-       </View>
-
+          }
+        </View>
 
         <AddButton handlePress={this.handlePressAddButton}/>
 
       </SafeAreaView>
     )
   }
+
 }
 
 function mapStateToProps(state) {
@@ -408,7 +382,7 @@ function mapStateToProps(state) {
 
 }
 
-export default withNavigationFocus(connect(mapStateToProps)(LabelsList)) ;
+export default connect(mapStateToProps)(ChoseLabel)
 
 const styles = StyleSheet.create({
   container: {

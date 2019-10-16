@@ -110,8 +110,6 @@ class ChoseDoctor extends Component{
       });
 
 
-    console.log(this.state);
-
 
   }
 
@@ -121,8 +119,8 @@ class ChoseDoctor extends Component{
     const nextDoctorsList = nextProps.doctorsList;
     const {doctorsListOrigin} = this.state;
 
-    console.log(nextDoctorsList);
-    console.log(doctorsListOrigin);
+    // console.log(nextDoctorsList);
+    // console.log(doctorsListOrigin);
 
     if (Object.keys(nextDoctorsList).length !== doctorsListOrigin.length) {
       const chosenDoctorsID = nextProps.chosenDoctorsID;
@@ -206,12 +204,14 @@ class ChoseDoctor extends Component{
 
       const prevChosenDoctors = this.props.chosenDoctorsID;
 
+      console.log(newDoctorsList);
+
       this.setState({
         doctorsList: newDoctorsList,
         doctorsListOrigin: newDoctorsListOrigin,
         chosenDoctorsID: newChosenDoctorsID,
       });
-      console.log(newChosenDoctorsID);
+      console.log(this.state);
 
       // this.props.dispatch(setChosenDoctors(newChosenDoctorsID));
       this.props.navigation.navigate('ChoseDoctor',{type: 'AddItemsWithBack', chosenItemsID: newChosenDoctorsID, prevData: prevChosenDoctors});

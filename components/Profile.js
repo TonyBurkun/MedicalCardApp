@@ -46,8 +46,8 @@ class Profile extends Component{
 
 
   handlePressLabelBtn = () => {
-    // this.props.navigation.navigate('LabelsList');
-    this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
+    this.props.navigation.navigate('LabelsList');
+    // this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
   };
 
   handleLogOut = () => {

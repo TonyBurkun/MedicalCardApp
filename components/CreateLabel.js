@@ -198,7 +198,7 @@ class CreateLabel extends Component{
 
       createNewLabel(label);
       this.props.dispatch(addLabel(label));
-      this.props.navigation.navigate('LabelsList');
+      this.props.navigation.goBack();
     }
 
 
@@ -224,7 +224,7 @@ class CreateLabel extends Component{
       <SafeAreaView style={styles.container}>
         <InternetNotification topDimension={0}/>
 
-       <ScrollView>
+       <ScrollView contentContainerStyle={{flexGrow: 1}}>
          <View style={{marginTop: 16}}>
            <FloatingLabelInput
              label="Название метки"
@@ -235,33 +235,35 @@ class CreateLabel extends Component{
            />
          </View>
          <View style={commonStyles.container}>
-           <GroupButtonsTitle title={'ЦВЕТ МЕТКИ'}/>
-           <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between'}}>
-             { colors.length &&
-             colors.map((item, index) => {
-               return (
-                 <TouchableOpacity
-                   key={index}
-                   style={[styles.colorItem, {backgroundColor: item.value}]}
-                   onPress={() => {this.handlePressOnColor(index)}}>
+           <View>
+             <GroupButtonsTitle title={'ЦВЕТ МЕТКИ'}/>
+             <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between'}}>
+               { colors.length &&
+               colors.map((item, index) => {
+                 return (
+                   <TouchableOpacity
+                     key={index}
+                     style={[styles.colorItem, {backgroundColor: item.value}]}
+                     onPress={() => {this.handlePressOnColor(index)}}>
 
-                   {item.checked &&
-                   <Image
-                     source={require('../assets/general/check-circle.png')}
-                     style={{alignSelf: 'center',  width: 32, height: 32}}
-                   />
-                   }
+                     {item.checked &&
+                     <Image
+                       source={require('../assets/general/check-circle.png')}
+                       style={{alignSelf: 'center',  width: 32, height: 32}}
+                     />
+                     }
 
 
-                 </TouchableOpacity>
-               )
-             })
-             }
+                   </TouchableOpacity>
+                 )
+               })
+               }
+             </View>
            </View>
            <TouchableOpacity
              disabled={!isEnabled}
              onPress={this.handleCreateLabel}
-             style={ isEnabled ? [commonStyles.submitBtn, {marginTop: 80}] : [commonStyles.submitBtn, commonStyles.disabledSubmitBtn, {marginTop: 80} ]}
+             style={ isEnabled ? [commonStyles.submitBtn, {marginTop: 20}] : [commonStyles.submitBtn, commonStyles.disabledSubmitBtn, {marginTop: 20} ]}
            >
              <Text
                style={ isEnabled ? [commonStyles.submitBtnText] : [commonStyles.submitBtnText, commonStyles.disabledSubmitBtnText]}

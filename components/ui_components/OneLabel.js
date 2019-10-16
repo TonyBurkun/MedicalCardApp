@@ -24,6 +24,7 @@ class OneLabel extends Component{
           style={[styles.labelBody, {backgroundColor: labelData.color, position: 'relative'}, !hasCheckBox ? {paddingLeft: 18} : {paddingLeft: 38} ]}>
           {hasCheckBox &&
           <CheckBox
+            onPress={() => {this.props.handleChoosingLabel(labelData.id, hasCheckBox)}}
             checked={labelData.checked}
             iconType='material-community'
             checkedIcon='check-circle'

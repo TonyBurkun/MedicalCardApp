@@ -17,6 +17,7 @@ import PhoneLabelInput from "./ui_components/InputField/PhoneLabelInput";
 import SubmitButton from './ui_components/Buttons/SubmitButton'
 import {isIphone5} from "../utils/helpers";
 import {saveChosenPillsType} from "../actions/pills";
+import {BooleanLiteral} from "@babel/types";
 
 
 
@@ -56,24 +57,19 @@ class CreateDoctor extends Component{
     }
   };
 
-  componentWillReceiveProps(newProps) {
-    const {isFormEdit} = this.state;
+    componentDidMount(){
+    console.log('DID MOUNT START');
 
-    this.setState({
-      formField: {
-        ...this.state.formField,
-        specializations: newProps.chosenDoctorSpecializations
-      }
-    });
+    const {isFormEdit} = this.state;
 
     if (isFormEdit) {
       const id = this.props.navigation.state.params.doctorID;
       const editedDoctor = this.props.doctorsList[id];
 
-
-      this.setState({
+       this.setState({
         ...this.state,
         formField: {
+          ...this.state.formField,
           firstName: editedDoctor.firstName,
           lastName: editedDoctor.lastName,
           specializations: editedDoctor.specializations,
@@ -81,13 +77,31 @@ class CreateDoctor extends Component{
           cellPhone: editedDoctor.cellPhone,
           addCellPhone: editedDoctor.addCellPhone,
           rating: editedDoctor.rating
-
         }
       });
 
+
       this.props.dispatch(setChosenDoctorSpecializations(editedDoctor.specializations));
     }
+
+    console.log('DID MOUNT FINISH');
+
   }
+
+   componentDidUpdate(prevProps, prevState){
+
+     if (prevProps.chosenDoctorSpecializations !== this.props.chosenDoctorSpecializations) {
+        this.setState({
+         ...this.state,
+         formField: {
+           ...this.state.formField,
+           specializations: this.props.chosenDoctorSpecializations
+         }
+       });
+     }
+
+  }
+
 
   componentWillMount(){
     this.props.dispatch(setChosenDoctorSpecializations([]));
