@@ -36,6 +36,10 @@ A basic react native app with [`react-native-firebase`](https://github.com/inver
 `npm start` could not be run correctly because node_modules can contain duplicate path to the react-native module.
 **[ANSWER]** Need to remove `react-native` folder from `node_modules/react-native-twitter-signin/node-modules`
 
+Appear the error 'FBSDKShareKit/FBSDKShareKit.h' file not found.
+
+**[ANSWER]** Change the path in Libraries>RCTFBSDK.xcodeproj and then on the Build settings searched for Framework Search path, and then change ~/Documents/FacebookSDK to $(HOME)/Documents/FacebookSDK
+
 ### License
 
 - See [LICENSE](/LICENSE)
