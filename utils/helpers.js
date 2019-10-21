@@ -1,4 +1,6 @@
 import {Dimensions} from 'react-native'
+import {getNotesListByCurrentUser, updateChosenNote} from "./API";
+import {updateNote} from "../actions/notes";
 
 export function isIphone5() {
   const windowHeight = Dimensions.get('window').height;
@@ -21,15 +23,6 @@ export function getCurrentDate() {
 export function convertObjToArr (obj){
   const copyObj = JSON.parse(JSON.stringify(obj));
   const objListKeys = Object.keys(copyObj);
-
-
-  // chosenNotesID.forEach((id) => {
-  //   notesArr.forEach((item) => {
-  //     if (item.id === id) {
-  //       item.checked = true;
-  //     }
-  //   })
-  // });
 
   return objListKeys.map((item) => {
     return copyObj[item];
@@ -62,15 +55,6 @@ export function setChosenItemInArr(arr, chosenIdArr){
 
 export function setInverseChosenItemInArr(arr, id){
   const copyArr = JSON.parse(JSON.stringify(arr));
-  //
-  // chosenIdArr.forEach((id) => {
-  //   copyArr.forEach((item) => {
-  //     if (item.id === id) {
-  //       item.checked = !item.checked;
-  //     }
-  //   })
-  // });
-
 
   copyArr.forEach((item) => {
     if (item.id === id) {

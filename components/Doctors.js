@@ -6,9 +6,15 @@ import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import InternetNotification from "./ui_components/InternetNotification";
 import * as Colors from "../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import {isIphone5} from '../utils/helpers'
+import {convertObjToArr, isIphone5} from '../utils/helpers'
 
-import {getDoctorsList, getDoctorSpecializations, getUIDfromFireBase, deleteDoctorByID} from '../utils/API';
+import {
+  getDoctorsList,
+  getDoctorSpecializations,
+  getUIDfromFireBase,
+  deleteDoctorByID,
+  getNotesListByCurrentUser, updateChosenNote
+} from '../utils/API';
 import {setDoctors, deleteDoctor} from '../actions/doctors'
 import Swipeable from "react-native-swipeable";
 import OneDoctorList from "./ui_components/ListItems/OneDoctorList";
@@ -17,6 +23,7 @@ import CustomButtonGroup from "./ui_components/Buttons/CustomButtonGroup";
 import HeaderCancelBtn from "./ui_components/TopNavigation/HeaderCancelBtn";
 import HeaderAddBtn from "./ui_components/TopNavigation/HeaderAddBtn";
 import {NO_DATA_TO_SHOW} from "../utils/textConstants";
+import {updateNote} from "../actions/notes";
 
 
 class Doctors extends Component{
@@ -149,34 +156,26 @@ class Doctors extends Component{
             doctorsListOrigin: newDoctorsList,
             isLoaded: newDoctorsList.length,
             showList: newDoctorsList.length,
-          })
+          });
+
+          // Remove the deleted DOCTOR from the all Notes where he was added ----
+          getNotesListByCurrentUser()
+            .then(data => {
+              const doctorID = item.id;
+              const notesListArr = convertObjToArr(data);
+              notesListArr.forEach((item) => {
+                if (item.doctors) {
+                  let doctorsArr = item.doctors;
+                  let searchResult = doctorsArr.indexOf(doctorID);
+                  if (searchResult !== -1) {
+                    doctorsArr.splice(searchResult, 1);
+                    updateChosenNote(item.id, item);
+                    this.props.dispatch(updateNote(item));
+                  }
+                }
+              })
+            })
         });
-
-
-
-      // if (item.checked) {
-      //   const {chosenLabelsID} = this.state;
-      //
-      //   chosenLabelsID.forEach((id, index) => {
-      //     if (id === item.id) {
-      //       chosenLabelsID.splice(index, 1);
-      //     }
-      //   });
-      //
-      //   this.setState({
-      //     chosenLabelsID
-      //   })
-      // }
-      //
-      // removeLabelForCurrentUser(item.id)
-      //   .then(() => {
-      //     this.props.dispatch(deleteLabel(item.id));
-      //   });
-      //
-      // this.props.navigation.setParams({
-      //   chosenLabelsID: this.state.chosenLabelsID
-      // });
-
     };
 
     let rightButtons = null;

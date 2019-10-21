@@ -190,6 +190,8 @@ class Notes extends Component{
       })
     }
 
+    console.log(newNotesListArr);
+
 
     this.setState({
       notesList: newNotesListArr,
@@ -339,7 +341,7 @@ class Notes extends Component{
           <Fragment>
             {showList ? (
               <Fragment>
-                {labelsList.length &&
+                {labelsList.length > 0 &&
                   <View style={{marginTop: 12}}>
                     <FlatList
                       horizontal={true}

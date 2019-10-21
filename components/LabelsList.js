@@ -13,9 +13,11 @@ import AddButton from '../components/ui_components/AddButton'
 
 import HeaderCancelBtn from './ui_components/TopNavigation/HeaderCancelBtn'
 import HeaderAddBtn from './ui_components/TopNavigation/HeaderAddBtn'
-import {getLabelsForUser, removeLabelForCurrentUser} from '../utils/API'
+import {getLabelsForUser, getNotesListByCurrentUser, removeLabelForCurrentUser, updateChosenNote} from '../utils/API'
 import {deleteLabel, saveChosenLabel, setLabels} from '../actions/labels'
 import Swipeable from 'react-native-swipeable';
+import {convertObjToArr} from "../utils/helpers";
+import {updateNote} from "../actions/notes";
 
 
 class LabelsList extends Component{
@@ -283,9 +285,29 @@ class LabelsList extends Component{
         })
       }
 
+
       removeLabelForCurrentUser(item.id)
         .then(() => {
           this.props.dispatch(deleteLabel(item.id));
+
+          // Remove the deleted LABEL from the all Notes where it was added ----
+          getNotesListByCurrentUser()
+            .then(data => {
+              const labelID = item.id;
+              const notesListArr = convertObjToArr(data);
+              notesListArr.forEach((item) => {
+                if (item.labels) {
+                  let labelsArr = item.labels;
+                  let searchResult = labelsArr.indexOf(labelID);
+                  if (searchResult !== -1) {
+                    labelsArr.splice(searchResult, 1);
+                    updateChosenNote(item.id, item);
+                    this.props.dispatch(updateNote(item));
+                  }
+                }
+              })
+
+            })
         });
 
       this.props.navigation.setParams({

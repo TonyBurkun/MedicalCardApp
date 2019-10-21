@@ -3,6 +3,8 @@ import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {ACCOUNT_NOT_FOUND, LOGIN_FAILED, EMAIL_CONFIRMATION, SUBMIT_RECOVERY_PASS} from '../utils/systemMessages'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
+import {convertObjToArr} from "./helpers";
+import {updateNote} from "../actions/notes";
 
 
 
@@ -384,8 +386,29 @@ export  function updateUserLabel(labelID, labelData) {
 export async function removeLabelForCurrentUser(labelID){
   const uid = getUIDfromFireBase();
 
-  let key = labelID;
-  await firebase.database().ref(`labels/${uid}/${key}`).remove();
+  await firebase.database().ref(`labels/${uid}/${labelID}`).remove();
+
+  // getNotesListByCurrentUser()
+  //   .then(data => {
+  //     console.log(data);
+  //     const notesListArr = convertObjToArr(data);
+  //     notesListArr.forEach((item, index) => {
+  //       if (item.labels) {
+  //         let labelsArr = item.labels;
+  //         let searchResult = labelsArr.indexOf(labelID);
+  //         if (searchResult !== -1) {
+  //           labelsArr.splice(searchResult, 1);
+  //           updateChosenNote(item.id, item);
+  //           console.log(item);
+  //           this.props.dispatch(updateNote(item));
+  //
+  //         }
+  //
+  //
+  //       }
+  //     })
+  //
+  //   })
 }
 
 

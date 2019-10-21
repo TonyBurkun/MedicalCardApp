@@ -5,15 +5,15 @@ import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import InternetNotification from "./ui_components/InternetNotification";
 import * as Colors from "../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import {isIphone5} from "../utils/helpers";
+import {convertObjToArr, isIphone5} from "../utils/helpers";
 import {
   checkRelationsImgToPills,
   deleteDoctorByID, deletePillByID, getAppPillsList,
   getDoctorsList,
-  getDoctorSpecializations,
+  getDoctorSpecializations, getNotesListByCurrentUser,
   getPillsList,
   getPillsType,
-  getUIDfromFireBase, removePillImages, removeRelationImgToPill
+  getUIDfromFireBase, removePillImages, removeRelationImgToPill, updateChosenNote
 } from "../utils/API";
 import {deleteDoctor, setDoctors} from "../actions/doctors";
 import {setDoctorSpecializations} from "../actions/doctorSpecializations";
@@ -24,6 +24,7 @@ import {NO_DATA_TO_SHOW} from "../utils/textConstants";
 import Swipeable from "react-native-swipeable";
 import OneDoctorList from "./ui_components/ListItems/OneDoctorList";
 import OnePillList from "./ui_components/ListItems/OnePillList";
+import {updateNote} from "../actions/notes";
 
 
 class Pills extends Component{
@@ -198,6 +199,24 @@ class Pills extends Component{
           })
         });
 
+      // Remove the deleted PILL from the all Notes where it was added ----
+      getNotesListByCurrentUser()
+        .then(data => {
+          const pillID = item.id;
+          const notesListArr = convertObjToArr(data);
+          notesListArr.forEach((item) => {
+            if (item.pills) {
+              let pillsArr = item.pills;
+              let searchResult = pillsArr.indexOf(pillID);
+              if (searchResult !== -1) {
+                pillsArr.splice(searchResult, 1);
+                updateChosenNote(item.id, item);
+                this.props.dispatch(updateNote(item));
+              }
+            }
+          })
+
+        })
     };
 
     let rightButtons = null;
@@ -314,7 +333,7 @@ class Pills extends Component{
 
     const uid = getUIDfromFireBase();
 
-    const buttons = ['Все препараты', 'Созданные'];
+    const buttons = ['Популярные', 'Созданные'];
 
     let {isLoaded, pillsList, search} = this.state;
     const { selectedIndex } = this.state;
