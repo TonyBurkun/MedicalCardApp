@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   groupButtonsTitle: {
     fontSize: 12,
     color: Colors.TABLE_TITLE,
-    marginBottom: 7.32,
+    marginBottom: 8,
     fontWeight: 'bold',
 
   }

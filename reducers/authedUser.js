@@ -1,4 +1,4 @@
-import {GET_AUTHED_USER, SET_AUTHED_USER_ID} from '../actions/authedUser'
+import {GET_AUTHED_USER, SET_AUTHED_USER_ID, UPDATE_CURRENT_USER_DATA} from '../actions/authedUser'
 
 const initialState = {
   currentUserUID: '',
@@ -17,6 +17,12 @@ function authedUser (state = initialState, action) {
       return {
         ...state,
         currentUserUID: action.id
+      };
+
+    case UPDATE_CURRENT_USER_DATA:
+      return {
+        ...state,
+        currentUserData: action.currentUserData
       };
 
     default:

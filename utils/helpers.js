@@ -64,3 +64,13 @@ export function setInverseChosenItemInArr(arr, id){
 
   return copyArr;
 }
+
+export function updateUserDataFields(newUserFieldsObj, prevUserFieldsObj){
+  for (let key in newUserFieldsObj) {
+    if (newUserFieldsObj.hasOwnProperty(key)) {
+      prevUserFieldsObj[key] = newUserFieldsObj[key]
+    }
+  }
+
+  return  prevUserFieldsObj;
+}

@@ -15,15 +15,29 @@ class SelectList extends Component{
   constructor(props) {
     super(props);
 
+
     this.state = {
       selectedOption: '',
     }
+  }
+
+  componentDidMount(){
+    const {defaultVal} = this.props;
+
+    this.setState({
+      selectedOption: defaultVal
+    })
   }
 
 
   render(){
 
     const {updateSelectVal, selectTitle, selectVal, options, initValIndex} = this.props;
+    console.log(this.state);
+    console.log(selectTitle);
+    console.log(selectVal);
+    console.log(initValIndex);
+
 
     if (Platform.OS === 'android') {
 
@@ -73,7 +87,7 @@ class SelectList extends Component{
           onPress={() => {this.refs.picker.show()}}
           style={[commonStyles.btn, commonStyles.selectBtn]}
         >
-          <Text style={[commonStyles.btn__text, commonStyles.selectBtn__text]}>{this.state.selectedOption || selectTitle}</Text>
+          <Text style={[commonStyles.btn__text, commonStyles.selectBtn__text, {fontSize: 16}, this.state.selectedOption? {color: Colors.MAIN_GREEN, fontWeight: 'bold'} : {color: Colors.GRAY_TEXT}]}>{this.state.selectedOption || selectTitle}</Text>
           <View style={[styles.triangle, commonStyles.selectBtn__caret]} />
         </TouchableOpacity>
         <SimplePicker
@@ -106,7 +120,8 @@ SelectList.propTypes = {
 
 SelectList.defaultProps = {
   selectTitle: 'Выберать значение',
-  options: ['option1', 'option2']
+  options: ['option1', 'option2'],
+  defaultValue: ''
 };
 
 

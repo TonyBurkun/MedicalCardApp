@@ -15,14 +15,11 @@ import {
   getPillsType,
   getUIDfromFireBase, removePillImages, removeRelationImgToPill, updateChosenNote
 } from "../utils/API";
-import {deleteDoctor, setDoctors} from "../actions/doctors";
-import {setDoctorSpecializations} from "../actions/doctorSpecializations";
 import {deletePill, setPills, setPillsTypeList} from "../actions/pills";
 import {SearchBar} from "react-native-elements";
 import CustomButtonGroup from "./ui_components/Buttons/CustomButtonGroup";
 import {NO_DATA_TO_SHOW} from "../utils/textConstants";
 import Swipeable from "react-native-swipeable";
-import OneDoctorList from "./ui_components/ListItems/OneDoctorList";
 import OnePillList from "./ui_components/ListItems/OnePillList";
 import {updateNote} from "../actions/notes";
 

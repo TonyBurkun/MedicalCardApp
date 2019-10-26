@@ -1,10 +1,8 @@
 import firebase from 'react-native-firebase'
 import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import {ACCOUNT_NOT_FOUND, LOGIN_FAILED, EMAIL_CONFIRMATION, SUBMIT_RECOVERY_PASS} from '../utils/systemMessages'
+import {EMAIL_CONFIRMATION, SUBMIT_RECOVERY_PASS} from '../utils/systemMessages'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
-import {convertObjToArr} from "./helpers";
-import {updateNote} from "../actions/notes";
 
 
 
@@ -50,24 +48,6 @@ export function sentVerificationEmail() {
       console.log('Error happened in sent Verification Email process: ', error);
     });
 }
-
-// export function writeUserDataToDB (uid, email, fname = '',lname= '', displayName='', photoURL =''){
-//   uid = uid || getUIDfromFireBase();
-//   email = email || ''; //for some reason the email is not added to firebase without this line
-//   firebase.database().ref('Users/' + uid).set({
-//     email,
-//     fname,
-//     lname,
-//     displayName,
-//     photoURL,
-//     setUpProfile: false
-//   }).then((data)=>{
-//     //success callback
-//   }).catch((error)=>{
-//     //error callback
-//     console.log('error ' , error)
-//   })
-// }
 
 export function createUserbyIDinDB (){
   const uid = getUIDfromFireBase();
@@ -388,27 +368,6 @@ export async function removeLabelForCurrentUser(labelID){
 
   await firebase.database().ref(`labels/${uid}/${labelID}`).remove();
 
-  // getNotesListByCurrentUser()
-  //   .then(data => {
-  //     console.log(data);
-  //     const notesListArr = convertObjToArr(data);
-  //     notesListArr.forEach((item, index) => {
-  //       if (item.labels) {
-  //         let labelsArr = item.labels;
-  //         let searchResult = labelsArr.indexOf(labelID);
-  //         if (searchResult !== -1) {
-  //           labelsArr.splice(searchResult, 1);
-  //           updateChosenNote(item.id, item);
-  //           console.log(item);
-  //           this.props.dispatch(updateNote(item));
-  //
-  //         }
-  //
-  //
-  //       }
-  //     })
-  //
-  //   })
 }
 
 

@@ -36,20 +36,21 @@ import ChoseDoctor from "./components/ChoseDoctor";
 import ChoseDoctorSpecializations from "./components/ChoseDoctorSpecializations";
 import Pills from './components/Pills'
 import MainNavigationButton from './components/ui_components/MainNavigationButton'
-import Profile from './components/Profile'
+import Profile from './components/profile/Profile'
+import ProfileData from "./components/profile/ProfileData";
 import CalendarIcon from "./components/ui_components/CalendarIcon";
 import Avatar from "./components/Avatar";
 import OneDoctor from "./components/OneDoctor";
 import CreatePill from "./components/CreatePill";
 import ChosePillsType from "./components/ChosePillsType";
 import ChosePill from "./components/ChosePill";
+
+
 import ChoseLabel from './components/ChoseLabel'
 
 
+
 import {createSwitchNavigator, createStackNavigator, createBottomTabNavigator, createMaterialTopTabNavigator} from 'react-navigation'
-
-
-
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
 import {NOTES, TESTS, DOCTORS, PILLS} from './utils/textConstants'
 import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'
@@ -177,7 +178,7 @@ const Tabs =
 
 
 
-class App extends React.Component {
+class  App extends React.Component {
   constructor() {
     super();
     this.state = {};
@@ -380,7 +381,10 @@ const MainNavStack = createStackNavigator({
           () => <Text style={{flex: 1, fontSize: 30, color: Colors.BLACK_TITLE, fontWeight: 'bold'}}>{tabTitle}</Text>
         ),
         headerRight: (
-          <Avatar/>
+         <View
+          style={{marginRight: 10}}>
+           <Avatar/>
+         </View>
         ),
         headerStyle: commonStyles.topHeader,
       }
@@ -412,6 +416,11 @@ const MainNavStack = createStackNavigator({
     navigationOptions: {
       // header: null
     }
+  },
+
+  ProfileData: {
+    screen: ProfileData,
+    navigationOptions: {}
   },
 
   CreateLabel: {

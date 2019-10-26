@@ -12,7 +12,7 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native'
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
+import RadioButtons from "./ui_components/Buttons/RadioButtons";
 import { SafeAreaView } from 'react-navigation'
 import * as Colors from '../utils/colors'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -41,7 +41,7 @@ const {height} = Dimensions.get('window');
 
 
 const radio_props = [
-  {label: 'Я согласен с Политикой Конфиденциальности', value: 1},
+  {text: 'Я согласен с Политикой Конфиденциальности', key: true},
 
 ];
 
@@ -57,7 +57,7 @@ class Registration extends Component {
         email: '',
         password: '',
         confirmPassword: '',
-        privacyPolicy: 0
+        privacyPolicy: ''
       },
       screenHeight: statusBarHeight + bottomSpace,
     };
@@ -66,6 +66,15 @@ class Registration extends Component {
 
   static navigationOptions = {
     title: 'Registration',
+  };
+
+  updateRadioBtnState = (key) => {
+    this.setState({
+      formField: {
+        ...this.state.formField,
+        privacyPolicy: key
+      }
+    })
   };
 
   handleSubmitRegistration = () => {
@@ -148,7 +157,7 @@ class Registration extends Component {
 
     const scrollEnabled = this.state.screenHeight > height;
     const {email, password, confirmPassword, privacyPolicy} = this.state.formField;
-    const isEnabled = email.length > 0 && password.length > 0 && confirmPassword.length >0 && privacyPolicy;
+    const isEnabled = email.length > 0 && password.length > 0 && confirmPassword.length >0;
 
     return (
       <SafeAreaView style={commonStyles.container}>
@@ -219,29 +228,11 @@ class Registration extends Component {
               />
               <Text>{validationChecker.getErrorsInField('confirmPassword')}</Text>
 
-             <View
-              style={{marginTop: 15, marginBottom: 25}}>
-               <RadioForm
-                 initial={-1}
-                 radio_props={radio_props}
-                 buttonColor={Colors.GRAY_TEXT}
-                 labelColor={Colors.GRAY_TEXT}
-                 selectedButtonColor={Colors.MAIN_GREEN}
-                 selectedLabelColor={Colors.MAIN_GREEN}
-                 labelStyle={{fontSize: 14}}
-                 formHorizontal={true}
-                 buttonSize={10}
-                 buttonOuterSize={20}
-                 onPress={(value) => {
-                   this.setState({
-                     formField: {
-                       ...this.state.formField,
-                       privacyPolicy: value
-                     }
-                   })
-                 }}
-               />
-             </View>
+
+              {/*<View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 15, marginBottom: 25}}>*/}
+              {/*  <RadioButtons options={radio_props} updateRadioBtnState={this.updateRadioBtnState}/>*/}
+              {/*</View>*/}
+
 
               <TouchableOpacity
                 disabled={!isEnabled}

@@ -1,15 +1,17 @@
 import React, { Component } from 'react'
-import {View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions} from 'react-native'
-import { SafeAreaView, withNavigation } from 'react-navigation'
-import * as Colors from '../utils/colors'
+import {View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, ActivityIndicator} from 'react-native'
+import {Image} from 'react-native-elements'
+import { SafeAreaView, withNavigation, withNavigationFocus } from 'react-navigation'
+import * as Colors from '../../utils/colors'
 import {connect} from 'react-redux'
 
-import InternetNotification from '../components/ui_components/InternetNotification'
-import commonStyles from "../utils/commonStyles";
-import ProfileListBtn from '../components/ui_components/ProfileListBtn'
-import GroupButtonsTitle from '../components/ui_components/GroupButtonsTitle'
-import {signOut} from "../utils/API";
-import {getBottomSpace, getStatusBarHeight} from "react-native-iphone-x-helper";
+import InternetNotification from '../ui_components/InternetNotification'
+import commonStyles from "../../utils/commonStyles";
+import ProfileListBtn from '../ui_components/ProfileListBtn'
+import GroupButtonsTitle from '../ui_components/GroupButtonsTitle'
+import {signOut} from "../../utils/API";
+import {getBottomSpace, getStatusBarHeight} from "react-native-iphone-x-helper/index";
+import {updateCurrentUserData} from "../../actions/authedUser";
 
 const {height} = Dimensions.get('window');
 
@@ -52,6 +54,7 @@ class Profile extends Component{
 
   handleLogOut = () => {
     const {navigation} = this.props;
+    this.props.dispatch(updateCurrentUserData({}));
     signOut(navigation);
   };
 
@@ -66,8 +69,12 @@ class Profile extends Component{
 
   render() {
     const scrollEnabled = this.state.screenHeight > height;
+    const {currentUserData} = this.props;
+    const name = currentUserData.name || '';
+    const surname = currentUserData.surname || '';
 
     console.log(this.state);
+    console.log(this.props);
 
     let image = this.props.currentUserPhotoURL;
 
@@ -81,15 +88,19 @@ class Profile extends Component{
               <Image
                 style={styles.headerAvatar}
                 source={{uri: image + '?width=100&height=100'}}
+                resizeMode='cover'
+                PlaceholderContent={<ActivityIndicator />}
               />
             </View>
             <View style={styles.nameBlockWrapper}>
-              <Text style={styles.nameText}>Иван Петрович</Text>
+              <Text style={styles.nameText}>{`${name} ${surname}`}</Text>
               <Text style={styles.profileText}>АКТИВНЫЙ ПРОФИЛЬ</Text>
             </View>
           </View>
           <View style={styles.btnBlockWrapper}>
-            <TouchableOpacity style={styles.transparentBtn}>
+            <TouchableOpacity
+              onPress={()=>{this.props.navigation.navigate('ProfileData', {username: `${name} ${surname}`,})}}
+              style={styles.transparentBtn}>
               <Text style={styles.transparentBtn__label}>ДАННЫЕ</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.transparentBtn}>
@@ -125,11 +136,12 @@ function mapStateToProps(state) {
   const {currentUserUID, currentUserData} = state.authedUser;
   const {avatarURL} = currentUserData;
   return {
-    currentUserPhotoURL: avatarURL || ''
+    currentUserPhotoURL: avatarURL || '',
+    currentUserData: currentUserData,
   }
 }
 
-export default withNavigation(connect(mapStateToProps)(Profile));
+export default withNavigationFocus(connect(mapStateToProps)(Profile));
 
 const styles = StyleSheet.create({
   container: {

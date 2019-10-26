@@ -18,15 +18,14 @@ import commonStyles from '../utils/commonStyles'
 import {signOut, getUIDfromFireBase, readUserData, writeUserDataToDB, updateCurrentUserInDB, updateUserData, saveUserAvatarToStorage} from '../utils/API'
 import validationChecker from '../utils/validationChecker'
 import DatePicker from 'react-native-datepicker'
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import { getStatusBarHeight, getBottomSpace } from 'react-native-iphone-x-helper'
-
 import StepScreenTitle from './ui_components/StepScreenTitle'
 import ScreenTitle from './ui_components/ScreenTitle'
 
 import firebase from 'react-native-firebase'
 import ImagePicker from 'react-native-image-picker';
 import InternetNotification from '../components/ui_components/InternetNotification'
+import RadioButtons from "./ui_components/Buttons/RadioButtons";
 
 
 
@@ -40,8 +39,8 @@ const validationRules = {
 };
 
 const radio_props = [
-  {label: 'Женский', value: 'female'},
-  {label: 'Мужской', value: 'male'}
+  {text: 'Женский', key: 'female'},
+  {text: 'Мужской', key: 'male'}
 ];
 
 const {height} = Dimensions.get('window');
@@ -63,7 +62,7 @@ export default class StepOne extends Component {
         name: '',
         surname: '',
         date: '',
-        gender: -1,
+        gender: '',
       },
       screenHeight: statusBarHeight + bottomSpace,
 
@@ -118,11 +117,16 @@ export default class StepOne extends Component {
     });
   };
 
+  updateRadioBtnState = (key) => {
+    this.setState({
+      ...this.state,
+      formField: {
+        ...this.state.formField,
+        gender: key
+      }
+    })
+  };
 
-  // handleLogOut = () => {
-  //   const {navigation} = this.props;
-  //   signOut(navigation);
-  // };
 
   handleSubmitForm = () => {
     let {navigation} = this.props;
@@ -313,53 +317,28 @@ export default class StepOne extends Component {
               />
               <Text>{validationChecker.getErrorsInField('date')}</Text>
 
-              <View style={styles.radioButtons}>
-                <Text style={styles.radioButtons__title}>Пол: </Text>
-                <RadioForm
-                  initial={-1}
-                  radio_props={radio_props}
-                  buttonColor={Colors.GRAY_TEXT}
-                  labelColor={Colors.GRAY_TEXT}
-                  selectedButtonColor={Colors.MAIN_GREEN}
-                  selectedLabelColor={Colors.MAIN_GREEN}
-                  labelStyle={{fontSize: 16, marginLeft: '6%'}}
-                  formHorizontal={true}
-                  buttonSize={10}
-                  buttonOuterSize={20}
-                  onPress={(value) => {
-                    this.setState({
-                      formField: {
-                        ...this.state.formField,
-                        gender: value
-                      }
-                    })
-                  }}
-                />
+              <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 20}}>
+                <Text style={{color: Colors.GRAY_TEXT, fontSize: 16, alignSelf: 'center'}}>Пол:</Text>
+                <RadioButtons options={radio_props} updateRadioBtnState={this.updateRadioBtnState}/>
+                <Text>{validationChecker.getErrorsInField('gender')}</Text>
               </View>
-              <Text>{validationChecker.getErrorsInField('gender')}</Text>
 
             </View>
           </View>
-          {/*<View style={{flexGrow: 1, justifyContent: 'flex-end'}}>*/}
-          {/*  <TouchableOpacity*/}
-          {/*    onPress={this.handleLogOut}*/}
-          {/*    style={[commonStyles.submitBtn, commonStyles.firstBtn]}*/}
-          {/*  >*/}
-          {/*    <Text style={commonStyles.submitBtnText}>Log Out</Text>*/}
-          {/*  </TouchableOpacity>*/}
+          <View style={{flexGrow: 1, justifyContent: 'flex-end'}}>
 
-          {/*  <TouchableOpacity*/}
-          {/*    onPress={this.handleSubmitForm}*/}
-          {/*    style={ isEnabled*/}
-          {/*      ? [commonStyles.submitBtn, commonStyles.firstBtn]*/}
-          {/*      : [commonStyles.submitBtn, commonStyles.firstBtn, commonStyles.disabledSubmitBtn ]}*/}
-          {/*    disabled={!isEnabled}*/}
-          {/*  >*/}
-          {/*    <Text style={ isEnabled*/}
-          {/*      ? commonStyles.submitBtnText*/}
-          {/*      : [commonStyles.submitBtnText, commonStyles.disabledSubmitBtnText]}>СОХРАНИТЬ</Text>*/}
-          {/*  </TouchableOpacity>*/}
-          {/*</View>*/}
+            <TouchableOpacity
+              onPress={this.handleSubmitForm}
+              style={ isEnabled
+                ? [commonStyles.submitBtn, commonStyles.firstBtn]
+                : [commonStyles.submitBtn, commonStyles.firstBtn, commonStyles.disabledSubmitBtn ]}
+              disabled={!isEnabled}
+            >
+              <Text style={ isEnabled
+                ? commonStyles.submitBtnText
+                : [commonStyles.submitBtnText, commonStyles.disabledSubmitBtnText]}>СОХРАНИТЬ</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </SafeAreaView>
     )

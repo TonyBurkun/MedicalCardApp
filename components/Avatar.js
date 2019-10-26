@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
-import {View, Text, Image, Button, StyleSheet, TouchableOpacity} from 'react-native'
+import {View, Text, Button, StyleSheet, TouchableOpacity, ActivityIndicator} from 'react-native'
 import {withNavigation} from 'react-navigation'
+import {Image} from 'react-native-elements'
 import {connect} from 'react-redux'
 
 class Avatar extends Component {
@@ -20,7 +21,8 @@ class Avatar extends Component {
        <Image
          style={styles.avatar}
          source={{uri: image + '?width=100&height=100'}}
-
+         resizeMode='cover'
+         PlaceholderContent={<ActivityIndicator />}
        />
      </TouchableOpacity>
     )
@@ -45,6 +47,5 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    marginRight: 10
   }
 });

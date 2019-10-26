@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native'
+import {View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator} from 'react-native'
 import {withNavigation} from 'react-navigation'
 import * as Colors from "../../utils/colors";
 import {Icon} from 'react-native-elements'
@@ -58,6 +58,8 @@ class MainNavigationButton extends Component{
            <Image
             source={require('../../assets/tab_navigation_ico/add_button_plus.png')}
             style={{position: 'absolute', left: '50%', marginLeft: -10, top: '50%', marginTop: -10, width: 20, height: 20}}
+            resizeMode='cover'
+            PlaceholderContent={<ActivityIndicator />}
            />
 
          </TouchableOpacity>
