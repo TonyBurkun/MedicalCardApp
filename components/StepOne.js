@@ -10,7 +10,7 @@ import {
   Platform,
   ScrollView,
   Image,
-  Dimensions,
+  Dimensions, ActivityIndicator,
 } from 'react-native'
 import {SafeAreaView} from 'react-navigation'
 import * as Colors from '../utils/colors'
@@ -26,6 +26,7 @@ import firebase from 'react-native-firebase'
 import ImagePicker from 'react-native-image-picker';
 import InternetNotification from '../components/ui_components/InternetNotification'
 import RadioButtons from "./ui_components/Buttons/RadioButtons";
+import {Overlay} from "react-native-elements";
 
 
 
@@ -53,6 +54,7 @@ export default class StepOne extends Component {
     const bottomSpace = getBottomSpace();
 
     this.state = {
+      showLoader: false,
       avatarSource: '',
       avatarSelected: false,
       needToUploadAvatar: false,
@@ -148,27 +150,42 @@ export default class StepOne extends Component {
       formDataObj.surname = this.state.formField.surname;
       formDataObj.date = this.state.formField.date;
       formDataObj.gender = this.state.formField.gender;
+      formDataObj.setUpProfile = true;
 
-      const localUri = this.state.formField.userAvatar;
+      // const localUri = this.state.formField.userAvatar;
+      console.log(this.state);
+      if (this.state.needToUploadAvatar){
 
-      if (this.state.needToUploadAvatar) {
-        Promise.all([saveUserAvatarToStorage(localUri), updateUserData(formDataObj)])
+        console.log('here');
+        console.log(formDataObj);
+        console.log(this.state.formField.userAvatar);
+        const localUri = this.state.formField.userAvatar;
+        this.setState({
+          showLoader: true
+        });
+
+        saveUserAvatarToStorage(localUri)
           .then(success => {
-            const imgData = success[0];
-            const {downloadURL} = imgData;
-
-            updateUserData({avatarURL: downloadURL});
-
+            console.log(success);
+            this.setState({
+              ...this.state,
+              showLoader: false,
+              formField: {
+                ...this.state.formField,
+                userAvatar: success.downloadURL,
+              }
+            });
+            formDataObj.avatarURL = this.state.formField.userAvatar;
+            updateUserData(formDataObj);
+            navigation.navigate('setUpTwoProfile');
           })
           .catch(error => {
             console.log('Upload user data and img to server was rejected with error: ', error);
           })
       } else {
         updateUserData(formDataObj);
+        navigation.navigate('setUpTwoProfile');
       }
-
-      updateUserData({setUpProfile: true});
-      navigation.navigate('setUpTwoProfile');
     }
 
   };
@@ -187,10 +204,16 @@ export default class StepOne extends Component {
     const {userAvatar, name, surname, date, gender} = this.state.formField;
 
 
-    const isEnabled = userAvatar.length > 0 && name.length > 0 && date.length > 0 && gender !== -1;
+    const isEnabled = userAvatar.length > 0 && name.length > 0 && date.length > 0 && gender.length > 0;
 
     return (
       <SafeAreaView style={commonStyles.container}>
+        <Overlay
+          isVisible={this.state.showLoader}
+          width="auto"
+          height="auto">
+          <ActivityIndicator/>
+        </Overlay>
         <InternetNotification/>
         <ScrollView
           scrollEnabled={scrollEnabled}

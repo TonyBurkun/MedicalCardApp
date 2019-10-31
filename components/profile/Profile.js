@@ -72,9 +72,16 @@ class Profile extends Component{
     const {currentUserData} = this.props;
     const name = currentUserData.name || '';
     const surname = currentUserData.surname || '';
+    let medicalCardID = null;
+    if (Boolean(currentUserData.medicalCardsList)){
+      medicalCardID = currentUserData.medicalCardsList[0];
+    }
 
-    console.log(this.state);
-    console.log(this.props);
+
+    // console.log(this.state);
+    // console.log(this.props);
+    // console.log(currentUserData);
+
 
     let image = this.props.currentUserPhotoURL;
 
@@ -103,7 +110,9 @@ class Profile extends Component{
               style={styles.transparentBtn}>
               <Text style={styles.transparentBtn__label}>ДАННЫЕ</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.transparentBtn}>
+            <TouchableOpacity
+              onPress={() => {this.props.navigation.navigate('ProfileMedicalCard', {profile: true, medicalCardID: medicalCardID})}}
+              style={styles.transparentBtn}>
               <Text style={styles.transparentBtn__label}>МЕД. КАРТА</Text>
             </TouchableOpacity>
           </View>

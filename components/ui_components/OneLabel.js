@@ -17,6 +17,8 @@ class OneLabel extends Component{
 
     const {labelData, hasCheckBox} = this.props;
 
+    console.log(hasCheckBox);
+
 
     return(
         <TouchableOpacity

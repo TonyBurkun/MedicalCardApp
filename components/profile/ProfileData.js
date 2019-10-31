@@ -251,7 +251,7 @@ class ProfileData extends Component {
         this.setState({
           showLoader: true
         });
-        console.log(avatarURL);
+
         saveUserAvatarToStorage(avatarURL)
           .then(success => {
             this.setState({

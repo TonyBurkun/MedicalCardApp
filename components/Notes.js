@@ -177,7 +177,6 @@ class Notes extends Component{
 
   componentWillReceiveProps(nextProps) {
 
-    // console.log(nextProps);
 
     const {notesList, labelsList } = nextProps;
 

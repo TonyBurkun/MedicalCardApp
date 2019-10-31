@@ -6,6 +6,13 @@ import * as Colors from '../utils/colors'
 import commonStyles from '../utils/commonStyles'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import InternetNotification from '../components/ui_components/InternetNotification'
+import {
+  addMedicalCardIDtoCurrentUser,
+  createMedicalCardInDB,
+  generateUniqID,
+  getUIDfromFireBase,
+  updateMedicalCardInDB
+} from "../utils/API";
 
 
 
@@ -15,18 +22,22 @@ class MedicalCardStart extends Component {
 
 
   handleSubmitForm = () => {
-    console.log('sumbit form');
     this.props.navigation.navigate('MedicalCardCreate');
-
-
   };
 
-  handleLogOut = () => {
-    const {navigation} = this.props;
-    signOut(navigation);
-  };
 
   handlePassBtn= () => {
+
+    const medicalCardDataObj = {
+      dateModified: new Date().getTime(),
+    };
+
+
+    const UID = getUIDfromFireBase();
+    const generatedID = generateUniqID();
+    createMedicalCardInDB(generatedID, {uid: UID});
+    updateMedicalCardInDB(generatedID, medicalCardDataObj);
+    addMedicalCardIDtoCurrentUser(generatedID);
     this.props.navigation.navigate('App');
   };
 

@@ -12,16 +12,16 @@ import MedicalCardList from "./MedicalCardList";
 
 import {connect} from 'react-redux'
 import {setAllergicReactions} from '../actions/allergicReactions'
-import {setChildhoodDiseases} from '../actions/childhoodDiseases'
-import {setVaccinations} from '../actions/vaccinations'
-import {setPregnancyOutcome} from '../actions/pregnancyOutcome'
-import {setGynecologicalDiseases} from '../actions/gynecologicalDiseases'
+import {setChildhoodDiseases, setChosenChildhoodDiseases} from '../actions/childhoodDiseases'
+import {setChosenVaccinations, setVaccinations} from '../actions/vaccinations'
+import {setChosenPregnancyOutcome, setPregnancyOutcome} from '../actions/pregnancyOutcome'
+import {setChosenGynecologicalDiseases, setGynecologicalDiseases} from '../actions/gynecologicalDiseases'
 import {setTransferredIVF} from '../actions/transferredIVF'
-import {setDisability} from '../actions/disability'
-import {setBadHabits} from '../actions/badHabits'
-import {setGenitalInfections} from '../actions/genitalInfections'
+import {setChosenDisability, setDisability} from '../actions/disability'
+import {setBadHabits, setChosenBadHabits} from '../actions/badHabits'
+import {setChosenGenitalInfections, setGenitalInfections} from '../actions/genitalInfections'
 import {setOther} from '../actions/other'
-import {getChildhoodDiseases} from '../utils/API';
+import {getChildhoodDiseases, getMedicalCardByID} from '../utils/API';
 import {getVaccinations} from '../utils/API';
 import {getPregnancyOutcome} from '../utils/API';
 import {getGynecologicalDiseases} from '../utils/API';
@@ -32,13 +32,30 @@ import {getGenitalInfections} from '../utils/API';
 import {generateUniqID, createMedicalCardInDB, getUIDfromFireBase, updateMedicalCardInDB, updateUserData, addMedicalCardIDtoCurrentUser} from '../utils/API'
 import {ifIphoneX} from "react-native-iphone-x-helper";
 import InternetNotification from '../components/ui_components/InternetNotification'
+import withNavigation from "react-navigation/src/views/withNavigation";
 
 
 class MedicalCardCreate extends Component {
   constructor(props) {
     super(props);
 
+    let isProfile = false;
+    let medicalCardID = null;
+    const navigationParams = this.props.navigation.state.params;
+
+    if (Boolean(navigationParams) && Boolean(navigationParams.profile !== undefined)) {
+      isProfile = this.props.navigation.state.params.profile;
+    }
+
+    if (Boolean(navigationParams) && Boolean(navigationParams.medicalCardID !== undefined)) {
+      medicalCardID = this.props.navigation.state.params.medicalCardID;
+    }
+
+
+
     this.state = {
+      isProfile,
+      medicalCardID,
       childhoodDiseases: [],
       formField: {
         allergicReactions: '',
@@ -51,7 +68,7 @@ class MedicalCardCreate extends Component {
     }
   }
 
-  componentDidMount() {
+   componentDidMount() {
 
     getChildhoodDiseases()
       .then(success => {
@@ -109,16 +126,86 @@ class MedicalCardCreate extends Component {
         console.log('You can not download the Genital Infections list: ', error);
       });
 
+     const {medicalCardID}= this.state;
+
+    if (Boolean(medicalCardID)) {
+      getMedicalCardByID(medicalCardID)
+        .then(data => {
+          console.log(data);
+          console.log(this);
+
+          this.setState({
+            ...this.state,
+            formField: {
+              ...this.state.formField,
+              allergicReactions: data.allergicReactions,
+              transferredIVF: data.transferredIVF,
+              other: data.other
+            },
+          });
+
+          if (Boolean(data.chosenChildhoodDiseases)) {
+            this.props.dispatch(setChosenChildhoodDiseases(data.chosenChildhoodDiseases));
+            let {childhoodDiseases} = this.props;
+            data.chosenChildhoodDiseases.forEach(item => {
+             childhoodDiseases[item.id].check = true
+            })
+          }
+
+          if (Boolean(data.chosenVaccinations)) {
+            this.props.dispatch(setChosenVaccinations(data.chosenVaccinations));
+            let {vaccinations} = this.props;
+            data.chosenVaccinations.forEach(item => {
+              vaccinations[item.id].check = true
+            })
+          }
+
+          if (Boolean(data.chosenPregnancyOutcome)) {
+            this.props.dispatch(setChosenPregnancyOutcome(data.chosenPregnancyOutcome));
+            let {pregnancyOutcome} = this.props;
+            data.chosenPregnancyOutcome.forEach(item => {
+              pregnancyOutcome[item.id].check = true
+            })
+          }
+
+          if (Boolean(data.chosenGynecologicalDiseases)) {
+            this.props.dispatch(setChosenGynecologicalDiseases(data.chosenGynecologicalDiseases));
+            let {gynecologicalDiseases} = this.props;
+            data.chosenGynecologicalDiseases.forEach(item => {
+              gynecologicalDiseases[item.id].check = true
+            })
+          }
+
+          if (Boolean(data.chosenDisability)){
+            this.props.dispatch(setChosenDisability(data.chosenDisability));
+            let {disability} = this.props;
+            data.chosenDisability.forEach(item => {
+              disability[item.id].check = true
+            })
+          }
+
+          if (Boolean(data.chosenBadHabits)){
+            this.props.dispatch(setChosenBadHabits(data.chosenBadHabits));
+            let {badHabits} = this.props;
+            data.chosenBadHabits.forEach(item => {
+              badHabits[item.id].check = true
+            })
+          }
+
+          if (Boolean(data.chosenGenitalInfections)) {
+            this.props.dispatch(setChosenGenitalInfections(data.chosenGenitalInfections));
+            let {genitalInfections} = this.props;
+            data.chosenGenitalInfections.forEach(item => {
+              genitalInfections[item.id].check = true
+            })
+          }
+
+        })
+        .catch(error => {console.log('There is an error while getting Medical Card data by ID: ', error)})
+    }
+
+
   }
-
-  handleLogOut = () => {
-    const {navigation} = this.props;
-    signOut(navigation);
-  };
-
-  handlePassBtn = () => {
-    this.props.navigation.navigate('App');
-  };
 
   handleTextChange = (newText) => {
     this.setState({
@@ -132,10 +219,23 @@ class MedicalCardCreate extends Component {
 
 
   showItemsList = (param, screenTitle, radio = '') => {
-    this.props.navigation.navigate('MedicalCardList', {listType: param, screenTitle: screenTitle, radio: radio});
+    // let isProfile = false;
+    // if (Boolean(this.props.navigation.state.params)) {
+    //   isProfile = this.props.navigation.state.params.profile;
+    // }
+
+    console.log(param);
+
+    if (this.state.isProfile){
+      this.props.navigation.navigate('ProfileMedicalCardList', {listType: param, screenTitle: screenTitle, radio: radio});
+    } else {
+      this.props.navigation.navigate('MedicalCardList', {listType: param, screenTitle: screenTitle, radio: radio});
+    }
+
   };
 
   handleSaveBtn = () => {
+    const {isProfile} = this.state;
 
     const {allergicReactions, other, transferredIVF} = this.state.formField;
     const {
@@ -159,24 +259,44 @@ class MedicalCardCreate extends Component {
       chosenBadHabits,
       chosenGenitalInfections,
       other,
+      dateModified: new Date().getTime(),
     };
 
     this.props.dispatch(setAllergicReactions(this.state.formField.allergicReactions));
     this.props.dispatch(setTransferredIVF(this.state.formField.transferredIVF));
     this.props.dispatch(setOther(this.state.formField.other));
 
+    if (!isProfile){
+      //This code run when the user fill Medical Card not in the Profile.
+      //Create Medical Card during the creation the new USER
 
-    const UID = getUIDfromFireBase();
-    const generatedID = generateUniqID();
-    createMedicalCardInDB(generatedID, {uid: UID});
-    updateMedicalCardInDB(generatedID, medicalCardDataObj);
-    addMedicalCardIDtoCurrentUser(generatedID);
 
-    this.props.navigation.navigate('MainNavigation');
+      const UID = getUIDfromFireBase();
+      const generatedID = generateUniqID();
+      createMedicalCardInDB(generatedID, {uid: UID});
+      updateMedicalCardInDB(generatedID, medicalCardDataObj);
+      addMedicalCardIDtoCurrentUser(generatedID);
+
+      this.props.navigation.navigate('MainNavigation');
+    }
+
+    if (isProfile){
+      //Updating the Medical Card from Profile screen
+
+      const {medicalCardID} = this.state;
+      updateMedicalCardInDB(medicalCardID, medicalCardDataObj);
+      this.props.navigation.goBack();
+    }
+
   };
 
   render() {
     console.log(this.state);
+    console.log(this.props);
+
+    const {isProfile} = this.state;
+
+
 
     const {
       chosenChildhoodDiseases,
@@ -283,13 +403,16 @@ class MedicalCardCreate extends Component {
           <ScrollView
             alwaysBounceVertical={false}
             contentContainerStyle={{flex: 1,justifyContent: 'space-between'}}>
-            <View
-              style={{paddingLeft: 16, paddingRight: 16}}>
-              <ScreenTitle
-                titleText={'МЕДИЦИНСКАЯ КАРТА'} marginTop={48}/>
-              <Text style={[commonStyles.subTitle, {textAlign: 'left', marginTop: 10, marginBottom: 0}]}>Вы можете
-                заполнить только подходящие для Вас блоки</Text>
-            </View>
+
+            {!isProfile &&
+              <View
+                style={{paddingLeft: 16, paddingRight: 16}}>
+                <ScreenTitle
+                  titleText={'МЕДИЦИНСКАЯ КАРТА'} marginTop={48}/>
+                <Text style={[commonStyles.subTitle, {textAlign: 'left', marginTop: 10, marginBottom: 0}]}>Вы можете
+                  заполнить только подходящие для Вас блоки</Text>
+              </View>
+            }
 
             <View style={commonStyles.tableBlock}>
               <Text style={[commonStyles.tableBlockTitle, {paddingLeft: 16}]}>ОСНОВНЫЕ РАЗДЕЛЫ</Text>
@@ -583,7 +706,7 @@ class MedicalCardCreate extends Component {
                   editable = {true}
                   multiline = {true}
                   placeholder={'Введите текст'}
-                  value={this.state.other}
+                  value={this.state.formField.other}
                   onChangeText={(text) => {
                     this.setState({
                       ...this.state,
@@ -640,7 +763,7 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(MedicalCardCreate)
+export default withNavigation(connect(mapStateToProps)(MedicalCardCreate))
 
 const styles = StyleSheet.create({
 

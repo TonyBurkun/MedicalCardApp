@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import {FlatList, Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native'
 import {SafeAreaView, withNavigationFocus} from 'react-navigation'
 import {SearchBar} from "react-native-elements";
@@ -16,8 +16,10 @@ import HeaderAddBtn from './ui_components/TopNavigation/HeaderAddBtn'
 import {getLabelsForUser, getNotesListByCurrentUser, removeLabelForCurrentUser, updateChosenNote} from '../utils/API'
 import {deleteLabel, saveChosenLabel, setLabels} from '../actions/labels'
 import Swipeable from 'react-native-swipeable';
-import {convertObjToArr} from "../utils/helpers";
+import {convertObjToArr, isIphone5} from "../utils/helpers";
 import {updateNote} from "../actions/notes";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {ifIphoneX} from "react-native-iphone-x-helper";
 
 
 class LabelsList extends Component{
@@ -30,7 +32,9 @@ class LabelsList extends Component{
       search: '',
       labelsList: [],
       searchDataList: [],
-      isLabelsLoaded: true,
+      isLoaded: true,
+      isSearchEmpty: false,
+      showList: false,
       chosenLabelsID: []
 
     }
@@ -70,42 +74,20 @@ class LabelsList extends Component{
 
   static navigationOptions = ({navigation}) => {
 
-    if (navigation.state.params && navigation.state.params.navType === 'showAddCancelBtn') {
-      return {
-        headerLeft: () => {
-          return (
-            <HeaderCancelBtn/>
-          )
-        },
-        headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Метки</Text>,
-        headerTintColor: Colors.GRAY_TEXT,
-        headerStyle: {
-          backgroundColor: Colors.WHITE,
-          elevation: 0,
-          shadowOpacity: 0,
-          borderBottomWidth: 0
+    return {
+      headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Метки</Text>,
+      headerTintColor: Colors.GRAY_TEXT,
+      headerStyle: {
+        backgroundColor: Colors.WHITE,
+        elevation: 0,
+        shadowOpacity: 0,
+        borderBottomWidth: 0
 
-        },
-        headerRight: (
-          <HeaderAddBtn type={'chosenLabels'}/>
-        )
-      }
-    } else {
-      return {
-        headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Метки</Text>,
-        headerTintColor: Colors.GRAY_TEXT,
-        headerStyle: {
-          backgroundColor: Colors.WHITE,
-          elevation: 0,
-          shadowOpacity: 0,
-          borderBottomWidth: 0
-
-        }
       }
     }
   };
 
-  componentDidMount(){
+   componentDidMount(){
 
    getLabelsForUser()
       .then(data => {
@@ -118,6 +100,8 @@ class LabelsList extends Component{
         this.setState({
           labelsList: labelsList,
           searchDataList: labelsList,
+          isLoaded: Boolean(labelsList.length),
+          showList: Boolean(labelsList.length)
         })
       });
 
@@ -127,43 +111,22 @@ class LabelsList extends Component{
   componentWillReceiveProps(nextProps) {
 
     console.log('New PROPS', nextProps);
-    // console.log(this.state);
-    const nextLabels = nextProps.labels.labels;
-    const {labelsList} = this.state;
-
-    console.log(nextLabels);
-    console.log(labelsList);
+    const {labels} = nextProps.labels;
+    const chosenLabelsID = nextProps.labels.chosenLabelsID;
 
 
-    if (Object.keys(nextLabels).length !== labelsList.length) {
+    const newLabelsList = this._cloneLabelsObjWithCheckedFalse(labels, chosenLabelsID);
 
-      const {labels} = nextProps.labels;
-      const chosenLabelsID = nextProps.labels.chosenLabelsID;
+    this.setState({
+      labelsList: newLabelsList,
+      searchDataList: newLabelsList,
+      search: '',
+      chosenLabelsID: chosenLabelsID,
+      isLoaded: Boolean(newLabelsList.length),
+      showList: Boolean(newLabelsList.length),
+      isSearchEmpty: false
 
-
-      const newLabelsList = this._cloneLabelsObjWithCheckedFalse(labels, chosenLabelsID);
-
-      if (newLabelsList.length) {
-        this.setState({
-          labelsList: newLabelsList,
-          searchDataList: newLabelsList,
-          search: '',
-          chosenLabelsID: chosenLabelsID,
-          isLabelsLoaded: true
-        });
-      } else {
-        this.setState({
-          isLabelsLoaded: false,
-          search: '',
-        });
-      }
-
-    }
-
-
-
-
-
+    });
   }
 
   updateSearch = (search) => {
@@ -181,16 +144,12 @@ class LabelsList extends Component{
         return ~value.indexOf(searchVal.toLowerCase());
       });
 
-      console.log(searchResultArr.length);
-      console.log(Boolean(searchResultArr.length));
-
-
 
       this.setState({
         ...this.state,
         search,
+        isSearchEmpty: Boolean(!searchResultArr.length),
         searchDataList : searchResultArr,
-        isLabelsLoaded: Boolean(searchResultArr.length)
       })
 
     } else {
@@ -198,8 +157,8 @@ class LabelsList extends Component{
       this.setState({
         ...this.state,
         search,
+        isSearchEmpty: false,
         searchDataList : this.state.labelsList,
-        isLabelsLoaded: true
       })
     }
 
@@ -210,11 +169,7 @@ class LabelsList extends Component{
 
 
     if (hasCheckBox){
-      // this.props.navigation.setParams({
-      //   chosenLabelsID: this.state.chosenLabelsID
-      // });
-
-      const {labelsList, searchDataList, chosenLabelsID} = this.state;
+      const {labelsList, searchDataList} = this.state;
 
       let newLabelsList = JSON.parse(JSON.stringify(labelsList));
       let newSearchDataList = JSON.parse(JSON.stringify(searchDataList));
@@ -341,7 +296,7 @@ class LabelsList extends Component{
     ];
 
 
-    if (this.state.isLabelsLoaded) {
+    if (this.state.isLoaded) {
 
       return (
         <Swipeable rightButtons={rightButtons}
@@ -369,7 +324,7 @@ class LabelsList extends Component{
     console.log('STATE:', this.state);
     console.log('PROPS', this.props);
 
-    const { search, searchDataList, isLabelsLoaded } = this.state;
+    const { search, searchDataList, isLoaded, showList } = this.state;
     const {navigation} = this.props;
 
     searchDataList.sort((a,b) => {
@@ -395,23 +350,43 @@ class LabelsList extends Component{
           inputContainerStyle={{borderRadius: 10, backgroundColor: 'rgba(142, 142, 147, 0.12)'}}
           inputStyle={{borderRadius: 10, color: '#8E8E93', fontSize: 14}}
         />
-       <View style={{marginTop: 16, paddingRight: 16, marginBottom: 60}}>
-         {isLabelsLoaded ? (
-           <FlatList
-             keyExtractor={(item, index) => index.toString()}
-             data={searchDataList}
-             renderItem={this.renderFlatListItem}
-           />
-           ) : (
-           <View style={{flex: 1, marginTop: '20%', alignItems: 'center', fontSize: 16}}>
-              <Text>{NO_DATA_TO_SHOW}</Text>
+
+
+         {isLoaded ? (
+           showList &&
+            <Fragment>
+              {!this.state.isSearchEmpty && this.state.searchDataList.length ? (
+                <View style={{flex: 1, marginTop: 16, paddingRight: 16, marginBottom: 60}}>
+                  <FlatList
+                    keyExtractor={(item, index) => index.toString()}
+                    data={searchDataList}
+                    renderItem={this.renderFlatListItem}
+                  />
+                </View>
+              ) : (
+                <View style={{flex: 1, marginTop: '20%', alignItems: 'center', fontSize: 16}}>
+                  <Text>{NO_DATA_TO_SHOW}</Text>
+                </View>
+              )}
+            </Fragment>
+         ) : (
+           <View style={{flex: 1, position: 'relative'}}>
+             <View style={styles.mainTextWrapper}>
+               <Text style={[!isIphone5()? styles.mainText: styles.mainText__smallPhone]}>Здесь отображаются Метки, которые Вы создали.</Text>
+               <Text style={[!isIphone5()? styles.subText: styles.subText__smallPhone]}>Создавайте, редактируйте или удаляйте метки.</Text>
+             </View>
+             <Image
+               style={styles.personImage}
+               source={require('../assets/person/pills.png')}/>
+             <View style={styles.tipWrapper}>
+               <Text style={styles.tipText}>Создать метку</Text>
+               <Image
+                 style={styles.tipArrow}
+                 source={require('../assets/vector/notes_vector.png')}/>
+
+             </View>
            </View>
-         )
-
-         }
-       </View>
-
-
+         )}
         <AddButton handlePress={this.handlePressAddButton}/>
 
       </SafeAreaView>
@@ -435,6 +410,76 @@ export default withNavigationFocus(connect(mapStateToProps)(LabelsList)) ;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.MAIN_BACKGROUND
+    backgroundColor: Colors.MAIN_BACKGROUND,
+  },
+
+  mainTextWrapper: {
+    fontSize: 16,
+    width: '100%',
+    position: 'absolute',
+    top: '10%',
+    paddingLeft: 30,
+    paddingRight: 30,
+  },
+
+  mainText: {
+    fontSize: 16,
+    color: Colors.TYPOGRAPHY_COLOR_DARK,
+    width: '100%',
+    textAlign: 'center',
+  },
+
+  mainText__smallPhone: {
+    fontSize: 12,
+    color: Colors.TYPOGRAPHY_COLOR_DARK,
+    width: '100%',
+    textAlign: 'center',
+  },
+
+  subText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: Colors.GRAY_TEXT,
+    marginTop: 5
+  },
+
+  subText__smallPhone: {
+    fontSize: 12,
+    textAlign: 'center',
+    color: Colors.GRAY_TEXT,
+    marginTop: 5
+  },
+
+  personImage: {
+    position: 'absolute',
+    left: 10,
+    bottom: 0,
+    width: wp('43%'),
+    height: hp('55%'),
+  },
+
+  tipWrapper: {
+    position: 'absolute',
+    bottom: isIphone5() ? 110 : 80,
+    right: '50%',
+    marginRight: isIphone5() ? -115 : -150,
+    width: 150,
+    height: 90,
+  },
+
+  tipText: {
+    width: '100%',
+    fontSize: 16,
+    textAlign: 'center',
+    color: Colors.GREEN_TIP
+  },
+
+  tipArrow: {
+    width: 39,
+    height: 62,
+    position: 'absolute',
+    bottom: 0,
+    left: '50%',
+    marginLeft: 0,
   }
 });

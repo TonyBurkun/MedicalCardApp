@@ -54,6 +54,8 @@ import {createSwitchNavigator, createStackNavigator, createBottomTabNavigator, c
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
 import {NOTES, TESTS, DOCTORS, PILLS} from './utils/textConstants'
 import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'
+import HeaderCancelBtn from "./components/ui_components/TopNavigation/HeaderCancelBtn";
+import HeaderAddBtn from "./components/ui_components/TopNavigation/HeaderAddBtn";
 
 
 
@@ -332,7 +334,7 @@ const MedicalCardCreateStack = createStackNavigator({
   MedicalCardList: {
     screen: MedicalCardList,
     navigationOptions: () => ({
-      headerTintColor: Colors.BLACK_TITLE,
+      headerTintColor: Colors.GRAY_TEXT,
       headerStyle: {
         backgroundColor: Colors.WHITE,
         elevation: 0,
@@ -423,12 +425,63 @@ const MainNavStack = createStackNavigator({
     navigationOptions: {}
   },
 
+  ProfileMedicalCard: {
+    screen: MedicalCardCreate,
+    navigationOptions: ({navigation}) => {
+      console.log(navigation);
+      return {
+        headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Медицинская карта</Text>,
+        headerTintColor: Colors.GRAY_TEXT,
+        headerStyle: {
+          backgroundColor: Colors.WHITE,
+          elevation: 0,
+          shadowOpacity: 0,
+          borderTopWidth: 1,
+          borderTopColor: Colors.TAB_NAVIGATION_BORDER,
+
+        },
+      }
+    }
+  },
+
+  ProfileMedicalCardList: {
+    screen: MedicalCardList,
+    navigationOptions: () => ({
+      headerTintColor: Colors.GRAY_TEXT,
+      headerStyle: {
+        backgroundColor: Colors.WHITE,
+        elevation: 0,
+        shadowOpacity: 0,
+        borderBottomWidth: 0
+
+      }
+    }),
+  },
+
   CreateLabel: {
     screen: CreateLabel,
   },
 
   LabelsList: {
     screen: LabelsList,
+    navigationOptions: () => {
+      return {
+        headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Метки</Text>,
+        headerTintColor: Colors.GRAY_TEXT,
+        headerStyle: {
+          backgroundColor: Colors.WHITE,
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0
+
+        }
+      }
+    }
+  },
+
+  ChoseLabel: {
+    screen: ChoseLabel,
+    navigationOptions: {}
   },
 
   CreateDoctor: {
@@ -459,9 +512,6 @@ const MainNavStack = createStackNavigator({
     screen: ChosePill
   },
 
-  ChoseLabel: {
-    screen: ChoseLabel
-  }
 
 
 

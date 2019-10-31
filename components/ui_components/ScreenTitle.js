@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 21,
     color: BLACK_TITLE,
+    fontWeight: 'bold',
     // textTransform: 'uppercase',
     // marginTop: 16,
     // marginBottom: 8,

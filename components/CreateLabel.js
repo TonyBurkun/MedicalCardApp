@@ -10,6 +10,7 @@ import GroupButtonsTitle from '../components/ui_components/GroupButtonsTitle'
 import commonStyles from "../utils/commonStyles";
 import {generateUniqID, createNewLabel, updateUserLabel} from '../utils/API'
 import {addLabel, updateLabel} from '../actions/labels'
+import withNavigationFocus from "react-navigation/src/views/withNavigationFocus";
 
 
 
@@ -184,7 +185,8 @@ class CreateLabel extends Component{
 
       updateUserLabel(oldLabelID, label);
       this.props.dispatch(updateLabel(label));
-      this.props.navigation.navigate('LabelsList');
+      // this.props.navigation.navigate('LabelsList');
+      this.props.navigation.goBack();
 
     } else {
       const generatedID = generateUniqID();

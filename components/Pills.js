@@ -90,16 +90,7 @@ class Pills extends Component{
       .then(resolve => {
         let currentUserPills = resolve[1];
 
-        // console.log(currentUserPills);
-
-
         for (let key in currentUserPills) {
-          // console.log(currentUserPills[key]);
-
-          // console.log(key);
-          // console.log(uid);
-          // console.log(currentUserPills[key].createdByUser);
-
           if (currentUserPills[key].createdByUser !== uid) {
             delete(currentUserPills[key]);
           }
@@ -107,9 +98,6 @@ class Pills extends Component{
         }
 
         let data = {...resolve[0], ...resolve[1]};
-
-
-        // console.log(currentUserPills);
         this.props.dispatch(setPills(data));
         const pillsList = this._clonePillsObjWithCheckedFalse(data, []);
         this.setState({

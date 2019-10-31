@@ -44,6 +44,7 @@ class MedicalCardList extends Component{
      headerTitleStyle: {
        fontWeight: 'bold',
        fontSize: 17,
+       color: Colors.BLACK_TITLE
      },
    }
   };
@@ -260,6 +261,7 @@ class MedicalCardList extends Component{
   render() {
 
     console.log(this.state);
+    console.log(this.props);
 
     const { search } = this.state;
     const dataList = this.state.data;

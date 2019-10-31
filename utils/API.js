@@ -293,6 +293,12 @@ export function createMedicalCardInDB(id, data) {
   firebase.database().ref('medical_cards/' + id).set(data)
 }
 
+export async function getMedicalCardByID(medicalCardID) {
+  const snapshotDB = await firebase.database().ref('medical_cards/' + medicalCardID).once('value');
+
+  return snapshotDB.val();
+}
+
 export function updateMedicalCardInDB(id, updatedDataObj){
   // firebase.database().reg('medical_cards/'+ medicalCardID).set(updatedDataObj);
 

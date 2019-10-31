@@ -32,6 +32,7 @@ import {getCurrentDate} from "../utils/helpers";
 import Tests from "./Tests";
 import HeaderSaveBtn from "./ui_components/TopNavigation/HeaderSaveBtn";
 import RemoveButton from "./ui_components/Buttons/RemoveButton";
+import withNavigationFocus from "react-navigation/src/views/withNavigationFocus";
 
 
 
@@ -823,6 +824,6 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(CreateNote);
+export default withNavigationFocus(connect(mapStateToProps)(CreateNote));
 
 const styles = StyleSheet.create({});
