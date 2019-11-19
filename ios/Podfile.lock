@@ -177,6 +177,9 @@ PODS:
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
   - Protobuf (3.7.0)
+  - TwitterCore (3.2.0)
+  - TwitterKit (3.3.0):
+    - TwitterCore (>= 3.1.0)
 
 DEPENDENCIES:
   - Crashlytics (~> 3.12.0)
@@ -191,6 +194,7 @@ DEPENDENCIES:
   - Firebase/Performance (~> 5.20.1)
   - Firebase/RemoteConfig (~> 5.20.1)
   - Firebase/Storage (~> 5.20.1)
+  - TwitterKit (~> 3.3.0)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -222,6 +226,8 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - Protobuf
+    - TwitterCore
+    - TwitterKit
 
 SPEC CHECKSUMS:
   BoringSSL-GRPC: 2a230d9cd93e7ce39916044f645cebb31f37dde6
@@ -252,7 +258,9 @@ SPEC CHECKSUMS:
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 7a877b7f3e5964e3fce995e2eb323dbc6831bb5a
+  TwitterCore: 8cbc9ad34d91c63a0035ea05bfbfc0d7ca72a28c
+  TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: 8d6b04b402d2906a9b0a2bbb6517d5bb48c9de7b
+PODFILE CHECKSUM: 3bb07cc51b28462501c074688732467f04bb2d66
 
 COCOAPODS: 1.6.1

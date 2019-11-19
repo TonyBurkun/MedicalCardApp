@@ -61,12 +61,6 @@
 		3A8DF637226F714A00FB3267 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF633226F714900FB3267 /* FBSDKLoginKit.framework */; };
 		3A8DF638226F714A00FB3267 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF634226F714A00FB3267 /* FBSDKShareKit.framework */; };
 		3A8DF678226F72E500FB3267 /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF654226F72CA00FB3267 /* libRCTFBSDK.a */; };
-		3A8DF6CA2270659C00FB3267 /* TwitterShareExtensionUIResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3A8DF6C62270659A00FB3267 /* TwitterShareExtensionUIResources.bundle */; };
-		3A8DF6CB2270659C00FB3267 /* TwitterKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3A8DF6C72270659A00FB3267 /* TwitterKitResources.bundle */; };
-		3A8DF6CC2270659C00FB3267 /* TwitterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6C82270659B00FB3267 /* TwitterKit.framework */; };
-		3A8DF6CD2270659C00FB3267 /* TwitterCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6C92270659C00FB3267 /* TwitterCore.framework */; };
-		3A8DF6CF227065BB00FB3267 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6CE227065BB00FB3267 /* Twitter.framework */; };
-		3A8DF6D72270662D00FB3267 /* libRNTwitterSignIn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6D62270661C00FB3267 /* libRNTwitterSignIn.a */; settings = {ATTRIBUTES = (Weak, ); }; };
 		66F583A38C047519D1E18159 /* libPods-MedicalCard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599A1087F9C545123EFD61BE /* libPods-MedicalCard.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		8AEB10120B9847F8905B7DA1 /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DD56AE46E45398AF70E2E /* libRNFirebase.a */; };
@@ -449,11 +443,6 @@
 		3A8DF633226F714900FB3267 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		3A8DF634226F714A00FB3267 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
 		3A8DF64A226F72CA00FB3267 /* RCTFBSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTFBSDK.xcodeproj; path = "../node_modules/react-native-fbsdk/ios/RCTFBSDK.xcodeproj"; sourceTree = "<group>"; };
-		3A8DF6C62270659A00FB3267 /* TwitterShareExtensionUIResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TwitterShareExtensionUIResources.bundle; sourceTree = "<group>"; };
-		3A8DF6C72270659A00FB3267 /* TwitterKitResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TwitterKitResources.bundle; sourceTree = "<group>"; };
-		3A8DF6C82270659B00FB3267 /* TwitterKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TwitterKit.framework; sourceTree = "<group>"; };
-		3A8DF6C92270659C00FB3267 /* TwitterCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TwitterCore.framework; sourceTree = "<group>"; };
-		3A8DF6CE227065BB00FB3267 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		3A8DF6D02270661C00FB3267 /* RNTwitterSignIn.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNTwitterSignIn.xcodeproj; path = "../node_modules/react-native-twitter-signin/ios/RNTwitterSignIn.xcodeproj"; sourceTree = "<group>"; };
 		4A114661868ACFA83CCA60B3 /* libPods-MedicalCard-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MedicalCard-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		599A1087F9C545123EFD61BE /* libPods-MedicalCard.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MedicalCard.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -487,10 +476,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A2129A622733E4F005784B9 /* libRNVectorIcons.a in Frameworks */,
-				3A8DF6D72270662D00FB3267 /* libRNTwitterSignIn.a in Frameworks */,
-				3A8DF6CF227065BB00FB3267 /* Twitter.framework in Frameworks */,
 				3A8DF678226F72E500FB3267 /* libRCTFBSDK.a in Frameworks */,
-				3A8DF6CC2270659C00FB3267 /* TwitterKit.framework in Frameworks */,
 				3A8DF3B9226DD3B400FB3267 /* libRNCAsyncStorage.a in Frameworks */,
 				3A8DF343226CE15B00FB3267 /* libRNImagePicker.a in Frameworks */,
 				3A8DF637226F714A00FB3267 /* FBSDKLoginKit.framework in Frameworks */,
@@ -502,7 +488,6 @@
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				3A8DF636226F714A00FB3267 /* FBSDKCoreKit.framework in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
-				3A8DF6CD2270659C00FB3267 /* TwitterCore.framework in Frameworks */,
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
@@ -678,11 +663,6 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3A8DF6CE227065BB00FB3267 /* Twitter.framework */,
-				3A8DF6C92270659C00FB3267 /* TwitterCore.framework */,
-				3A8DF6C82270659B00FB3267 /* TwitterKit.framework */,
-				3A8DF6C72270659A00FB3267 /* TwitterKitResources.bundle */,
-				3A8DF6C62270659A00FB3267 /* TwitterShareExtensionUIResources.bundle */,
 				3A8DF609226F714800FB3267 /* Bolts.framework */,
 				3A8DF632226F714900FB3267 /* FBSDKCoreKit.framework */,
 				3A8DF633226F714900FB3267 /* FBSDKLoginKit.framework */,
@@ -897,6 +877,7 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				E5B4B8AE4D595D54AD312DFD /* [CP] Copy Pods Resources */,
+				F69A6BD74800DC1DBEF62DBD /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1398,7 +1379,6 @@
 				3A21294A227316C3005784B9 /* FontAwesome5_Brands.ttf in Resources */,
 				3A8DF23C226A7B9900FB3267 /* GoogleService-Info.plist in Resources */,
 				3A212953227316C3005784B9 /* EvilIcons.ttf in Resources */,
-				3A8DF6CA2270659C00FB3267 /* TwitterShareExtensionUIResources.bundle in Resources */,
 				3A21294F227316C3005784B9 /* FontAwesome5_Solid.ttf in Resources */,
 				3A21294B227316C3005784B9 /* MaterialCommunityIcons.ttf in Resources */,
 				3A212954227316C3005784B9 /* SimpleLineIcons.ttf in Resources */,
@@ -1409,7 +1389,6 @@
 				3A212950227316C3005784B9 /* FontAwesome5_Regular.ttf in Resources */,
 				3A21294C227316C3005784B9 /* AntDesign.ttf in Resources */,
 				3A212952227316C3005784B9 /* Zocial.ttf in Resources */,
-				3A8DF6CB2270659C00FB3267 /* TwitterKitResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1512,12 +1491,16 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-MedicalCard/Pods-MedicalCard-resources.sh",
+				"${PODS_ROOT}/TwitterKit/iOS/TwitterKit.framework/TwitterKitResources.bundle",
+				"${PODS_ROOT}/TwitterKit/iOS/TwitterKit.framework/TwitterShareExtensionUIResources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/gRPC-C++/gRPCCertificates.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TwitterKitResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TwitterShareExtensionUIResources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/gRPCCertificates.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1545,6 +1528,30 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F69A6BD74800DC1DBEF62DBD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MedicalCard/Pods-MedicalCard-frameworks.sh",
+				"${PODS_ROOT}/TwitterCore/iOS/TwitterCore.framework",
+				"${PODS_ROOT}/TwitterKit/iOS/TwitterKit.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TwitterCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TwitterKit.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MedicalCard/Pods-MedicalCard-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1716,7 +1723,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.burkunantoncompany.medicalcard;
 				PRODUCT_NAME = MedicalCard;
-				VALID_ARCHS = "arm64 armv7 armv7s";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
