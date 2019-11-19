@@ -31,7 +31,7 @@ import {
   createUserbyIDinDB,
 } from '../utils/API'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
-import {ACCOUNT_NOT_FOUND, LOGIN_FAILED} from '../utils/systemMessages'
+import {ACCOUNT_NOT_FOUND, LOGIN_FAILED, EMAIL_CONFIRMATION} from '../utils/systemMessages'
 import commonStyles from '../utils/commonStyles'
 
 import InternetNotification from '../components/ui_components/InternetNotification'
@@ -105,23 +105,26 @@ class Login extends Component {
             }
 
           } else {
-            signOut();
+            // signOut();
             this.setState({
               formField: {
                 ...this.state.formField,
                 password: ''
               }
             });
+
+
+
             Alert.alert(
-              `Email Confirmation`,
-              `We have sent email to ${email} to confirm the validity of our email address. Please follow the link provided to complete your registration.`,
+              EMAIL_CONFIRMATION.title,
+              EMAIL_CONFIRMATION.message.replace('{email}', email),
               [
                 {
-                  text: 'Resend the confirmation mail', onPress: () => {
+                  text: EMAIL_CONFIRMATION.resendButtonText, onPress: () => {
                     sentVerificationEmail()
                   }
                 },
-                {text: 'Ok'}
+                {text: EMAIL_CONFIRMATION.buttonText}
               ],
               {cancelable: false}
             );

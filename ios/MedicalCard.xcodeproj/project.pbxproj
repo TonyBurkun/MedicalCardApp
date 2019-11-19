@@ -66,7 +66,7 @@
 		3A8DF6CC2270659C00FB3267 /* TwitterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6C82270659B00FB3267 /* TwitterKit.framework */; };
 		3A8DF6CD2270659C00FB3267 /* TwitterCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6C92270659C00FB3267 /* TwitterCore.framework */; };
 		3A8DF6CF227065BB00FB3267 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6CE227065BB00FB3267 /* Twitter.framework */; };
-		3A8DF6D72270662D00FB3267 /* libRNTwitterSignIn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6D62270661C00FB3267 /* libRNTwitterSignIn.a */; };
+		3A8DF6D72270662D00FB3267 /* libRNTwitterSignIn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DF6D62270661C00FB3267 /* libRNTwitterSignIn.a */; settings = {ATTRIBUTES = (Weak, ); }; };
 		66F583A38C047519D1E18159 /* libPods-MedicalCard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599A1087F9C545123EFD61BE /* libPods-MedicalCard.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		8AEB10120B9847F8905B7DA1 /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DD56AE46E45398AF70E2E /* libRNFirebase.a */; };
@@ -1716,6 +1716,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.burkunantoncompany.medicalcard;
 				PRODUCT_NAME = MedicalCard;
+				VALID_ARCHS = "arm64 armv7 armv7s";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

@@ -3,7 +3,6 @@ import {View, Text, StyleSheet} from 'react-native'
 import * as Colors from "../../utils/colors";
 import {Image} from "react-native-elements";
 import PropTypes from 'prop-types'
-import DateLabel from "./DateLabel";
 
 class DoctorItem extends Component {
 

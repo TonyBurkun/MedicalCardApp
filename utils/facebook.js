@@ -1,7 +1,11 @@
 import { AccessToken, LoginManager } from 'react-native-fbsdk';
 import firebase from 'react-native-firebase'
 import {Alert} from 'react-native';
-import {FACEBOOK_EMAIL_EXIST} from '../utils/systemMessages'
+import {
+  FACEBOOK_EMAIL_EXIST,
+  SOCIAL_NETWORK_ALREADY_LINKED,
+  SOCIAL_NETWORK_SUCCESS_LINKED
+} from '../utils/systemMessages'
 
 
 
@@ -48,5 +52,30 @@ export async function facebookLogin() {
       )
     }
 
+  }
+}
+
+
+
+export async function joinFacebook() {
+  try {
+    return LoginManager.logInWithReadPermissions(['public_profile', 'email'])
+      .then((result) => {
+        if (result.isCancelled) {
+          return Promise.reject(new Error('The user cancelled the request'))
+        }
+        // Retrieve the access token
+        return AccessToken.getCurrentAccessToken()
+      })
+      .then((data) => {
+        // Create a new Firebase credential with the token
+        const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
+
+        // Link using the credential
+        return firebase.auth().currentUser.linkWithCredential(credential)
+      })
+  }
+  catch(error) {
+    console.log('Join Facebook error: ', error)
   }
 }

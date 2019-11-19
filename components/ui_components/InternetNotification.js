@@ -5,7 +5,7 @@ import commonStyles from '../../utils/commonStyles'
 import * as Colors from '../../utils/colors'
 import {getStatusBarHeight} from 'react-native-iphone-x-helper'
 import {INTERNET_CONNECTION} from '../../utils/systemMessages'
-import ScreenTitle from "./ScreenTitle";
+import ScreenTitle from "./titles/ScreenTitle";
 
 
 const {width} = Dimensions.get('window');

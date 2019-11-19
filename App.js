@@ -19,43 +19,43 @@ import Recovery from './components/RecoveryPassword'
 import Registration from './components/Registration'
 import StepOne from './components/StepOne'
 import StepTwo from './components/StepTwo'
-import MedicalCardStart from './components/MedicalCardStart'
-import MedicalCardCreate from './components/MedicalCardCreate'
-import MedicalCardList from './components/MedicalCardList'
-import CreateNote from './components/CreateNote'
-import OneNote from "./components/OneNote";
-import CreateTest from './components/CreateTest'
-import CreateLabel from './components/CreateLabel'
-import LabelsList from './components/LabelsList'
+import MedicalCardStart from './components/medical_card/MedicalCardStart'
+import MedicalCardCreate from './components/medical_card/MedicalCardCreate'
+import MedicalCardList from './components/medical_card/MedicalCardList'
+import CreateNote from './components/notes/CreateNote'
+import OneNote from "./components/notes/OneNote";
+import CreateTest from './components/tests/CreateTest'
+import CreateLabel from './components/labels/CreateLabel'
+import LabelsList from './components/labels/LabelsList'
 
-import Notes from './components/Notes'
-import Tests from './components/Tests'
-import Doctors from './components/Doctors'
-import CreateDoctor from "./components/CreateDoctor";
-import ChoseDoctor from "./components/ChoseDoctor";
-import ChoseDoctorSpecializations from "./components/ChoseDoctorSpecializations";
-import Pills from './components/Pills'
-import MainNavigationButton from './components/ui_components/MainNavigationButton'
+import Notes from './components/notes/Notes'
+import Tests from './components/tests/Tests'
+import Doctors from './components/doctors/Doctors'
+import CreateDoctor from "./components/doctors/CreateDoctor";
+import ChoseDoctor from "./components/doctors/ChoseDoctor";
+import ChoseDoctorSpecializations from "./components/doctors/ChoseDoctorSpecializations";
+import Pills from './components/pills/Pills'
+import MainNavigationButton from './components/ui_components/Buttons/MainNavigationButton'
 import Profile from './components/profile/Profile'
 import ProfileData from "./components/profile/ProfileData";
+import ChangeEmail from "./components/profile/ChangeEmail";
 import CalendarIcon from "./components/ui_components/CalendarIcon";
-import Avatar from "./components/Avatar";
-import OneDoctor from "./components/OneDoctor";
-import CreatePill from "./components/CreatePill";
-import ChosePillsType from "./components/ChosePillsType";
-import ChosePill from "./components/ChosePill";
+import Avatar from "./components/ui_components/Avatar";
+import OneDoctor from "./components/doctors/OneDoctor";
+import CreatePill from "./components/pills/CreatePill";
+import ChosePillsType from "./components/pills/ChosePillsType";
 
 
-import ChoseLabel from './components/ChoseLabel'
+import ChosePill from "./components/pills/ChosePill";
 
 
 
+import ChoseLabel from './components/labels/ChoseLabel'
 import {createSwitchNavigator, createStackNavigator, createBottomTabNavigator, createMaterialTopTabNavigator} from 'react-navigation'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
 import {NOTES, TESTS, DOCTORS, PILLS} from './utils/textConstants'
 import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'
-import HeaderCancelBtn from "./components/ui_components/TopNavigation/HeaderCancelBtn";
-import HeaderAddBtn from "./components/ui_components/TopNavigation/HeaderAddBtn";
+import TermsOfUse from "./components/profile/TermsOfUse";
 
 
 
@@ -456,6 +456,15 @@ const MainNavStack = createStackNavigator({
 
       }
     }),
+  },
+
+  ChangeEmail: {
+    screen: ChangeEmail,
+    navigationOptions: {}
+  },
+  TermsOfUse: {
+    screen: TermsOfUse,
+    navigationOptions:{}
   },
 
   CreateLabel: {

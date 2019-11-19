@@ -17,10 +17,6 @@ class PillLabel extends Component {
 
 
   handleRemoveChosenPill = (pillID) => {
-    console.log('press remove Pill');
-    console.log(pillID);
-    console.log(this.props);
-
     this.props.dispatch(removeChosePill(pillID));
   };
 

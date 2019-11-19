@@ -22,8 +22,8 @@ import { getStatusBarHeight, getBottomSpace } from 'react-native-iphone-x-helper
 import InternetNotification from '../components/ui_components/InternetNotification'
 
 
-import StepScreenTitle from './ui_components/StepScreenTitle'
-import ScreenTitle from './ui_components/ScreenTitle'
+import StepScreenTitle from './ui_components/titles/StepScreenTitle'
+import ScreenTitle from './ui_components/titles/ScreenTitle'
 import SelectList from './ui_components/SelectList';
 import firebase from 'react-native-firebase'
 

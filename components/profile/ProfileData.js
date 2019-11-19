@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 import * as Colors from "../../utils/colors";
 import {SafeAreaView} from "react-navigation";
 import InternetNotification from '../ui_components/InternetNotification';
-import GroupButtonsTitle from '../ui_components/GroupButtonsTitle';
+import GroupButtonsTitle from '../ui_components/titles/GroupButtonsTitle';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import commonStyles from "../../utils/commonStyles";
 import validationChecker from "../../utils/validationChecker";
@@ -541,7 +541,7 @@ class ProfileData extends Component {
           </View>
 
 
-        <View style={commonStyles.containerIndents}>
+        <View style={[commonStyles.containerIndents, {paddingBottom: 22}]}>
           <SubmitButton handleSubmitForm={this.handleSubmitForm} isEnabled={isEnabled}/>
         </View>
         </KeyboardAwareScrollView>

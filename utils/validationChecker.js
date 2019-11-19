@@ -15,7 +15,7 @@ const validationChecker = (function() {
 
   const defaultRules = {
     required: /\S+/,
-    isEmail: /^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/,
+    isEmail:  /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
     isNumber: /^(([0-9]*)|(([0-9]*)\.([0-9]*)))$/,
   };
 

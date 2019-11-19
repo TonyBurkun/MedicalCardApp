@@ -4,9 +4,9 @@
 //Email already exist
 
 export const FACEBOOK_EMAIL_EXIST = {
-  title: 'Sorry',
-  message: 'The user with this email has already exist. Please use the Login form',
-  buttonText: 'Ok'
+  title: 'Внимание',
+  message: 'Пользотвалеь с таким Email уже существует, пожалуйста авторизируйтесь',
+  buttonText: 'Хорошо'
 };
 
 //FaceBook messages END ------------------
@@ -14,9 +14,9 @@ export const FACEBOOK_EMAIL_EXIST = {
 //Twitter messages -----------------------
 
 export const TWITTER_LOGIN_ERROR = {
-  title: 'Sorry',
-  message: 'The authorization via Twitter was canceled',
-  buttonText: 'Ok'
+  title: 'Внимание',
+  message: 'Авторизация через Twitter была отменена',
+  buttonText: 'Хорошо'
 };
 
 
@@ -28,23 +28,24 @@ export const TWITTER_LOGIN_ERROR = {
 //Registration with Email and Password
 
 export const EMAIL_CONFIRMATION = {
-  title: `Вам было отправлено письмо на почту`,
-  message: `Для продолжения регистрации перейдите по ссылке в письме`,
+  title: `Подтверждение электорнной почты`,
+  message: `Мы отправили Вам ссылку для подтверждения электронной почты на ардес {email}. Пожалуйста, подтвердите Вашу электронную почту.`,
+  resendButtonText: 'Отправить еще раз',
   buttonText: 'Я проверю'
 };
 
 //Login with Email and Password
 
 export const ACCOUNT_NOT_FOUND = {
-  title: 'Find Your Account',
-  message: `We don't seem to have an account with that email or password. Please check the spelling and try again or sign up as a new user`,
-  buttonText: 'Ok'
+  title: 'Поиск аккаунта',
+  message: `Мы не нашли пользователя с таким электронным адресом или паролем. Пожалуйста, проверьте правописание и попробуйте снова или зарегистрируйтесь как новый пользователь.`,
+  buttonText: 'Хорошо'
 };
 
 export const LOGIN_FAILED ={
-  title: 'Login Failed',
-  message: `The password is invalid or the user does not have a password.`,
-  buttonText: 'Ok'
+  title: 'Ошибка авторизации',
+  message: `Вы ввели неверный пароль или у пользователя еще нет пароля.`,
+  buttonText: 'Хорошо'
 };
 
 //Recovery password
@@ -55,9 +56,30 @@ export const SUBMIT_RECOVERY_PASS = {
   buttonText: 'Я проверю'
 };
 
+export const RECOVERY_PASS_NO_USER = {
+  title: 'Странно...',
+  message: `Такого пользователь нет в системе или он был удален. Попробуйде ввести другой email`,
+  buttonText: 'Я проверю'
+}
+
 //Internet notification
 
 export const INTERNET_CONNECTION ={
   exist: 'Соединение восстановленно',
   lost: 'Потерялся интернет...'
+};
+
+
+//Social Network linked
+
+export const SOCIAL_NETWORK_SUCCESS_LINKED = {
+  title: 'Подключение аккаунта',
+  message: 'Вы успешно подключили социальную сеть к основному аккаунту',
+  buttonText: 'Понятно'
+};
+
+export const SOCIAL_NETWORK_ALREADY_LINKED = {
+  title: 'Подключение аккаунта',
+  message: 'Эта социальна сеть уже подключена к основному аккаунту',
+  buttonText: 'Понятно'
 };

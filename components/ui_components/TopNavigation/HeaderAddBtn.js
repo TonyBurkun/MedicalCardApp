@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {withNavigation} from 'react-navigation'
 import * as Colors from '../../../utils/colors'
-import GroupButtonsTitle from "../GroupButtonsTitle";
+import GroupButtonsTitle from "../titles/GroupButtonsTitle";
 import {setChosenDoctorSpecializations} from '../../../actions/doctorSpecializations'
 import {setChosenDoctors} from "../../../actions/doctors";
 import {saveChosenLabel} from "../../../actions/labels";

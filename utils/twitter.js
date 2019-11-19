@@ -39,3 +39,24 @@ export async function twitterLogin() {
     )
   }
 }
+
+export async function joinTwitter() {
+ try {
+   RNTwitterSignIn.init(TwitterKeys.TWITTER_CONSUMER_KEY, TwitterKeys.TWITTER_CONSUMER_SECRET);
+   const loginData = await RNTwitterSignIn.logIn();
+   const { authToken, authTokenSecret } = loginData;
+   const credential = TwitterAuthProvider.credential(authToken, authTokenSecret);
+
+   return  firebase.auth().currentUser.linkWithCredential(credential)
+ } catch (e) {
+   console.log('Twitter login error: ', e);
+   Alert.alert(
+     TWITTER_LOGIN_ERROR.title,
+     TWITTER_LOGIN_ERROR.message,
+     [
+       {text: TWITTER_LOGIN_ERROR.buttonText}
+     ],
+     {cancelable: false}
+   )
+ }
+}

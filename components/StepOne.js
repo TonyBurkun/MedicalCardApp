@@ -19,8 +19,8 @@ import {signOut, getUIDfromFireBase, readUserData, writeUserDataToDB, updateCurr
 import validationChecker from '../utils/validationChecker'
 import DatePicker from 'react-native-datepicker'
 import { getStatusBarHeight, getBottomSpace } from 'react-native-iphone-x-helper'
-import StepScreenTitle from './ui_components/StepScreenTitle'
-import ScreenTitle from './ui_components/ScreenTitle'
+import StepScreenTitle from './ui_components/titles/StepScreenTitle'
+import ScreenTitle from './ui_components/titles/ScreenTitle'
 
 import firebase from 'react-native-firebase'
 import ImagePicker from 'react-native-image-picker';

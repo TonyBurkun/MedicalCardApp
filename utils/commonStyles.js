@@ -21,7 +21,7 @@ const commonStyles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     backgroundColor: Colors.MAIN_BACKGROUND,
-      ...ifIphoneX({paddingBottom: 0}, {paddingBottom: 20})
+      ...ifIphoneX({paddingBottom: 56}, {paddingBottom: 20})
   },
 
   containerIndents: {

@@ -1,7 +1,7 @@
 import firebase from 'react-native-firebase'
 import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import {EMAIL_CONFIRMATION, SUBMIT_RECOVERY_PASS} from '../utils/systemMessages'
+import {EMAIL_CONFIRMATION, SUBMIT_RECOVERY_PASS, RECOVERY_PASS_NO_USER} from '../utils/systemMessages'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
 
 
@@ -39,6 +39,8 @@ export function removeTokeFromAsyncStorage(key){
 
 
 export function sentVerificationEmail() {
+
+  console.log(firebase.auth().currentUser);
   firebase.auth().currentUser.sendEmailVerification()
     .then(function() {
       // Email sent.
@@ -120,7 +122,7 @@ export function registrationWithEmailAndPassword(email, password, navigation){
 
       Alert.alert(
         EMAIL_CONFIRMATION.title,
-        EMAIL_CONFIRMATION.message,
+        EMAIL_CONFIRMATION.message.replace('{email}', email),
         [
           {text: EMAIL_CONFIRMATION.buttonText}
         ],
@@ -162,6 +164,14 @@ export function sendPasswordResetEmail(email, actionCodeSettings, navigation){
     })
     .catch(error => {
       console.log(error);
+      Alert.alert(
+        RECOVERY_PASS_NO_USER.title,
+        RECOVERY_PASS_NO_USER.message,
+        [
+          {text: RECOVERY_PASS_NO_USER.buttonText}
+        ],
+        {cancelable: false}
+      );
     })
 }
 
