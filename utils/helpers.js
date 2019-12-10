@@ -1,6 +1,5 @@
 import {Dimensions} from 'react-native'
-import {getNotesListByCurrentUser, updateChosenNote} from "./API";
-import {updateNote} from "../actions/notes";
+import {generateUniqID} from "./API";
 
 export function isIphone5() {
   const windowHeight = Dimensions.get('window').height;
@@ -73,4 +72,31 @@ export function updateUserDataFields(newUserFieldsObj, prevUserFieldsObj){
   }
 
   return  prevUserFieldsObj;
+}
+
+
+export function prepareIndicatorDataForSaving(
+  patternTypeID = null,
+  patternIndicatorID = null,
+  createdIndicatorID = null,
+  title = '',
+  norma = '',
+  unit = '',
+  result = '',
+) {
+
+  const indicatorDataObj = {};
+  indicatorDataObj.inputFields = {};
+
+  indicatorDataObj.patternTypeID = patternTypeID;
+  indicatorDataObj.patternIndicatorID = patternIndicatorID;
+  indicatorDataObj.createdIndicatorID = createdIndicatorID;
+  indicatorDataObj.inputFields.title = title;
+  indicatorDataObj.inputFields.norma = norma;
+  indicatorDataObj.inputFields.unit = unit;
+  indicatorDataObj.inputFields.result = result;
+  indicatorDataObj.custom = !Boolean(patternTypeID);
+  indicatorDataObj.readyForSave = false;
+
+  return indicatorDataObj;
 }

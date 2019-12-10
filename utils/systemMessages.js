@@ -83,3 +83,14 @@ export const SOCIAL_NETWORK_ALREADY_LINKED = {
   message: 'Эта социальна сеть уже подключена к основному аккаунту',
   buttonText: 'Понятно'
 };
+
+
+
+//Test Tab
+
+export const TRY_SAVE_NOT_FILLED_INDICATOR ={
+  title: 'Внимание',
+  message: 'Вы не до конца заполнили все анализы. Пожалуйста убедитесь, что все поля у анализов заполнены иначе эти анализы не будут сохранены.',
+  buttonText: 'Все равно сохранить',
+  cancelButtonText: 'Отмена'
+};

@@ -14,6 +14,7 @@ import labels  from './labels'
 import doctors from './doctors'
 import pills from './pills'
 import notes from './notes'
+import tests from './tests'
 
 
 export default combineReducers({
@@ -31,5 +32,6 @@ export default combineReducers({
   labels,
   doctors,
   pills,
-  notes
+  notes,
+  tests
 })

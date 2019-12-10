@@ -4,8 +4,6 @@ import { SafeAreaView } from 'react-navigation'
 import * as Colors from '../../utils/colors'
 
 import InternetNotification from '../ui_components/InternetNotification'
-import CalendarIcon from "../ui_components/CalendarIcon";
-import Avatar from "../ui_components/Avatar";
 import commonStyles from "../../utils/commonStyles";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view/index";
 import FloatingLabelInput from "../ui_components/FloatingLabelInput";
@@ -29,11 +27,10 @@ import {addNote, deleteNote, updateNote} from "../../actions/notes";
 import {saveChosenLabel} from "../../actions/labels";
 import {setChosenDoctors} from "../../actions/doctors";
 import {getCurrentDate} from "../../utils/helpers";
-import Tests from "../tests/Tests";
-import HeaderSaveBtn from "../ui_components/TopNavigation/HeaderSaveBtn";
 import RemoveButton from "../ui_components/Buttons/RemoveButton";
 import withNavigationFocus from "react-navigation/src/views/withNavigationFocus";
 import {ifIphoneX} from "react-native-iphone-x-helper";
+import DateSelect from "../ui_components/InputField/DateSelect";
 
 
 
@@ -170,9 +167,19 @@ class CreateNote extends Component{
     })
   };
 
-  handlePressDateList = () => {
-    console.log('press DAte list');
-    this.datePicker.onPressDate()
+  // handlePressDateList = () => {
+  //   console.log('press DAte list');
+  //   this.datePicker.onPressDate()
+  // };
+
+  updateDateValue = (newDate) => {
+    this.setState({
+      ...this.state,
+      formField: {
+        ...this.state.formField,
+        date: newDate
+      }
+    });
   };
 
   handleNoteComplaint = (newText) => {
@@ -510,79 +517,84 @@ class CreateNote extends Component{
           <KeyboardAwareScrollView
             contentContainerStyle={{justifyContent: 'space-between', flexGrow: 1}}>
            <View>
-              <View style={{paddingTop: 16, borderBottomWidth: 1, borderBottomColor: Colors.BORDER_COLOR}}>
-                <FloatingLabelInput
-                  label="Добавить заголовок (обязательно)"
-                  value={this.state.formField.noteTitle}
-                  onChangeText={this.handleNoteTitle}
-                  maxLength={50}
-                />
-                <ListItem
-                  onPress={this.handlePressDateList}
-                  containerStyle={{
-                    paddingLeft: 16,
-                    paddingRight: 16,
-                    paddingTop: 9,
-                    paddingBottom: 9,
-                    borderBottomWidth: 1,
-                    borderColor: Colors.TABLE_BORDER
-                  }}
-                  title={'Дата'}
-                  titleStyle={{fontSize: 14}}
-                  rightAvatar={
-                    <View style={{flexDirection: 'row'}}>
-                      <DatePicker
-                        locale={'ru'}
-                        ref={(picker) => { this.datePicker = picker; }}
-                        date={this.state.formField.date} //initial date from state
-                        // mode="date" //The enum of date, datetime and time
-                        format="DD-MM-YYYY"
-                        minDate="01-01-1930"
-                        maxDate={getCurrentDate()}
-                        confirmBtnText="Сохранить"
-                        cancelBtnText="Отмена"
-                        hideText={!this.state.formField.date}
-                        showIcon={false}
-                        customStyles={{
-                          dateInput: {
-                            alignItems: 'flex-end',
-                            paddingLeft: 16,
-                            borderWidth: 0,
-                            backgroundColor: Colors.WHITE,
+             <View style={{paddingTop: 16, borderBottomWidth: 1, borderBottomColor: Colors.BORDER_COLOR}}>
+               <FloatingLabelInput
+                 label="Добавить заголовок (обязательно)"
+                 value={this.state.formField.noteTitle}
+                 onChangeText={this.handleNoteTitle}
+                 maxLength={50}
+               />
+               {/*<ListItem*/}
+               {/*  onPress={this.handlePressDateList}*/}
+               {/*  containerStyle={{*/}
+               {/*    paddingLeft: 16,*/}
+               {/*    paddingRight: 0,*/}
+               {/*    paddingTop: 9,*/}
+               {/*    paddingBottom: 9,*/}
+               {/*    borderBottomWidth: 1,*/}
+               {/*    borderColor: Colors.TABLE_BORDER*/}
+               {/*  }}*/}
+               {/*  title={'Дата'}*/}
+               {/*  titleStyle={{fontSize: 14}}*/}
+               {/*  rightAvatar={*/}
+               {/*    <View style={{flexDirection: 'row'}}>*/}
+               {/*      <DatePicker*/}
+               {/*        locale={'ru'}*/}
+               {/*        ref={(picker) => {*/}
+               {/*          this.datePicker = picker;*/}
+               {/*        }}*/}
+               {/*        date={this.state.formField.date} //initial date from state*/}
+               {/*        // mode="date" //The enum of date, datetime and time*/}
+               {/*        format="DD-MM-YYYY"*/}
+               {/*        minDate="01-01-1930"*/}
+               {/*        maxDate={getCurrentDate()}*/}
+               {/*        confirmBtnText="Сохранить"*/}
+               {/*        cancelBtnText="Отмена"*/}
+               {/*        hideText={!this.state.formField.date}*/}
+               {/*        showIcon={false}*/}
+               {/*        customStyles={{*/}
+               {/*          dateInput: {*/}
+               {/*            alignItems: 'flex-end',*/}
+               {/*            paddingLeft: 16,*/}
+               {/*            borderWidth: 0,*/}
+               {/*            backgroundColor: Colors.WHITE,*/}
 
-                          },
-                          dateText: {
-                            fontSize: 14,
-                            color: Colors.MAIN_GREEN,
-                            fontWeight: 'bold'
-                          },
-                          placeholderText: {
-                            fontSize: 14,
-                            color: Colors.GRAY_TEXT,
-                          },
+               {/*          },*/}
+               {/*          dateText: {*/}
+               {/*            fontSize: 14,*/}
+               {/*            color: Colors.MAIN_GREEN,*/}
+               {/*            fontWeight: 'bold'*/}
+               {/*          },*/}
+               {/*          placeholderText: {*/}
+               {/*            fontSize: 14,*/}
+               {/*            color: Colors.GRAY_TEXT,*/}
+               {/*          },*/}
 
-                        }}
-                        onDateChange={(value) => {
-                          this.setState({
-                            ...this.state,
-                            formField: {
-                              ...this.state.formField,
-                              date: value,
-                            }
-                          });
-                        }}
-                      />
-                      <Icon
-                        name='chevron-right'
-                        type='evilicon'
-                        color={Colors.GRAY_TEXT}
-                        size={40}
-                        containerStyle={{alignSelf: 'center', paddingTop: 2}}
-                      />
-                    </View>
-                  }
-                />
-              </View>
+               {/*        }}*/}
+               {/*        onDateChange={(value) => {*/}
+               {/*          this.setState({*/}
+               {/*            ...this.state,*/}
+               {/*            formField: {*/}
+               {/*              ...this.state.formField,*/}
+               {/*              date: value,*/}
+               {/*            }*/}
+               {/*          });*/}
+               {/*        }}*/}
+               {/*      />*/}
+               {/*      <Icon*/}
+               {/*        name='chevron-right'*/}
+               {/*        type='evilicon'*/}
+               {/*        color={Colors.GRAY_TEXT}*/}
+               {/*        size={40}*/}
+               {/*        containerStyle={{alignSelf: 'center', paddingTop: 2}}*/}
+               {/*      />*/}
+               {/*    </View>*/}
+               {/*  }*/}
+               {/*/>*/}
+               <DateSelect
+                 initialDate={this.state.formField.date}
+                 updateDateValue={(value) => {this.updateDateValue(value)}}/>
+             </View>
 
              <View style={{paddingTop: 18, borderBottomWidth: 1, borderBottomColor: Colors.BORDER_COLOR}}>
                <FloatingLabelInput
@@ -738,7 +750,7 @@ class CreateNote extends Component{
                <Text style={{fontSize: 14, color: Colors.GRAY_TEXT, marginBottom: 9}}>Прикрепить фото</Text>
                <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
                  {
-                  noteImagesArr.map((item, index) => {
+                   noteImagesArr.map((item, index) => {
                      return (
                        <View
                          key={index}
@@ -762,7 +774,7 @@ class CreateNote extends Component{
                              style={{width: 80, height: 80}}
                              source={{uri: item.url}}
                              resizeMode={'cover'}
-                             PlaceholderContent={<ActivityIndicator />}
+                             PlaceholderContent={<ActivityIndicator/>}
                            />
                          </View>
                        </View>
@@ -783,7 +795,7 @@ class CreateNote extends Component{
                    <Image
                      style={{width: 24, height: 24, alignSelf: 'center'}}
                      source={require('../../assets/general/add_plus.png')}
-                     PlaceholderContent={<ActivityIndicator />}
+                     PlaceholderContent={<ActivityIndicator/>}
                    />
                  </TouchableOpacity>
                </View>

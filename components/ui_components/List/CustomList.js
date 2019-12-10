@@ -48,7 +48,7 @@ class CustomList extends Component{
 
 
 
-    updateSearch = search => {
+  updateSearch = search => {
     this.setState({ search });
 
     const searchVal = search;
@@ -85,6 +85,11 @@ class CustomList extends Component{
       data = data.map((item) => {
         item.checked = false;
         return item;
+      });
+
+      originData = originData.map((item) => {
+        item.checked = false;
+        return item;
       })
     }
 
@@ -115,8 +120,8 @@ class CustomList extends Component{
     const {searchField} = this.props;
 
 
-    console.log(this.state);
-    console.log(this.props);
+    // console.log(this.state);
+    // console.log(this.props);
     return (
 
 

@@ -96,8 +96,6 @@ class Login extends Component {
 
 
             const userTokenWasSaved = await addUserTokenToAsyncStorage(USER_TOKEN_LOCAL_STORAGE_KEY, 'true');
-
-            console.log(userTokenWasSaved);
             if (userTokenWasSaved) {
               const setUpParam = await checkSetUpParamInUser();
 

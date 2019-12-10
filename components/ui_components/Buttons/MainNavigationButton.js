@@ -22,7 +22,7 @@ class MainNavigationButton extends Component{
         break;
 
       case 1:
-        console.log('Tests Tab');
+        console.log('MedicalTestsList Tab');
         navigation.navigate('CreateTest');
         break;
 

@@ -588,6 +588,53 @@ export async function removeNoteImages(noteID, imageName) {
 // -- END NOTES FLOW ---------
 
 
+// -- TEST FLOW  -------------
+
+export async function getTestTypesList(){
+  const snapshotDB = await firebase.database().ref('test_types/').once('value');
+  return snapshotDB.val() || [];
+}
+
+
+export async function saveIndicatorImageToStorage (imageID, localUri){
+  //localUri - local link on the image from device
+
+  const downloadURL = await firebase
+    .storage()
+    .ref(`indicator-images/${imageID}/${imageID}.jpg`)
+    .putFile(
+      localUri
+    );
+
+  console.log(downloadURL);
+
+  return downloadURL;
+
+}
+
+
+export function createNewTest(testData){
+  const uid = getUIDfromFireBase();
+  firebase.database().ref(`tests/${uid}/${testData.id}`).set(testData);
+}
+
+export async function geTestsListByCurrentUser(){
+  const uid = getUIDfromFireBase();
+  const snapshotDB = await firebase.database().ref(`tests/${uid}`).once('value');
+  return snapshotDB.val() || {};
+}
+
+export async function removeIndicatorImages(indicatorID, imageName) {
+  await firebase.storage()
+    .ref(`indicator-images/${indicatorID}/${imageName}.jpg`).delete();
+
+}
+
+
+
+// -- END TEST FLOW  ---------
+
+
 
 
 //-- End FireBase  -----------------------------

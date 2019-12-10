@@ -68,7 +68,7 @@ class MedicalCardCreate extends Component {
     }
   }
 
-   componentDidMount() {
+  componentDidMount() {
 
     getChildhoodDiseases()
       .then(success => {
@@ -126,7 +126,7 @@ class MedicalCardCreate extends Component {
         console.log('You can not download the Genital Infections list: ', error);
       });
 
-     const {medicalCardID}= this.state;
+    const {medicalCardID} = this.state;
 
     if (Boolean(medicalCardID)) {
       getMedicalCardByID(medicalCardID)
@@ -148,7 +148,7 @@ class MedicalCardCreate extends Component {
             this.props.dispatch(setChosenChildhoodDiseases(data.chosenChildhoodDiseases));
             let {childhoodDiseases} = this.props;
             data.chosenChildhoodDiseases.forEach(item => {
-             childhoodDiseases[item.id].check = true
+              childhoodDiseases[item.id].check = true
             })
           }
 
@@ -176,7 +176,7 @@ class MedicalCardCreate extends Component {
             })
           }
 
-          if (Boolean(data.chosenDisability)){
+          if (Boolean(data.chosenDisability)) {
             this.props.dispatch(setChosenDisability(data.chosenDisability));
             let {disability} = this.props;
             data.chosenDisability.forEach(item => {
@@ -184,7 +184,7 @@ class MedicalCardCreate extends Component {
             })
           }
 
-          if (Boolean(data.chosenBadHabits)){
+          if (Boolean(data.chosenBadHabits)) {
             this.props.dispatch(setChosenBadHabits(data.chosenBadHabits));
             let {badHabits} = this.props;
             data.chosenBadHabits.forEach(item => {
@@ -201,7 +201,9 @@ class MedicalCardCreate extends Component {
           }
 
         })
-        .catch(error => {console.log('There is an error while getting Medical Card data by ID: ', error)})
+        .catch(error => {
+          console.log('There is an error while getting Medical Card data by ID: ', error)
+        })
     }
 
 
@@ -398,7 +400,7 @@ class MedicalCardCreate extends Component {
 
     return (
       <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0}]}>
-        <InternetNotification/>
+        <InternetNotification topDimension={0}/>
         <KeyboardAwareScrollView>
           <ScrollView
             alwaysBounceVertical={false}

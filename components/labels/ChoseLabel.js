@@ -389,6 +389,7 @@ class ChoseLabel extends Component {
 }
 
 function mapStateToProps(state) {
+  console.log(state);
   const labels = state.labels;
   console.log(state);
   return(
