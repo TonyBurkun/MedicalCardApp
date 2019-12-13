@@ -182,13 +182,13 @@ class CreateTest extends Component{
     const {isFormEdit} = this.state;
 
 
-    console.log(other);
-    console.log(date);
-    console.log(imagesArr);
-    console.log(labels);
-    console.log(chosenLabelsID);
-    console.log(chosenTestType);
-    console.log(indicatorsListForSave);
+    // console.log(other);
+    // console.log(date);
+    // console.log(imagesArr);
+    // console.log(labels);
+    // console.log(chosenLabelsID);
+    // console.log(chosenTestType);
+    // console.log(indicatorsListForSave);
 
 
     if (!isFormEdit) {

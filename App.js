@@ -45,21 +45,18 @@ import Avatar from "./components/ui_components/Avatar"
 import OneDoctor from "./components/doctors/OneDoctor"
 import Pills from './components/pills/Pills'
 import CreatePill from "./components/pills/CreatePill"
-
-
 import ChosePillsType from "./components/pills/ChosePillsType"
-
-
-
 import ChosePill from "./components/pills/ChosePill";
 import ChoseLabel from './components/labels/ChoseLabel'
+
 import {createSwitchNavigator, createStackNavigator, createBottomTabNavigator, createMaterialTopTabNavigator} from 'react-navigation'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
 import {NOTES, TESTS, DOCTORS, PILLS} from './utils/textConstants'
 import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'
 import TermsOfUse from "./components/profile/TermsOfUse";
-import TypeTestList from "./components/medical_tests/TypeTestList";
 import HeaderAddBtn from "./components/ui_components/TopNavigation/HeaderAddBtn";
+import TypeTestList from "./components/medical_tests/TypeTestList";
+import OneMedicalTest from "./components/medical_tests/OneMedicalTest";
 
 
 
@@ -463,6 +460,13 @@ const MainNavStack = createStackNavigator({
           <HeaderAddBtn titleBtn={'Сохранить'} type={'chosenIndicators'}/>
         )
       }
+    }
+  },
+
+  OneMedicalTest: {
+    screen: OneMedicalTest,
+    navigationOptions: {
+      // header: null
     }
   },
 

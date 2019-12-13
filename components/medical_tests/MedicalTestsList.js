@@ -176,10 +176,12 @@ class MedicalTestsList extends Component{
 
 
   handleChoosingTest = (testID) => {
+
     const {testsList} = this.props;
     const currentTest = testsList[testID];
+    console.log(currentTest);
 
-    // this.props.navigation.navigate('OneTest', {testID: testID, currentTest: currentTest})
+    this.props.navigation.navigate('OneMedicalTest', {testID: testID, currentTest: currentTest})
 
   };
 
