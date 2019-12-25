@@ -8,33 +8,46 @@ import commonStyles from "../../utils/commonStyles";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import SelectFromList from "../ui_components/InputField/SelectFromList";
 import {
-  createNewTest,
-  generateUniqID,
+  createNewTest, deleteNoteByID, deleteTestByID,
+  generateUniqID, geTestsListByCurrentUser, getLabelsForUser,
   getTestTypesList,
-  getUIDfromFireBase,
-  saveIndicatorImageToStorage,
+  getUIDfromFireBase, removeNoteImages, removeTestImages,
+  saveIndicatorImageToStorage, updateChosenTest,
 } from "../../utils/API";
-import {addTest, setChosenIndicators, setChosenTestType, setTestTypes} from "../../actions/tests";
+import {
+  addTest,
+  deleteTest,
+  setChosenIndicators,
+  setChosenTestType,
+  setTest,
+  setTestTypes,
+  updateTest
+} from "../../actions/tests";
 import {connect} from 'react-redux'
 import withNavigation from "react-navigation/src/views/withNavigation";
-import {getCurrentDate} from "../../utils/helpers";
+import {addCheckFieldToArr, convertObjToArr, getCurrentDate} from "../../utils/helpers";
 import {Icon, Image, Overlay} from "react-native-elements";
 import DateSelect from "../ui_components/InputField/DateSelect";
 import ChosenLabel from "../ui_components/ChosenLabel";
 import ImagePicker from "react-native-image-picker";
 import SubmitButton from "../ui_components/Buttons/SubmitButton";
+import {saveChosenLabel, setLabels} from "../../actions/labels";
+import {ifIphoneX} from "react-native-iphone-x-helper";
+import RemoveButton from "../ui_components/Buttons/RemoveButton";
+import {deleteNote} from "../../actions/notes";
+import withNavigationFocus from "react-navigation/src/views/withNavigationFocus";
 
 
-async function _uploadImagesToStore(pillImagesArr) {
+async function _uploadImagesToStore(testID, imagesArr) {
   let uploadedFilesUrlArr = [];
 
-  for (const item of pillImagesArr) {
+  for (const item of imagesArr) {
 
-    const imageID = generateUniqID();
+    const imageName = generateUniqID();
 
-    await saveIndicatorImageToStorage(imageID, item.url)
+    await saveIndicatorImageToStorage(testID, imageName, item.url)
       .then(success => {
-        uploadedFilesUrlArr.push({name: imageID, url: success.downloadURL});
+        uploadedFilesUrlArr.push({name: imageName, url: success.downloadURL});
       })
       .catch(error => {
         console.log('Upload user data and img to server was rejected with error: ', error);
@@ -51,7 +64,7 @@ class CreateTest extends Component{
     super(props);
 
     this.state = {
-      isFormEdit: false,
+      isFormEdit: Boolean(this.props.navigation.state.params),
       testTypesList: [],
       testsList: [],
       uploadingImages: false,
@@ -66,32 +79,89 @@ class CreateTest extends Component{
 
   }
 
-  componentDidMount(){
+  async componentDidMount(){
+    console.log('DID MOUNT TEST CREATE/EDIT');
     console.log(this.props);
+    const {isFormEdit} = this.state;
+     getTestTypesList()
+      .then(data => {
+        this.props.dispatch(setTestTypes(data));
+        this.setState({
+          testTypesList: data
+        });
+      })
+      .catch(error => {console.log('can not get Test Type List: ', error)});
 
-    const {testTypesList} = this.props;
+     getLabelsForUser()
+      .then(data => {
+        this.props.dispatch(setLabels(data));
 
-    if (Boolean(testTypesList) && Boolean(testTypesList.length)) {
-      console.log('exist');
-      this.setState({
-        testTypesList: testTypesList
-      });
-
-      console.log(this.state);
-    }  else {
-      console.log('not exist');
-      getTestTypesList()
-        .then(data => {
-          this.props.dispatch(setTestTypes(data));
-          this.setState({
-            testTypesList: data
-          })
+        let labelsListArr = convertObjToArr(data);
+        labelsListArr = addCheckFieldToArr(labelsListArr);
+        this.setState({
+          labelsList: labelsListArr
         })
+      })
+      .catch(error => {console.log('can not get Labels list for the user', error)});
+
+     geTestsListByCurrentUser()
+      .then(data => {
+        this.props.dispatch(setTest(data));
+        let testsListArr = convertObjToArr(data);
+
+
+        this.setState({
+          testsList: testsListArr,
+          testsListOrigin: testsListArr,
+          // showList: Boolean(testsListArr.length),
+        })
+      })
+      .catch(error => {console.log('can not get Tests List: ', error)});
+
+
+
+
+
+
+    if (isFormEdit){
+      console.log('EDIT TEST');
+      const currentTestID = this.props.navigation.state.params.currentTest.id;
+      const {testsList} = this.props;
+      const currentTest = testsList[currentTestID];
+      const chosenTestTypesArr = [];
+      chosenTestTypesArr.push(currentTest.testType);
+      let prevImagesArr = [];
+      const chosenLabels = currentTest.labels || [];
+      const chosenIndicators = currentTest.indicators || [];
+
+      // console.log(this.state);
+      console.log(currentTest);
+
+
+
+      this.props.dispatch(setChosenTestType(chosenTestTypesArr));
+      this.props.dispatch(saveChosenLabel(chosenLabels));
+      this.props.dispatch(setChosenIndicators(chosenIndicators));
+
+      this.setState({
+        ...this.state,
+        formField: {
+          ...this.state.formField,
+          date: currentTest.date,
+          other: currentTest.other,
+          imagesArr: currentTest.images || [],
+          prevImagesArr: currentTest.images || [],
+          testLabels: chosenLabels
+        }
+
+      })
     }
+
   };
 
   componentWillUnmount(){
     this.props.dispatch(setChosenTestType([]));
+    this.props.dispatch(saveChosenLabel([]));
   }
 
   updateDateValue = (newDate) => {
@@ -157,21 +227,6 @@ class CreateTest extends Component{
   };
 
 
-  // static navigationOptions = ({navigation}) => {
-  //
-  //   return {
-  //     // headerLeft: (
-  //     //   <CalendarIcon/>
-  //     // ),
-  //     headerTitle: 'Создать Анализ',
-  //     // headerRight: (
-  //     //   <Avatar/>
-  //     // ),
-  //     // headerStyle: commonStyles.topHeader,
-  //
-  //   }
-  // };
-
   handleSubmitForm = async () => {
     console.log('press save Btn');
 
@@ -199,8 +254,12 @@ class CreateTest extends Component{
         uploadingImages: true
       });
 
-      const uploadedFilesUrlArr = await _uploadImagesToStore(imagesArr);
+      const uploadedFilesUrlArr = await _uploadImagesToStore(generatedID, imagesArr);
       console.log(uploadedFilesUrlArr);
+
+
+      console.log(indicatorsListForSave);
+
 
       const indicatorsListWithID = indicatorsListForSave.map(item => {
         item.createdIndicatorID = generateUniqID();
@@ -228,6 +287,8 @@ class CreateTest extends Component{
         this.props.dispatch(addTest(testData));
         this.props.dispatch(setChosenTestType([]));
         this.props.dispatch(setChosenIndicators([]));
+        this.props.dispatch(saveChosenLabel([]));
+
 
         this.setState({
           uploadingImages: false
@@ -236,6 +297,122 @@ class CreateTest extends Component{
         this.props.navigation.goBack();
 
       }
+    }
+
+    if (isFormEdit) {
+      const {currentTest} = this.props.navigation.state.params;
+      const testID = currentTest.id;
+      const {imagesArr, prevImagesArr} = this.state.formField;
+
+      console.log(imagesArr);
+      console.log(prevImagesArr);
+
+
+      let uploadedFilesUrlArr = [];
+      let alreadyUploadedImgArr = [];
+      let shouldBeRemovedImgArr = [];
+      let shouldBeUploadedImgArr = [];
+
+      let imagesAfterEditArr = [];
+
+      const prevImageUrlArr = prevImagesArr.map(item => item.url);
+      const imagesUrlArr = imagesArr.map(item => item.url);
+
+      if (JSON.stringify(imagesArr) !== JSON.stringify(prevImagesArr)) {
+        imagesUrlArr.forEach((item, index) => {
+          if (prevImageUrlArr.includes(item)) {
+            alreadyUploadedImgArr.push(imagesArr[index]);
+          }
+
+          if (!prevImageUrlArr.includes(item)) {
+            shouldBeUploadedImgArr.push(imagesArr[index]);
+          }
+
+        });
+
+        prevImageUrlArr.forEach((item, index)=> {
+          if (!imagesUrlArr.includes(item)){
+            shouldBeRemovedImgArr.push(prevImagesArr[index]);
+          }
+        });
+
+
+
+        // noteImageUrlArr.forEach((item, index) => {
+        //   if (!prevImageUrlArr.includes(item)) {
+        //     shouldBeUploadedImgArr.push(noteImagesArr[index]);
+        //   }
+        // });
+        //
+        console.log('ALREADY UPLOADED ', alreadyUploadedImgArr);
+        console.log('NEED TO REMOVE ', shouldBeRemovedImgArr);
+        console.log('NEED TO UPLOAD ', shouldBeUploadedImgArr);
+
+        if (shouldBeUploadedImgArr.length) {
+          console.log('upload...');
+          this.setState({
+            uploadingImages: true
+          });
+          uploadedFilesUrlArr = await _uploadImagesToStore(testID, shouldBeUploadedImgArr);
+          this.setState({
+            uploadingImages: false
+          });
+        }
+
+        if (shouldBeRemovedImgArr.length) {
+          shouldBeRemovedImgArr.map(item => {
+            removeTestImages(testID, item.name);
+          })
+        }
+        console.log(alreadyUploadedImgArr);
+        console.log(uploadedFilesUrlArr);
+        imagesAfterEditArr = [...alreadyUploadedImgArr, ...uploadedFilesUrlArr];
+        console.log(imagesAfterEditArr);
+
+      } else {
+        imagesAfterEditArr = prevImagesArr;
+      }
+
+
+      console.log(imagesAfterEditArr);
+
+
+      const indicatorsListWithID = indicatorsListForSave.map(item => {
+        item.createdIndicatorID = generateUniqID();
+        return item;
+      });
+
+      console.log(indicatorsListWithID);
+
+      const testData = {
+        id: testID,
+        createdByUser: currentTest.createdByUser,
+        images: imagesAfterEditArr,
+        labels: chosenLabelsID,
+        testType: chosenTestType[0],
+        indicators: indicatorsListWithID,
+        date,
+        other,
+        dateModified: new Date().getTime(),
+      };
+
+
+      updateChosenTest(testID, testData);
+      this.props.dispatch(updateTest(testData));
+
+      this.props.dispatch(setChosenIndicators([]));
+      this.props.dispatch(setChosenTestType([]));
+      this.props.dispatch(setChosenIndicators([]));
+
+      this.props.navigation.goBack();
+
+
+      // console.log(testData);
+
+
+
+
+
     }
 
 
@@ -294,11 +471,40 @@ class CreateTest extends Component{
 
   };
 
+  handleRemoveNote = () => {
+    const {isFormEdit} = this.state;
+
+    if (isFormEdit) {
+      const currentTestID = this.props.navigation.state.params.currentTest.id;
+      const editedTest = this.props.testsList[currentTestID];
+      const testImages = editedTest.images || [];
+
+      console.log(editedTest);
+
+      deleteTestByID(currentTestID)
+        .then(() => {
+          if (testImages.length) {
+            testImages.forEach(item => {
+              removeTestImages(currentTestID, item.name)
+                .catch(error => {
+                  console.log('Images from Note was note removed because of: ', error)
+                })
+            })
+          }
+
+          this.props.dispatch(deleteTest(currentTestID));
+          this.props.navigation.navigate('Home');
+        });
+
+    }
+  };
+
 
 
 
   render() {
     console.log(this.props);
+    console.log(this.state);
     const {isFormEdit} = this.state;
     const { labels, testTypesList, chosenTestType, indicatorsListForSave} = this.props;
     const {other, date, imagesArr} = this.state.formField;
@@ -313,13 +519,13 @@ class CreateTest extends Component{
 
 
 
-
+    console.log(testTypesList);
 
     const testTypesTitleList = testTypesList.map(item => {
       return item['title'];
     });
     const {chosenLabelsID} = this.props || [];
-    console.log(testTypesList);
+    console.log(chosenLabelsID);
 
     return (
       <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0}]}>
@@ -347,7 +553,7 @@ class CreateTest extends Component{
               }
             </View>
             <View style={{marginTop: 16}}>
-              <DateSelect updateDateValue={(value) => {this.updateDateValue(value)}}/>
+              <DateSelect initialDate={this.state.formField.date} updateDateValue={(value) => {this.updateDateValue(value)}}/>
             </View>
 
 
@@ -463,7 +669,7 @@ class CreateTest extends Component{
                   editable = {true}
                   multiline = {true}
                   placeholder={'Введите текст'}
-                  value={this.state.formField.other}
+                  value={other}
                   onChangeText={(text) => {
                     this.setState({
                       ...this.state,
@@ -479,7 +685,7 @@ class CreateTest extends Component{
 
 
 
-            <View style={{paddingTop: 40, paddingLeft: 16, paddingRight: 16}}>
+            <View style={{paddingTop: 40, paddingLeft: 16, paddingRight: 16, borderWidth: 0, ...ifIphoneX({paddingBottom: 22}, {paddingBottom: 20})}}>
               {/*<TouchableOpacity*/}
               {/*  style={[commonStyles.submitBtn, {...ifIphoneX({marginBottom: 22},{marginBottom: 20})}]}*/}
               {/*  onPress={this.handleSaveBtn}*/}
@@ -491,6 +697,13 @@ class CreateTest extends Component{
                             title={isFormEdit ? "СОХРАНИТЬ" : "СОЗДАТЬ"}
                             handleSubmitForm={this.handleSubmitForm}/>
             </View>
+
+            {isFormEdit &&
+            <View style={[commonStyles.containerIndents, {borderWidth: 0}]}>
+              <RemoveButton handleRemove={(event) => this.handleRemoveNote(event)} title={'УДАЛИТЬ АНАЛИЗ'}/>
+            </View>
+
+            }
 
 
 
@@ -510,13 +723,14 @@ function mapStateToProps(state) {
     testTypesList: state.tests.testTypesList,
     chosenTestType: state.tests.chosenTestType,
     indicatorsListForSave: state.tests.indicatorsListForSave,
+    testsList: state.tests.testsList,
 
     labels: labels.labels,
     chosenLabelsID: labels.chosenLabelsID,
   }
 }
 
-export default withNavigation(connect(mapStateToProps)(CreateTest))
+export default withNavigationFocus(connect(mapStateToProps)(CreateTest))
 
 const styles = StyleSheet.create({
 

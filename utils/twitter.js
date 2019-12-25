@@ -14,6 +14,7 @@ const TwitterKeys = {
 
 
 export async function twitterLogin() {
+  console.log(RNTwitterSignIn);
   try {
     RNTwitterSignIn.init(TwitterKeys.TWITTER_CONSUMER_KEY, TwitterKeys.TWITTER_CONSUMER_SECRET);
     const loginData = await RNTwitterSignIn.logIn();

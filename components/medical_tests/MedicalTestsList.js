@@ -32,8 +32,6 @@ class MedicalTestsList extends Component{
 
   componentDidMount(){
 
-
-
     getTestTypesList()
       .then(data => {
         this.props.dispatch(setTestTypes(data));
@@ -72,13 +70,17 @@ class MedicalTestsList extends Component{
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log('WILL RECEIVE PROPS');
 
 
     const {testsList, labelsList} = nextProps;
+    const prevTestsList = this.state.testsList;
     console.log(nextProps);
 
     let newLabelsListArr = convertObjToArr(labelsList);
     let newTestsListArr = convertObjToArr(testsList);
+
+     console.log(newTestsListArr);
 
     if (newLabelsListArr !== this.state.labelsList) {
       this.setState({
@@ -86,16 +88,33 @@ class MedicalTestsList extends Component{
       })
     }
 
-    this.setState({
-      testsList: newTestsListArr,
-      testsListOrigin: newTestsListArr,
-      showList: Boolean(newTestsListArr.length),
-    })
+
+
+    // this.forceUpdate();
+
+     console.log(this.state.testsList);
+     console.log(newTestsListArr);
+
+     // if (prevTestsList !== newTestsListArr) {
+     //   console.log('not equal');
+     //   this.setState({
+     //     testsList: newTestsListArr,
+     //     testsListOrigin: newTestsListArr,
+     //     showList: Boolean(newTestsListArr.length),
+     //   });
+     // }
+
+     this.setState({
+       testsList: newTestsListArr,
+       testsListOrigin: newTestsListArr,
+       showList: Boolean(newTestsListArr.length),
+     });
 
 
   }
 
   renderFlatListItem = ({item}) => {
+    console.log(item);
     return (
       <OneTestListItem key={item.id} testData={item} hasCheckBox={false}  handleChoosingTest = {this.handleChoosingTest}/>
     )
@@ -189,6 +208,7 @@ class MedicalTestsList extends Component{
 
   render() {
     const {testsList,  labelsList, isLoaded, showList} = this.state;
+    console.log(testsList);
 
 
     testsList.sort((a,b) => {

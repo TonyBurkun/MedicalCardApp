@@ -1,6 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import {View, Text, TextInput, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator, FlatList} from 'react-native'
 import {connect} from "react-redux";
+import { withNavigationFocus } from 'react-navigation';
 import InternetNotification from "../ui_components/InternetNotification";
 import {getCurrentUserData, getTestTypesList, getUIDfromFireBase} from "../../utils/API";
 import * as Colors from "../../utils/colors";
@@ -10,6 +11,10 @@ import commonStyles from "../../utils/commonStyles";
 import GreenTitle from "../ui_components/titles/GreenTitle";
 import {Image} from "react-native-elements";
 import {getIndicatorInReadableFormat} from "../../utils/helpers";
+import {setChosenTestType} from "../../actions/tests";
+import {saveChosenLabel} from "../../actions/labels";
+
+
 
 class OneMedicalTest extends Component {
 
@@ -17,6 +22,7 @@ class OneMedicalTest extends Component {
     super(props);
 
     this.state = {
+      currentTestTypeTitle: '',
       currentTest: {},
       currentUserData: {},
       testTypesList: []
@@ -40,7 +46,8 @@ class OneMedicalTest extends Component {
     }
 
     function handleEditBtn(){
-      navigation.navigate('CreateTest', {testID: currentTest.id});
+      console.log(currentTest);
+      navigation.navigate('CreateTest', {currentTest: currentTest});
     }
 
     return {
@@ -61,6 +68,7 @@ class OneMedicalTest extends Component {
   };
 
   async componentDidMount(){
+    console.log(this.props);
     const {tests, navigation, testTypesList, currentUserData} = this.props;
     if (testTypesList && testTypesList.length) {
       await this.setState({
@@ -104,8 +112,15 @@ class OneMedicalTest extends Component {
       const date = currentUserData.date;
       const gender = currentUserData.gender;
 
+      console.log(testTypesList);
+      console.log(currentTest.indicators);
+      console.log(currentTest.date);
+      console.log(currentUserData);
+      console.log(currentTest.indicators);
+
       const testIndicators = getIndicatorInReadableFormat(testTypesList, currentTest.indicators, date, gender);
 
+      console.log(testIndicators);
 
 
 
@@ -120,6 +135,51 @@ class OneMedicalTest extends Component {
       });
     }
   }
+
+
+
+  componentWillReceiveProps(nextProps){
+    console.log(nextProps);
+    const testID = this.props.navigation.state.params.testID;
+    const {testsList} = nextProps;
+    console.log(testsList);
+    console.log(testsList[testID]);
+
+
+
+
+    const {testTypesList, currentUserData} = this.state;
+    const date = currentUserData.date;
+    const gender = currentUserData.gender;
+    const updatedTest = testsList[testID];
+    const updatedTestType = updatedTest.testType;
+    const updatedTestTypeTitle = testTypesList[updatedTestType].title;
+
+    console.log(updatedTestTypeTitle);
+
+
+
+    const testIndicators = getIndicatorInReadableFormat(testTypesList, updatedTest.indicators, date, gender);
+
+
+    console.log(testTypesList);
+    console.log(date);
+    console.log(gender);
+
+    this.setState({
+      currentTest: updatedTest,
+      currentTestTypeTitle: updatedTestTypeTitle,
+      testType: updatedTest.testType,
+      testIndicators
+
+    });
+
+  }
+
+  componentWillUnmount() {
+    this.props.dispatch(saveChosenLabel([]));
+  }
+
 
   renderIndicatorsItem = ({item, index}) => {
     const testIndicators = this.state.currentTest.indicators || [];
@@ -142,16 +202,16 @@ class OneMedicalTest extends Component {
             style={styles.input}
           />
         </View>
-        <View style={{flexDirection: 'row', marginTop: 8,  marginLeft: -4, marginRight: -4}}>
-          <View style={{flexGrow: 1, marginLeft: 4, marginRight: 4}}>
+        <View style={{flexDirection: 'row', marginTop: 8}}>
+          <View style={{width: 82, marginRight: 8}}>
             <Text style={styles.inputTitle}>НОРМА</Text>
             <TextInput
-              value={item.norma}
+              value={item.norma.toString()}
               editable={false}
               style={[styles.input, {textAlign: 'center'}]}
             />
           </View>
-          <View style={{flexGrow: 1, marginLeft: 4, marginRight: 4}}>
+          <View style={{width: 82}}>
             <Text style={styles.inputTitle}>ЕД.ИЗМ</Text>
             <TextInput
               value={item.unit}
@@ -269,10 +329,12 @@ function mapStateToProps(state) {
     currentUserData: state.authedUser.currentUserData,
     testTypesList: state.tests.testTypesList,
     labelsList: state.labels.labels,
+    testsList: state.tests.testsList,
+    indicatorsListForSave: state.tests.indicatorsListForSave,
   }
 }
 
-export default connect(mapStateToProps)(OneMedicalTest)
+export default withNavigationFocus(connect(mapStateToProps)(OneMedicalTest))
 
 const styles = StyleSheet.create({
   container: {

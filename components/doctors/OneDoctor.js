@@ -110,11 +110,13 @@ class OneDoctor extends Component{
 
       if (firstName.length) {
         const firstNameArr = firstName.split(' ');
-        firstNameArr.length = 2;
+        if (firstNameArr.length > 2) {
+          firstNameArr.length = 2;
+        }
         if (firstNameArr.length === 2) {
           firstLetters = firstNameArr[0].slice(0,1) +  firstNameArr[1].slice(0,1)
         } else {
-          firstLetters = firstNameArr[0].slice(0,2)
+          firstLetters = firstNameArr[0].slice(0,1)
         }
         return firstLetters.toUpperCase();
       }

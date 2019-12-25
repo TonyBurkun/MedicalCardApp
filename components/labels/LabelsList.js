@@ -16,13 +16,14 @@ import {
   getLabelsForUser,
   getNotesListByCurrentUser,
   removeLabelForCurrentUser,
-  updateChosenNote
+  updateChosenNote, updateChosenTest
 } from '../../utils/API'
 import {deleteLabel, saveChosenLabel, setLabels} from '../../actions/labels'
 import Swipeable from 'react-native-swipeable';
 import {convertObjToArr, isIphone5} from "../../utils/helpers";
 import {updateNote} from "../../actions/notes";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {updateTest} from "../../actions/tests";
 
 
 class LabelsList extends Component{
@@ -279,9 +280,10 @@ class LabelsList extends Component{
                   if (searchResult !== -1) {
                     labelsArr.splice(searchResult, 1);
                     //TODO need to add updateChosenTest method and update the props
-
-                    // updateChosenNote(item.id, item);
-                    // this.props.dispatch(updateNote(item));
+                    console.log(item.id);
+                    console.log(item);
+                    updateChosenTest(item.id, item);
+                    this.props.dispatch(updateTest(item));
                   }
                 }
               })

@@ -595,18 +595,15 @@ export async function getTestTypesList(){
   return snapshotDB.val() || [];
 }
 
-
-export async function saveIndicatorImageToStorage (imageID, localUri){
+export async function saveIndicatorImageToStorage (imageID, imageName, localUri){
   //localUri - local link on the image from device
 
   const downloadURL = await firebase
     .storage()
-    .ref(`indicator-images/${imageID}/${imageID}.jpg`)
+    .ref(`indicator-images/${imageID}/${imageName}.jpg`)
     .putFile(
       localUri
     );
-
-  console.log(downloadURL);
 
   return downloadURL;
 
@@ -624,11 +621,24 @@ export async function geTestsListByCurrentUser(){
   return snapshotDB.val() || {};
 }
 
-export async function removeIndicatorImages(indicatorID, imageName) {
+export async function removeTestImages(testID, imageName) {
   await firebase.storage()
-    .ref(`indicator-images/${indicatorID}/${imageName}.jpg`).delete();
-
+    .ref(`indicator-images/${testID}/${imageName}.jpg`).delete();
 }
+
+export  function updateChosenTest(testID, testData) {
+  const uid = getUIDfromFireBase();
+  firebase.database().ref(`tests/${uid}/${testID}`).update(testData);
+}
+
+
+export async function deleteTestByID(testID){
+  const uid = getUIDfromFireBase();
+  await firebase.database().ref(`tests/${uid}/${testID}`).remove();
+}
+
+
+
 
 
 

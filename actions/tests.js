@@ -65,14 +65,14 @@ export function addTest(test){
 export function deleteTest(testID){
   return {
     type: DELETE_TEST,
-    noteID: testID
+    testID: testID
   }
 }
 
 export function updateTest(test){
   return {
     type: UPDATE_TEST,
-    note: test
+    test: test
   }
 }
 

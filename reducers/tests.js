@@ -5,6 +5,7 @@ import {DELETE_TEST} from '../actions/tests'
 import {SET_CHOSEN_TEST_TYPE} from '../actions/tests'
 import {SET_CHOSEN_TESTS} from '../actions/tests'
 import {SHOW_WARNING_POPUP_BEFORE_SAVE} from '../actions/tests'
+import {updateUserData} from "../utils/API";
 
 
 const initialState = {
@@ -65,30 +66,36 @@ function tests (state = initialState, action) {
         }
       );
     //
-    // case UPDATE_NOTE:
-    //
-    //   let updatedNote = action.note;
-    //   Object.keys(state.notesList).filter((item) => {
-    //     if (state.notesList[item].id === updatedNote.id) {
-    //       state.notesList[item] = updatedNote;
-    //     }
-    //   });
-    //
-    //   return {
-    //     ...state,
-    //     notesList: state.notesList
-    //   };
-    //
-    // case DELETE_NOTE:
-    //   let deletedNoteID = action.noteID;
-    //   const notesList = state.notesList;
-    //   delete notesList[deletedNoteID];
-    //
-    //
-    //   return {
-    //     ...state,
-    //     notesList: notesList
-    //   };
+    case UPDATE_TEST:
+
+      let updatedTest = action.test;
+      // console.log(updatedTest);
+      // console.log( state.testsList);
+      Object.keys(state.testsList).filter((item) => {
+        if (state.testsList[item].id === updatedTest.id) {
+          state.testsList[item] = updatedTest;
+        }
+      });
+
+      console.log( state.testsList);
+
+      return {
+        ...state,
+        testsList: state.testsList
+      };
+
+    case DELETE_TEST:
+      let deleteTestID = action.testID;
+      const testsList = state.testsList;
+      delete testsList[deleteTestID];
+
+      console.log(testsList);
+
+
+      return {
+        ...state,
+        testsList: testsList
+      };
 
     default:
       return state

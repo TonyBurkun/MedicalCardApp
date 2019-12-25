@@ -9,6 +9,7 @@ import ChosenLabel from "./../ui_components/ChosenLabel";
 import DateLabel from "../ui_components/DateLabel";
 import {getTestTypesList} from "../../utils/API";
 import {setTestTypes} from "../../actions/tests";
+import { withNavigationFocus } from 'react-navigation';
 
 class OneTestListItem extends Component {
 
@@ -23,13 +24,15 @@ class OneTestListItem extends Component {
   }
 
   componentDidMount(){
+    console.log('MOUNT');
     const {testTypesList, testData} = this.props;
+    console.log(testData);
     if (testTypesList && testTypesList.length) {
       const currentTestType = testTypesList[testData.testType];
       this.setState({
         testTypesList,
         testTypeTitle: currentTestType.title
-      })
+    })
     } else {
       getTestTypesList()
         .then(data => {
@@ -45,6 +48,17 @@ class OneTestListItem extends Component {
 
   }
 
+  componentWillReceiveProps(nextProps){
+    console.log(nextProps);
+
+    const {testType} = nextProps.testData;
+    const {testTypesList} = this.props.tests;
+    const testTypeTitle = testTypesList[testType].title;
+    this.setState({
+      testTypeTitle
+    });
+  }
+
 
   render() {
     console.log(this.state);
@@ -54,6 +68,9 @@ class OneTestListItem extends Component {
     const testLabelsID = testData.labels || [];
     const testImagesArr = testData.images || [];
     const {testTypeTitle} = this.state;
+
+    console.log(testLabelsID);
+    console.log(labelsList);
 
 
 
@@ -66,11 +83,15 @@ class OneTestListItem extends Component {
           <DateLabel date={testData.date}/>
           <Text style={{fontSize: 21, color: Colors.BLACK_TITLE}}>{testTypeTitle}</Text>
           <Text style={{fontSize: 12, color: Colors.NOTE_GREY_TEXT, marginTop: 8}}>{testData.other}</Text>
-          <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 8, marginBottom: -8}}>
-            {testLabelsID.map((item, index) => {
-              return   <ChosenLabel key={index} title={labelsList[item].title} color={labelsList[item].color}/>
-            })}
-          </View>
+          {Boolean(testLabelsID.length && labelsList.length) &&
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 8, marginBottom: -8}}>
+              {testLabelsID.map((item, index) => {
+                console.log(item);
+                console.log(labelsList);
+                return   <ChosenLabel key={index} title={labelsList[item].title} color={labelsList[item].color}/>
+              })}
+            </View>
+          }
           <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 16, marginBottom: -8}}>
             {testImagesArr.map((item, index) => {
               return (
@@ -104,7 +125,7 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(OneTestListItem)
+export default withNavigationFocus(connect(mapStateToProps)(OneTestListItem))
 
 const styles = StyleSheet.create({
   noteBody: {

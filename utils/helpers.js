@@ -20,6 +20,7 @@ export function getCurrentDate() {
 
 export function convertObjToArr (obj){
   const copyObj = JSON.parse(JSON.stringify(obj));
+  console.log(copyObj);
   const objListKeys = Object.keys(copyObj);
 
   return objListKeys.map((item) => {
@@ -102,34 +103,33 @@ export function prepareIndicatorDataForSaving(
 
 
 export function getIndicatorInReadableFormat(testTypesList, indicatorsList, date, gender) {
-  // console.group();
-  // console.log(testTypesList);
-  // console.log(indicatorsList);
-  // console.log(date);
-  // console.log(gender);
-  // console.groupEnd();
+  console.group();
+  console.log(testTypesList);
+  console.log(indicatorsList);
+  console.log(date);
+  console.log(gender);
+  console.groupEnd();
 
 
   return indicatorsList.map((item) => {
-    const patternTypeID = item.patternTypeID;
-    const patternIndicatorID = item.patternIndicatorID;
-    const patternTest = testTypesList[patternTypeID];
-    const patternIndicator = patternTest.indicators[patternIndicatorID];
-
-
-    const splitDateArr = date.split('-');
-    const MMDDYY = splitDateArr[1] + '-' + splitDateArr[0] + '-' + splitDateArr[2];
-
-    const dateInMilliseconds = new Date(MMDDYY).getTime();
-    const currentDateInMilliseconds = new Date().getTime();
-
-
-    const ageInMilliseconds = currentDateInMilliseconds - dateInMilliseconds;
-    const userAge = Math.round(ageInMilliseconds / 1000 / 60 / 60 / 24);
-
     const indicatorFields = {};
 
     if (!Boolean(item.custom)) {
+
+      const patternTypeID = item.patternTypeID;
+      const patternIndicatorID = item.patternIndicatorID;
+      const patternTest = testTypesList[patternTypeID];
+      const patternIndicator = patternTest.indicators[patternIndicatorID];
+
+
+      const splitDateArr = date.split('-');
+      const MMDDYY = splitDateArr[1] + '-' + splitDateArr[0] + '-' + splitDateArr[2];
+      const dateInMilliseconds = new Date(MMDDYY).getTime();
+      const currentDateInMilliseconds = new Date().getTime();
+      const ageInMilliseconds = currentDateInMilliseconds - dateInMilliseconds;
+      const userAge = Math.round(ageInMilliseconds / 1000 / 60 / 60 / 24);
+
+
       indicatorFields.title = patternIndicator['indicator_title'];
       indicatorFields.unit = patternIndicator['unit'];
 
