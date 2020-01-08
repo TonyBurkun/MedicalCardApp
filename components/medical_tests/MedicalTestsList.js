@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import {View, Text, Image, StyleSheet, Platform, FlatList, TouchableOpacity} from 'react-native'
+import {View, Text, Image, StyleSheet, Platform, FlatList, TouchableOpacity, ActivityIndicator} from 'react-native'
 import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import InternetNotification from "../ui_components/InternetNotification";
 import * as Colors from "../../utils/colors";
@@ -11,6 +11,7 @@ import {connect} from 'react-redux'
 import {setLabels} from "../../actions/labels";
 import OneTestListItem from "./OneTestListItem";
 import {NO_DATA_TO_SHOW} from "../../utils/textConstants";
+import {Overlay} from "react-native-elements";
 
 
 
@@ -27,6 +28,7 @@ class MedicalTestsList extends Component{
       chosenLabels: false,
       isLoaded: false,
       showList: false,
+      // uploadedData: true,
     }
   }
 
@@ -64,12 +66,13 @@ class MedicalTestsList extends Component{
           testsListOrigin: testsListArr,
           isLoaded: true,
           showList: Boolean(testsListArr.length),
+          // uploadedData: false
         })
       })
       .catch(error => {console.log('can not get Tests List: ', error)});
   }
 
-  componentWillReceiveProps(nextProps) {
+   componentWillReceiveProps(nextProps) {
     console.log('WILL RECEIVE PROPS');
 
 
@@ -87,7 +90,6 @@ class MedicalTestsList extends Component{
         labelsList: newLabelsListArr
       })
     }
-
 
 
     // this.forceUpdate();
@@ -238,6 +240,12 @@ class MedicalTestsList extends Component{
 
     return(
       <SafeAreaView style={styles.container}>
+        {/*<Overlay*/}
+        {/*  isVisible={this.state.uploadedData}*/}
+        {/*  width="auto"*/}
+        {/*  height="auto">*/}
+        {/*  <ActivityIndicator/>*/}
+        {/*</Overlay>*/}
         <InternetNotification topDimension={0}/>
 
         {Boolean(isLoaded) &&

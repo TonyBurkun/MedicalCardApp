@@ -10,7 +10,7 @@ import commonStyles from "../../utils/commonStyles";
 import ProfileListBtn from '../ui_components/Buttons/ProfileListBtn'
 import ProfileListBtnChangeStatus from "../ui_components/Buttons/ProfileListBtnChangeStatus";
 import GroupButtonsTitle from '../ui_components/titles/GroupButtonsTitle'
-import {signOut} from "../../utils/API";
+import {getCurrentUserData, signOut} from "../../utils/API";
 import {getBottomSpace, getStatusBarHeight} from "react-native-iphone-x-helper/index";
 
 import {updateCurrentUserData} from "../../actions/authedUser";
@@ -62,6 +62,15 @@ class Profile extends Component{
   componentDidMount() {
     const providerDataArr = firebase.auth().currentUser.providerData;
     console.log(providerDataArr);
+    console.log(this.props);
+    const {currentUserData} = this.props;
+    console.log(currentUserData);
+
+    getCurrentUserData()
+      .then(data => {
+        this.props.dispatch(updateCurrentUserData(data));
+      });
+
 
     providerDataArr.forEach((item) => {
       switch (item.providerId) {

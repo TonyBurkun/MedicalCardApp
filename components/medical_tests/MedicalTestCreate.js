@@ -67,7 +67,8 @@ class CreateTest extends Component{
       isFormEdit: Boolean(this.props.navigation.state.params),
       testTypesList: [],
       testsList: [],
-      uploadingImages: false,
+      // uploadingImages: false,
+      showLoader: false,
       formField: {
         date: getCurrentDate(),
         imagesArr: [],
@@ -82,6 +83,9 @@ class CreateTest extends Component{
   async componentDidMount(){
     console.log('DID MOUNT TEST CREATE/EDIT');
     console.log(this.props);
+    this.setState({
+      showLoader: true
+    });
     const {isFormEdit} = this.state;
      getTestTypesList()
       .then(data => {
@@ -114,6 +118,7 @@ class CreateTest extends Component{
           testsList: testsListArr,
           testsListOrigin: testsListArr,
           // showList: Boolean(testsListArr.length),
+          showLoader: false
         })
       })
       .catch(error => {console.log('can not get Tests List: ', error)});
@@ -251,7 +256,7 @@ class CreateTest extends Component{
       const uid = getUIDfromFireBase();
 
       this.setState({
-        uploadingImages: true
+        showLoader: true
       });
 
       const uploadedFilesUrlArr = await _uploadImagesToStore(generatedID, imagesArr);
@@ -291,7 +296,7 @@ class CreateTest extends Component{
 
 
         this.setState({
-          uploadingImages: false
+          showLoader: false
         });
 
         this.props.navigation.goBack();
@@ -351,11 +356,11 @@ class CreateTest extends Component{
         if (shouldBeUploadedImgArr.length) {
           console.log('upload...');
           this.setState({
-            uploadingImages: true
+            showLoader: true
           });
           uploadedFilesUrlArr = await _uploadImagesToStore(testID, shouldBeUploadedImgArr);
           this.setState({
-            uploadingImages: false
+            showLoader: false
           });
         }
 
@@ -530,7 +535,7 @@ class CreateTest extends Component{
     return (
       <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0}]}>
         <Overlay
-          isVisible={this.state.uploadingImages}
+          isVisible={this.state.showLoader}
           width="auto"
           height="auto">
           <ActivityIndicator/>

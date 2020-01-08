@@ -24,6 +24,7 @@ class MedicalCardList extends Component{
 
   constructor(props){
     super(props);
+    console.log(props);
 
     const listType = this.props.navigation.getParam('listType');
     const radio = this.props.navigation.getParam('radio');
@@ -111,6 +112,7 @@ class MedicalCardList extends Component{
 
 
   renderFlatListItem = ({item, index}) => {
+    console.log(item);
     return (
 
       <ListItem

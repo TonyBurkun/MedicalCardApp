@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import {View, Text, StyleSheet, Switch, TouchableHighlight, ScrollView} from 'react-native'
+import {View, Text, StyleSheet, Switch, TouchableHighlight, ScrollView, ActivityIndicator} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
 import {Overlay} from "react-native-elements";
 import * as Colors from '../../utils/colors'
@@ -29,6 +29,7 @@ class IndicatorsList extends Component {
     this.state = {
       showNormPopup: false,
       popupSwitch: false,
+      showLoader: false,
       name: '',
       surname: '',
       date: '',
@@ -155,6 +156,9 @@ class IndicatorsList extends Component {
 
   async componentDidMount(){
     console.log('DID MOUNT ');
+   await this.setState({
+      showLoader: true
+    });
     console.log(this.props);
     const {currentUserData, chosenTestType, testTypesList, indicatorsListForSave} = this.props;
     const currentTestTypeObj = testTypesList[chosenTestType[0]];
@@ -255,7 +259,8 @@ class IndicatorsList extends Component {
 
     await this.setState({
       ...this.state,
-      indicatorsForShowArr
+      indicatorsForShowArr,
+      showLoader: false,
     });
 
 
@@ -409,6 +414,14 @@ class IndicatorsList extends Component {
       <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0}]}>
         <InternetNotification topDimension={0}/>
         <Overlay
+          isVisible={this.state.showLoader}
+          width="auto"
+          height="auto">
+          <ActivityIndicator/>
+        </Overlay>
+
+        {/*POP UP about norm of data*/}
+        <Overlay
           isVisible={this.state.showNormPopup}
           overlayBackgroundColor={Colors.MAIN_BACKGROUND}
           overlayStyle={{borderRadius: 20, height: 'auto', paddingLeft: 0, paddingRight: 0, paddingBottom: 0}}
@@ -473,6 +486,8 @@ class IndicatorsList extends Component {
             </TouchableHighlight>
           </View>
         </Overlay>
+
+
         <KeyboardAwareScrollView>
           <View style={commonStyles.containerIndents}>
             <Text style={{fontSize: 14, color: Colors.TYPOGRAPHY_COLOR_DARK, paddingTop: 16, paddingBottom: 16}}>
@@ -507,6 +522,7 @@ class IndicatorsList extends Component {
         </KeyboardAwareScrollView>
         <AddButton handlePress={this.handlePressAddButton}/>
       </SafeAreaView>
+
     )
   }
 
@@ -524,6 +540,7 @@ function mapStateToProps(state) {
   }
 }
 
-export default withNavigation(connect(mapStateToProps)(IndicatorsList))
+// export default withNavigation(connect(mapStateToProps)(IndicatorsList))
+export default connect(mapStateToProps)(IndicatorsList)
 
 const styles = StyleSheet.create({});
