@@ -41,6 +41,7 @@ Appear the error 'FBSDKShareKit/FBSDKShareKit.h' file not found.
 **[ANSWER]** Change the path in Libraries>RCTFBSDK.xcodeproj and then on the Build settings searched for Framework Search path, and then change ~/Documents/FacebookSDK to $(HOME)/Documents/FacebookSDK
 
 XCode 11 Beta App Launch Crash
+
 **[ANSWER]** https://github.com/facebook/react-native/issues/25154
 
 ### License
