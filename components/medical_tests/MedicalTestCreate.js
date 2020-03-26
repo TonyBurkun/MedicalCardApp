@@ -16,7 +16,7 @@ import {
 } from "../../utils/API";
 import {
   addTest,
-  deleteTest,
+  deleteTest, saveIndicatiorsListToShow, saveIndicatorsListForShow,
   setChosenIndicators,
   setChosenTestType,
   setTest,
@@ -25,7 +25,13 @@ import {
 } from "../../actions/tests";
 import {connect} from 'react-redux'
 import withNavigation from "react-navigation/src/views/withNavigation";
-import {addCheckFieldToArr, convertObjToArr, getCurrentDate} from "../../utils/helpers";
+import {
+  addCheckFieldToArr,
+  convertObjToArr,
+  getCurrentDate,
+  getIndicatorsArrForShow,
+  sortArrByObjectProp
+} from "../../utils/helpers";
 import {Icon, Image, Overlay} from "react-native-elements";
 import DateSelect from "../ui_components/InputField/DateSelect";
 import ChosenLabel from "../ui_components/ChosenLabel";
@@ -36,6 +42,11 @@ import {ifIphoneX} from "react-native-iphone-x-helper";
 import RemoveButton from "../ui_components/Buttons/RemoveButton";
 import {deleteNote} from "../../actions/notes";
 import withNavigationFocus from "react-navigation/src/views/withNavigationFocus";
+import PillLabel from "../ui_components/PillLabel";
+
+import { InteractionManager } from 'react-native';
+
+
 
 
 async function _uploadImagesToStore(testID, imagesArr) {
@@ -58,17 +69,18 @@ async function _uploadImagesToStore(testID, imagesArr) {
   return uploadedFilesUrlArr;
 }
 
-class CreateTest extends Component{
+class MedicalTestCreate extends Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
       isFormEdit: Boolean(this.props.navigation.state.params),
-      testTypesList: [],
-      testsList: [],
-      // uploadingImages: false,
-      showLoader: false,
+      formedTestTypesList: {},
+      chosenTestType: [],
+      // testsList: [],
+      indicatorsForShowArr: [],
+      showLoader: true,
       formField: {
         date: getCurrentDate(),
         imagesArr: [],
@@ -82,87 +94,179 @@ class CreateTest extends Component{
 
   async componentDidMount(){
     console.log('DID MOUNT TEST CREATE/EDIT');
+
     console.log(this.props);
-    this.setState({
-      showLoader: true
-    });
-    const {isFormEdit} = this.state;
-     getTestTypesList()
-      .then(data => {
-        this.props.dispatch(setTestTypes(data));
-        this.setState({
-          testTypesList: data
-        });
-      })
-      .catch(error => {console.log('can not get Test Type List: ', error)});
 
-     getLabelsForUser()
-      .then(data => {
-        this.props.dispatch(setLabels(data));
-
-        let labelsListArr = convertObjToArr(data);
-        labelsListArr = addCheckFieldToArr(labelsListArr);
-        this.setState({
-          labelsList: labelsListArr
-        })
-      })
-      .catch(error => {console.log('can not get Labels list for the user', error)});
-
-     geTestsListByCurrentUser()
-      .then(data => {
-        this.props.dispatch(setTest(data));
-        let testsListArr = convertObjToArr(data);
+    InteractionManager.runAfterInteractions(() => {
 
 
-        this.setState({
-          testsList: testsListArr,
-          testsListOrigin: testsListArr,
-          // showList: Boolean(testsListArr.length),
-          showLoader: false
-        })
-      })
-      .catch(error => {console.log('can not get Tests List: ', error)});
+      let {formedTestTypesList, labels, testsList, chosenTestType} = this.props;
+      // testTypesList = convertObjToArr(testTypesList);
+      // testTypesList = sortArrByObjectProp(testTypesList, 'id');
+      labels = convertObjToArr(labels);
 
 
-
-
-
-
-    if (isFormEdit){
-      console.log('EDIT TEST');
-      const currentTestID = this.props.navigation.state.params.currentTest.id;
-      const {testsList} = this.props;
-      const currentTest = testsList[currentTestID];
-      const chosenTestTypesArr = [];
-      chosenTestTypesArr.push(currentTest.testType);
-      let prevImagesArr = [];
-      const chosenLabels = currentTest.labels || [];
-      const chosenIndicators = currentTest.indicators || [];
-
-      // console.log(this.state);
-      console.log(currentTest);
-
-
-
-      this.props.dispatch(setChosenTestType(chosenTestTypesArr));
-      this.props.dispatch(saveChosenLabel(chosenLabels));
-      this.props.dispatch(setChosenIndicators(chosenIndicators));
 
       this.setState({
-        ...this.state,
-        formField: {
-          ...this.state.formField,
-          date: currentTest.date,
-          other: currentTest.other,
-          imagesArr: currentTest.images || [],
-          prevImagesArr: currentTest.images || [],
-          testLabels: chosenLabels
-        }
+        showLoader: false,
+        formedTestTypesList,
+        labels,
+        chosenTestType,
+      });
 
-      })
-    }
+    });
+
+
+
+    const {isFormEdit} = this.state;
+     // getTestTypesList()
+     //  .then(data => {
+     //    this.props.dispatch(setTestTypes(data));
+     //    this.setState({
+     //      testTypesList: data
+     //    });
+     //  })
+     //  .catch(error => {console.log('can not get Test Type List: ', error)});
+
+     // getLabelsForUser()
+     //  .then(data => {
+     //    this.props.dispatch(setLabels(data));
+     //
+     //    let labelsListArr = convertObjToArr(data);
+     //    labelsListArr = addCheckFieldToArr(labelsListArr);
+     //    this.setState({
+     //      labelsList: labelsListArr
+     //    })
+     //  })
+     //  .catch(error => {console.log('can not get Labels list for the user', error)});
+
+     // geTestsListByCurrentUser()
+     //  .then(data => {
+     //    this.props.dispatch(setTest(data));
+     //    let testsListArr = convertObjToArr(data);
+     //
+     //
+     //    this.setState({
+     //      testsList: testsListArr,
+     //      testsListOrigin: testsListArr,
+     //      // showList: Boolean(testsListArr.length),
+     //      showLoader: false
+     //    })
+     //  })
+     //  .catch(error => {console.log('can not get Tests List: ', error)});
+
+
+
+
+
+
+    // if (isFormEdit){
+    //   console.log('EDIT TEST');
+    //   const currentTestID = this.props.navigation.state.params.currentTest.id;
+    //   const {testsList} = this.props;
+    //   const currentTest = testsList[currentTestID];
+    //   const chosenTestTypesArr = [];
+    //   chosenTestTypesArr.push(currentTest.testType);
+    //   let prevImagesArr = [];
+    //   const chosenLabels = currentTest.labels || [];
+    //   const chosenIndicators = currentTest.indicators || [];
+    //
+    //   // console.log(this.state);
+    //   console.log(currentTest);
+    //
+    //
+    //
+    //   this.props.dispatch(setChosenTestType(chosenTestTypesArr));
+    //   this.props.dispatch(saveChosenLabel(chosenLabels));
+    //   this.props.dispatch(setChosenIndicators(chosenIndicators));
+    //
+    //   this.setState({
+    //     ...this.state,
+    //     formField: {
+    //       ...this.state.formField,
+    //       date: currentTest.date,
+    //       other: currentTest.other,
+    //       imagesArr: currentTest.images || [],
+    //       prevImagesArr: currentTest.images || [],
+    //       testLabels: chosenLabels
+    //     }
+    //
+    //   })
+    // }
 
   };
+
+
+  // componentWillReceiveProps(nextProps) {
+  //   console.log(this.state);
+  //   console.log(nextProps);
+  //
+  //   const {chosenTestType} = this.state;
+  //   const newChosenTestType = nextProps.chosenTestType;
+  //   console.log(chosenTestType);
+  //   console.log(newChosenTestType);
+  //   console.log(this.props.chosenTestType, newChosenTestType);
+  //
+  //   if (chosenTestType && chosenTestType.id !== newChosenTestType && newChosenTestType.id) {
+  //
+  //     let {currentUserData, testTypesList, indicatorsListForSave} = this.props;
+  //     // testTypesList = convertObjToArr(testTypesList);
+  //     // testTypesList = sortArrByObjectProp(testTypesList, 'id');
+  //
+  //     console.log(testTypesList);
+  //     console.log(newChosenTestType);
+  //     const currentTestTypeObj = testTypesList[newChosenTestType.id];
+  //     const currentTestTypeIndex =  newChosenTestType.index;
+  //
+  //
+  //
+  //     console.log(currentUserData);
+  //     console.log(currentTestTypeIndex);
+  //     console.log(currentTestTypeObj);
+  //
+  //     const indicatorsForShowArr = getIndicatorsArrForShow(currentTestTypeObj, currentUserData.date, currentUserData.gender);
+  //     console.log(indicatorsForShowArr);
+  //
+  //     this.props.dispatch(saveIndicatorsListForShow(indicatorsForShowArr));
+  //
+  //     this.setState({
+  //       ...this.state,
+  //       chosenTestType: newChosenTestType,
+  //       indicatorsForShowArr,
+  //       testTypesList,
+  //       currentTestTypeObj,
+  //       indicatorsListForSave,
+  //     });
+  //
+  //   }
+  //
+  // }
+
+  // static getDerivedStateFromProps(nextProps, prevState){
+  //   if(nextProps.chosenTestType.id !== prevState.chosenTestType.id){
+  //
+  //     const newChosenTestType = nextProps.chosenTestType;
+  //
+  //     let {currentUserData, testTypesList} = nextProps;
+  //     const currentTestTypeObj = testTypesList[newChosenTestType.id];
+  //
+  //     const indicatorsForShowArr = getIndicatorsArrForShow(currentTestTypeObj, currentUserData.date, currentUserData.gender);
+  //
+  //     return {
+  //       chosenTestType: nextProps.chosenTestType,
+  //       indicatorsForShowArr,
+  //
+  //     };
+  //   }
+  //   else return null;
+  // }
+  //
+  // componentDidUpdate(prevProps, prevState) {
+  //   console.log(prevProps, prevState);
+  //   const {indicatorsForShowArr} = this.state;
+  //   console.log(indicatorsForShowArr);
+  //   this.props.dispatch(saveIndicatorsListForShow(indicatorsForShowArr));
+  // }
 
   componentWillUnmount(){
     this.props.dispatch(setChosenTestType([]));
@@ -177,10 +281,6 @@ class CreateTest extends Component{
         date: newDate
       }
     });
-  };
-
-  showItemsList = (param, screenTitle, radio = '') => {
-    this.props.navigation.navigate(param, {listType: param, screenTitle: screenTitle, radio: radio});
   };
 
   handleAddImage = () => {
@@ -230,6 +330,18 @@ class CreateTest extends Component{
       }
     });
   };
+  handleShowTestTypeList = () => {
+    console.log('here');
+    console.log(this.props);
+    // const {testTypesTitleList} = this.props;
+    // this.props.navigation.navigate('TypeTestList', {testTypesTitleList: testTypesTitleList})
+    this.props.navigation.navigate('TypeTestList');
+  };
+
+  handleShowIndicatorsList = () => {
+    this.props.navigation.navigate('MedicalIndicators')
+  };
+
 
 
   handleSubmitForm = async () => {
@@ -341,14 +453,6 @@ class CreateTest extends Component{
           }
         });
 
-
-
-        // noteImageUrlArr.forEach((item, index) => {
-        //   if (!prevImageUrlArr.includes(item)) {
-        //     shouldBeUploadedImgArr.push(noteImagesArr[index]);
-        //   }
-        // });
-        //
         console.log('ALREADY UPLOADED ', alreadyUploadedImgArr);
         console.log('NEED TO REMOVE ', shouldBeRemovedImgArr);
         console.log('NEED TO UPLOAD ', shouldBeUploadedImgArr);
@@ -511,8 +615,33 @@ class CreateTest extends Component{
     console.log(this.props);
     console.log(this.state);
     const {isFormEdit} = this.state;
-    const { labels, testTypesList, chosenTestType, indicatorsListForSave} = this.props;
+    const { labels, chosenTestType, indicatorsListForSave} = this.props;
+    const {testTypesList, indicatorsForShowArr} = this.state;
     const {other, date, imagesArr} = this.state.formField;
+
+
+
+    // function getTestTypeTitleStr (chosenTestType, testTypesTitleList) {
+    //   console.log(chosenTestType);
+    //   console.log(testTypesTitleList);
+    //   let chosenTestTypeTitleStr = '';
+    //   if (chosenTestType && Object.keys(chosenTestType).length && testTypesTitleList && testTypesTitleList.length) {
+    //     chosenTestType.index.forEach((item) => {
+    //       console.log(testTypesTitleList);
+    //       console.log(item);
+    //       chosenTestTypeTitleStr = chosenTestTypeTitleStr + testTypesTitleList[item] + ', '
+    //     });
+    //     chosenTestTypeTitleStr = chosenTestTypeTitleStr.substr(0, chosenTestTypeTitleStr.length - 2);
+    //   }
+    //
+    //   return chosenTestTypeTitleStr;
+    // }
+
+
+
+
+    console.log(chosenTestType);
+    console.log(chosenTestType.length);
 
 
 
@@ -524,11 +653,7 @@ class CreateTest extends Component{
 
 
 
-    console.log(testTypesList);
 
-    const testTypesTitleList = testTypesList.map(item => {
-      return item['title'];
-    });
     const {chosenLabelsID} = this.props || [];
     console.log(chosenLabelsID);
 
@@ -543,20 +668,55 @@ class CreateTest extends Component{
         <InternetNotification topDimension={0}/>
         <KeyboardAwareScrollView>
           <ScrollView>
+
             <View style={{marginTop: 16}}>
               <SelectFromList
                 placeholder={'Тип анализа (обязательно)'}
-                selectRoute={'TypeTestList'}
                 type={'testList'}
-                data={testTypesTitleList}
+                // testTypesList={testTypesList}
+                pressOnSelect = {() => {this.handleShowTestTypeList()}}
               />
-              {Boolean(chosenTestType.length) &&
-                <SelectFromList
-                  placeholder={'Показатели (обязательно)'}
-                  selectRoute={'MedicalIndicators'}
-                />
+
+              {/*<View*/}
+              {/*  style={[commonStyles.tableBlockItem, {position: 'relative'}]}>*/}
+              {/*  <Text style={{*/}
+              {/*    position: 'absolute',*/}
+              {/*    left: 12,*/}
+              {/*    top: 5,*/}
+              {/*    fontSize: 14,*/}
+              {/*    color: Colors.GRAY_TEXT*/}
+              {/*  }}> {getTestTypeTitleStr(chosenTestType, testTypesTitleList) .length > 0 && 'Тип анализа (обязательно)'}</Text>*/}
+              {/*  <Text*/}
+
+              {/*    onPress = {() => {this.handleShowTestTypeList()}}*/}
+              {/*    style={!getTestTypeTitleStr(chosenTestType, testTypesTitleList) .length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {*/}
+              {/*      paddingTop: 28,*/}
+              {/*      fontSize: 16,*/}
+              {/*      color: Colors.TYPOGRAPHY_COLOR_DARK*/}
+              {/*    }]}>*/}
+              {/*    {!getTestTypeTitleStr(chosenTestType, testTypesTitleList) .length ? 'Тип анализа (обязательно)' : getTestTypeTitleStr (chosenTestType, testTypesTitleList) }*/}
+              {/*  </Text>*/}
+              {/*  <Icon*/}
+              {/*    name='chevron-right'*/}
+              {/*    type='evilicon'*/}
+              {/*    color={Colors.GRAY_TEXT}*/}
+              {/*    size={40}*/}
+              {/*    containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}*/}
+
+              {/*    onPress = {() => {this.handleShowTestTypeList()}}*/}
+              {/*  />*/}
+              {/*</View>*/}
+
+
+
+              {Boolean(Object.keys(chosenTestType).length) &&
+              <SelectFromList
+                placeholder={'Показатели (обязательно)'}
+                pressOnSelect = {() => {this.handleShowIndicatorsList()}}
+              />
               }
             </View>
+
             <View style={{marginTop: 16}}>
               <DateSelect initialDate={this.state.formField.date} updateDateValue={(value) => {this.updateDateValue(value)}}/>
             </View>
@@ -725,7 +885,10 @@ function mapStateToProps(state) {
   const {notes, pills, doctors, labels} = state;
 
   return {
-    testTypesList: state.tests.testTypesList,
+    // currentUserData: state.authedUser.currentUserData,
+    // testTypesList: state.tests.testTypesList,
+    formedTestTypesList: state.tests.formedTestTypesList,
+    testTypesTitleList: state.tests.testTypesTitleList,
     chosenTestType: state.tests.chosenTestType,
     indicatorsListForSave: state.tests.indicatorsListForSave,
     testsList: state.tests.testsList,
@@ -735,7 +898,7 @@ function mapStateToProps(state) {
   }
 }
 
-export default withNavigationFocus(connect(mapStateToProps)(CreateTest))
+export default connect(mapStateToProps)(MedicalTestCreate)
 
 const styles = StyleSheet.create({
 

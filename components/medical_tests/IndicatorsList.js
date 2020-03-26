@@ -1,19 +1,25 @@
 import React, {Component, Fragment} from 'react'
-import {View, Text, StyleSheet, Switch, TouchableHighlight, ScrollView, ActivityIndicator} from 'react-native'
+import {View, Text, StyleSheet, Switch, TouchableHighlight, ScrollView, ActivityIndicator, FlatList, KeyboardAvoidingView} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
 import {Overlay} from "react-native-elements";
 import * as Colors from '../../utils/colors'
-import withNavigation from "react-navigation/src/views/withNavigation";
 import {connect} from "react-redux";
 import {SHOW_POPUP_BEFORE_ADD_INDICATORS} from "../../utils/textConstants";
 import {SafeAreaView} from "react-navigation";
 import commonStyles from "../../utils/commonStyles";
 import InternetNotification from "../ui_components/InternetNotification";
-import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
+import {KeyboardAwareFlatList, KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import MedicalIndicatorForm from "../ui_components/InputField/MedicalIndicatorForm";
 import {generateUniqID} from "../../utils/API";
 import AddButton from "../ui_components/Buttons/AddButton";
-import {showPopUpWarning} from "../../actions/tests";
+import {setChosenIndicators, showPopUpWarning} from "../../actions/tests";
+import {convertObjToArr, getIndicatorsArrForShow, sortArrByObjectProp} from "../../utils/helpers";
+import HeaderAddBtn from "../ui_components/TopNavigation/HeaderAddBtn";
+import {IndicatorForm} from '../../utils/dataPattern'
+import { InteractionManager } from 'react-native';
+
+
+
 
 
 
@@ -29,19 +35,22 @@ class IndicatorsList extends Component {
     this.state = {
       showNormPopup: false,
       popupSwitch: false,
-      showLoader: false,
+      showLoader: true,
       name: '',
       surname: '',
       date: '',
       gender: '',
       chosenTestType: [],
-      testTypesList: [],
+      // testTypesList: [],
       currentTestTypeObj: {},
+      formedGender: '',
       // indicatorsListForSave: [],
+      indicatorsForShowArr: [],
       localIndicatorsForSaveArr: [],
+      indicatorsPart: [],
+      page: 1,
+      step: 4
     }
-
-
   }
 
 
@@ -71,217 +80,133 @@ class IndicatorsList extends Component {
     await AsyncStorage.clear();
   };
 
-  _getTestFieldsValue = (item = null, currentTestTypeID) => {
-
-    console.log(currentTestTypeID);
-
-    const {gender, date} = this.state;
-
-    const splitDateArr = date.split('-');
-    const MMDDYY = splitDateArr[1] + '-' + splitDateArr[0] + '-' + splitDateArr[2];
-
-    const dateInMilliseconds = new Date(MMDDYY).getTime();
-    const currentDateInMilliseconds = new Date().getTime();
 
 
-    const ageInMilliseconds = currentDateInMilliseconds - dateInMilliseconds;
-    const userAge = Math.round(ageInMilliseconds/1000/60/60/24);
+   componentDidMount(){
+    console.log('DID MOUNT ');
+    console.log(this.props);
 
 
-
-    let testFormFields = {
-      patternTypeID:  currentTestTypeID,
-      patternIndicatorID: null,
-      createdIndicatorID: null,
-      inputFields: {
-        title: '',
-        unit: '',
-        norma: '',
-        result: '',
-      },
-      custom: !Boolean(currentTestTypeID),
-      readyForSave: false
-
-    };
-
-    // if (this.state.chosenTestType.length) {
-    //   testFormFields.patternTypeID = this.state.chosenTestType[0] !== 0 ? this.state.chosenTestType[0] : null;
-    // }
+     InteractionManager.runAfterInteractions(() => {
+       console.log(this.state);
+       console.log(this.props);
 
 
-   if (Boolean(item)) {
-     testFormFields.patternIndicatorID = item.id;
-     testFormFields.inputFields.title = item['indicator_title'];
-     testFormFields.inputFields.unit = item['unit'];
+       const {currentUserData, testTypesTitleList, formedTestTypesList, chosenTestType} = this.props;
+       const {gender} = currentUserData;
+       const formedTestTypesListArr = convertObjToArr(formedTestTypesList);
+       const {step} = this.state;
+       console.log(formedTestTypesListArr);
 
+       const currentTestTypeObj = formedTestTypesListArr[chosenTestType[0]];
+       let indicatorsListForShow = currentTestTypeObj.indicators;
 
-     if (item['norma']['global'] && item['norma']['global'].length) {
-       // if the test types has global value which identical for both male and female
-
-       const globalNorma = item['norma']['global'][0].value;
-
-       if (globalNorma.from === globalNorma.to) {
-         testFormFields.inputFields.norma = globalNorma.to;
-       } else {
-         testFormFields.inputFields.norma = globalNorma.from + '-' + globalNorma.to
+       let formedGender = '';
+       if (gender === 'male') {
+         formedGender = '(м)'
+       }
+       if (gender === 'female') {
+         formedGender = '(ж)'
        }
 
-     }
 
-     if (!(item['norma']['global'] && item['norma']['global'].length)) {
-       // if the test types doesn't include global value and need to find the value depends on male or female and age
-       const valuesByGender = item['norma'][gender];
-       if (Boolean(valuesByGender)) {
-         valuesByGender.map(item => {
 
-           if (item.from <= userAge &&  userAge <= item.to){
 
-             if (item.value.from === item.value.to) {
-               testFormFields.inputFields.norma = item.value.to
-             }
-             if (item.value.from !== item.value.to) {
-               testFormFields.inputFields.norma = item.value.from + '-' + item.value.to
-             }
 
+
+       // let {currentUserData, chosenTestType, testTypesList} = this.props;
+       // let {indicatorsListForSave} = this.props; // i guess i should be removed with all reference
+       // let {setIndicatorAfterSave} = this.props;
+       // let indicatorsListForShow = JSON.parse(JSON.stringify(this.props.indicatorsListForShow));
+       // let indicatorsListForShow = testTypesList[chosenTestType.id].indicators;
+
+
+       // console.log(indicatorsListForSave);
+       // console.log(indicatorsListForShow);
+       // console.log(setIndicatorAfterSave);
+       //
+       // for (let i = 0; i < setIndicatorAfterSave.length; i++) {
+       //   let item = setIndicatorAfterSave[i];
+       //   console.log(item);
+       //   if (!item.custom) {
+       //     let updatingIndicator = indicatorsListForShow[item.indicatorID];
+       //     updatingIndicator.inputFields.result = item.inputFields.result;
+       //   } else {
+       //     indicatorsListForShow.push(item)
+       //   }
+       //
+       //
+       //   if (item.custom) {
+       //     indicatorsListForSave[item.customIndicatorID] = item;
+       //   } else {
+       //     indicatorsListForSave[item.indicatorID] = item;
+       //   }
+       //
+       //   this.props.dispatch(setChosenIndicators(indicatorsListForSave));
+       //
+       //
+       //
+       // }
+       //
+       // console.log(indicatorsListForSave);
+       // console.log(indicatorsListForShow);
+       // console.log(setIndicatorAfterSave);
+
+
+
+       // testTypesList = convertObjToArr(testTypesList);
+       // testTypesList = sortArrByObjectProp(testTypesList, 'id');
+       //
+       // console.log(testTypesList);
+       // console.log(chosenTestType);
+       // const currentTestTypeObj = testTypesList[chosenTestType.index];
+       //
+       //
+       // console.log(currentTestTypeObj);
+       //
+
+       let indicatorsPart = indicatorsListForShow.slice(0, step);
+       console.log(indicatorsPart);
+       this.setState({
+         ...this.state,
+         name: currentUserData.name || '',
+         surname: currentUserData.surname || '',
+         date: currentUserData.date || '',
+         gender: currentUserData.gender || '',
+         formedGender,
+         chosenTestType,
+         // testTypesList,
+         currentTestTypeObj,
+         // indicatorsListForSave,
+         indicatorsForShowArr: indicatorsListForShow,
+         indicatorsPart: indicatorsPart,
+         showLoader: false
+
+       });
+
+
+       this._retrieveData(SHOW_POPUP_BEFORE_ADD_INDICATORS)
+         .then(success => {
+
+           if (Boolean(success)) {
+             this.setState({
+               ...this.state,
+               showNormPopup: false
+             })
+           } else {
+             this.setState({
+               ...this.state,
+               showNormPopup: true
+             })
            }
          })
-       }
+         .catch(error => {
+           console.log('Error while getting data from AsyncStorage: ', error);
+         })
 
-     }
-   }
-
-      return testFormFields
-  };
+     });
 
 
-  async componentDidMount(){
-    console.log('DID MOUNT ');
-   await this.setState({
-      showLoader: true
-    });
-    console.log(this.props);
-    const {currentUserData, chosenTestType, testTypesList, indicatorsListForSave} = this.props;
-    const currentTestTypeObj = testTypesList[chosenTestType[0]];
-    const currentTestTypeID =  chosenTestType[0];
-    let indicatorsForShowArr = [];
-    let customIndicatorsForSave = [];
-    let patternIndicatorsForSave = [];
-    let patternIndicatorsForShowArr = [];
-    let customIndicatorsForShowArr = [];
-
-    console.log(indicatorsListForSave);
-
-
-
-
-
-    await this.setState({
-      ...this.state,
-      name: currentUserData.name || '',
-      surname: currentUserData.surname || '',
-      date: currentUserData.date || '',
-      gender: currentUserData.gender || '',
-      chosenTestType,
-      testTypesList,
-      currentTestTypeObj,
-      indicatorsListForSave,
-    });
-
-    if (currentTestTypeObj['indicators'] && currentTestTypeObj['indicators'].length) {
-      currentTestTypeObj['indicators'].forEach((item, index) => {
-        const currentTestFields = this._getTestFieldsValue(item, currentTestTypeID);
-        indicatorsForShowArr.push(currentTestFields);
-      })
-    } else {
-      // const currentTestFields = this._getTestFieldsValue(null, currentTestTypeID);
-      // indicatorsForShowArr.push(currentTestFields);
-      indicatorsForShowArr = [];
-    }
-
-
-
-
-    if (indicatorsListForSave && indicatorsListForSave.length) {
-
-      customIndicatorsForSave = indicatorsListForSave.filter(item => {
-        return item.custom === true;
-      });
-
-      patternIndicatorsForSave = indicatorsListForSave.filter(item => {
-        return item.custom === false
-      });
-
-      if (patternIndicatorsForSave && patternIndicatorsForSave.length) {
-        patternIndicatorsForSave.forEach((patternIndicatorItem) => {
-          indicatorsForShowArr.forEach((indicatorForShowItem) => {
-            if (patternIndicatorItem.patternIndicatorID === indicatorForShowItem.patternIndicatorID) {
-              indicatorForShowItem.inputFields.result = patternIndicatorItem.inputFields.result;
-              indicatorForShowItem.readyForSave = true;
-            }
-          })
-        });
-        patternIndicatorsForShowArr = indicatorsForShowArr;
-      } else {
-        patternIndicatorsForShowArr = indicatorsForShowArr;
-      }
-
-      if (customIndicatorsForSave && customIndicatorsForSave.length) {
-        customIndicatorsForShowArr = customIndicatorsForSave;
-      }
-
-
-      console.log(patternIndicatorsForShowArr);
-      console.log(customIndicatorsForShowArr);
-
-
-      // indicatorsForShowArr = [];
-      indicatorsForShowArr = [...patternIndicatorsForShowArr, ...customIndicatorsForShowArr];
-
-    }
-
-    if (indicatorsForShowArr.length === 0) {
-      const currentTestFields = this._getTestFieldsValue(null, currentTestTypeID);
-      indicatorsForShowArr.push(currentTestFields);
-    }
-
-
-
-    indicatorsForShowArr.sort((a, b) =>{
-      let resultA = a.inputFields.result.toLowerCase();
-      let resultB = b.inputFields.result.toLowerCase();
-
-      if (resultB < resultA)
-        return -1;
-      if (resultB > resultA)
-        return 1;
-      return 0
-    });
-
-    await this.setState({
-      ...this.state,
-      indicatorsForShowArr,
-      showLoader: false,
-    });
-
-
-    this._retrieveData(SHOW_POPUP_BEFORE_ADD_INDICATORS)
-      .then(success => {
-
-        if (Boolean(success)) {
-          this.setState({
-            ...this.state,
-            showNormPopup: false
-          })
-        } else {
-          this.setState({
-            ...this.state,
-            showNormPopup: true
-          })
-        }
-      })
-      .catch(error => {
-        console.log('Error while getting data from AsyncStorage: ', error);
-      })
 
   }
 
@@ -301,15 +226,18 @@ class IndicatorsList extends Component {
 
   };
 
-
-
   handleIndicatorsListForSave =  async (value, index, action) => {
+
+    console.log(value);
+    console.log(action);
+    console.log(index);
     // action should be null or true.
     // if the true - indicator will be removed
-    const {indicatorsForShowArr} = this.state;
+    const {indicatorsPart} = this.state;
     // const {indicatorsListForSave} = this.props;
+    console.log(indicatorsPart);
 
-    let editedIndicatorsForShowArr = indicatorsForShowArr.map((item, itemIndex) => {
+    let editedIndicatorsForShowArr = indicatorsPart.map((item, itemIndex) => {
       if (index === itemIndex){
         item = value;
         item.readyForSave = Boolean(action);
@@ -317,10 +245,12 @@ class IndicatorsList extends Component {
       return item
     });
 
+    console.log(editedIndicatorsForShowArr);
+
 
     await this.setState({
       ...this.state,
-      indicatorsForShowArr: editedIndicatorsForShowArr
+      indicatorsPart: editedIndicatorsForShowArr
     });
 
 
@@ -330,6 +260,8 @@ class IndicatorsList extends Component {
     const localIndicatorsForSaveArr = editedIndicatorsForShowArr.filter((item) => {
       return item.readyForSave
     });
+
+    console.log(localIndicatorsForSaveArr);
 
 
     const notCompleteIndicators = editedIndicatorsForShowArr.filter((item, index) => {
@@ -366,19 +298,80 @@ class IndicatorsList extends Component {
 
   };
 
+  renderHeader = () => {
+    return (
+      <View style={[commonStyles.containerIndents, {backgroundColor: Colors.MAIN_BACKGROUND}]}>
+        <Text style={{
+          fontSize: 14,
+          color: Colors.TYPOGRAPHY_COLOR_DARK,
+          paddingTop: 16, paddingBottom: 16
+        }}>
+          Нормы (сверяйте результаты с нормальными показателями той лаборатории, которая проводила анализы, учитывая единицы измерения)
+        </Text>
+      </View>
+    )
+  };
+
+  renderIndicatorsList = ({item, index}) => {
+    console.log('HEre');
+    console.log(item);
+    return (
+      <MedicalIndicatorForm
+        // key={item.id}
+        data={item}
+        // custom={item.custom}
+        // title={item.inputFields.title}
+        // unit={item.inputFields.unit}
+        // norma={item.inputFields.norma.toString()}
+        // result={item.inputFields.result}
+        // patternTypeIndex={item.patternTypeIndex}
+        // patternIndicatorID={item.patternIndicatorID}
+        // createdIndicatorID={item.createdIndicatorID}
+        // updateIndicatorsList={(value, index, action)=> this.handleIndicatorsListForSave(value, index, action)}
+      />
+    )
+  };
+
+  handleLoadMore = () => {
+    let {page, step, indicatorsPart} = this.state;
+    let {indicatorsForShowArr} = this.state;
+    let start = page * step;
+    page = page + 1;
+
+    let end = page * step;
+
+
+    if (start < indicatorsForShowArr.length) {
+      let nextIndicatorsPart = indicatorsForShowArr.slice(start, end);
+      indicatorsPart = [...indicatorsPart, ...nextIndicatorsPart];
+      this.setState({
+        ...this.state,
+        indicatorsPart,
+        page,
+      })
+    }
+
+  };
 
 
   handlePressAddButton = () => {
-    const {indicatorsForShowArr} = this.state;
-    const item = null;
-    const currentTestTypeID = null;
+    let {indicatorsForShowArr, indicatorsPart} = this.state;
+    const currentTestTypeID = this.props.chosenTestType.id;
+    let indicatorFields = new IndicatorForm();
+    indicatorFields.custom = true;
+    indicatorFields.testTypeID = currentTestTypeID;
+    indicatorFields.customIndicatorID = generateUniqID();
 
 
-    const currentTestFields = this._getTestFieldsValue(item, currentTestTypeID);
-    indicatorsForShowArr.push(currentTestFields);
+    if (indicatorsForShowArr.length === indicatorsPart.length) {
+      indicatorsPart = [...indicatorsPart, indicatorFields]
+    } else {
+      indicatorsForShowArr = [...indicatorsForShowArr, indicatorFields];
+    }
 
     this.setState({
-      indicatorsForShowArr
+      indicatorsForShowArr,
+      indicatorsPart,
     })
   };
 
@@ -392,137 +385,113 @@ class IndicatorsList extends Component {
       name,
       surname,
       date,
-      gender,
+      formedGender,
       currentTestTypeObj,
-      indicatorsForShowArr
+      indicatorsForShowArr,
+      indicatorsPart,
     } = this.state;
 
-    console.log(currentTestTypeObj);
+    console.log(indicatorsForShowArr);
 
 
 
 
-    let formedGender = '';
-    if (gender === 'male') {
-      formedGender = '(м)'
-    }
-    if (gender === 'female') {
-      formedGender = '(ж)'
-    }
+
+
 
     return (
-      <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0}]}>
-        <InternetNotification topDimension={0}/>
-        <Overlay
-          isVisible={this.state.showLoader}
-          width="auto"
-          height="auto">
-          <ActivityIndicator/>
-        </Overlay>
+     <View style={{flex: 1, position: 'relative', backgroundColor: Colors.MAIN_BACKGROUND}}>
+       {/*<KeyboardAvoidingView behavior='position' keyboardVerticalOffset={0} style={{flex: 1, paddingBottom: 34}}>*/}
+         <InternetNotification topDimension={0}/>
+         <Overlay
+           isVisible={this.state.showLoader}
+           width="auto"
+           height="auto">
+           <ActivityIndicator/>
+         </Overlay>
+         <Overlay
+           isVisible={this.state.showNormPopup}
+           overlayBackgroundColor={Colors.MAIN_BACKGROUND}
+           overlayStyle={{borderRadius: 20, height: 'auto', paddingLeft: 0, paddingRight: 0, paddingBottom: 0}}
+         >
+           <View>
+             <View style={{paddingLeft: 25, paddingRight: 25}}>
+               <Text style={{
+                 fontSize: 17, fontWeight: 'bold', textAlign: 'center', color: Colors.BLACK_TITLE_BTN,
+                 marginTop: 10,
+               }}>Показатели</Text>
+               <Text style={{
+                 textAlign: 'center', fontSize: 13, color: Colors.TYPOGRAPHY_COLOR_DARK,
+                 marginTop: 8,
+               }}>
+                 Поле “Норма” в показателях отображается согласно данных (дата рождения и пол) заполненных в  Медицинской Карте
+               </Text>
+             </View>
+             <View>
+             </View>
+             <View style={{marginTop: 16}}>
+               <Text style={{
+                 fontSize: 16,
+                 color: Colors.MAIN_GREEN,
+                 textAlign: 'center'
+               }}>{`${name} ${surname} ${formedGender}`}</Text>
+               <Text
+                 style={{ fontSize: 16, color: Colors.MAIN_GREEN, textAlign: 'center'}}
+               >{date}</Text>
+             </View>
 
-        {/*POP UP about norm of data*/}
-        <Overlay
-          isVisible={this.state.showNormPopup}
-          overlayBackgroundColor={Colors.MAIN_BACKGROUND}
-          overlayStyle={{borderRadius: 20, height: 'auto', paddingLeft: 0, paddingRight: 0, paddingBottom: 0}}
-        >
-          <View>
-            <View style={{paddingLeft: 25, paddingRight: 25}}>
-              <Text style={{
-                fontSize: 17, fontWeight: 'bold', textAlign: 'center', color: Colors.BLACK_TITLE_BTN,
-                marginTop: 10,
-              }}>Показатели</Text>
-              <Text style={{
-                textAlign: 'center', fontSize: 13, color: Colors.TYPOGRAPHY_COLOR_DARK,
-                marginTop: 8,
-              }}>
-                Поле “Норма” в показателях отображается согласно данных (дата рождения и пол) заполненных в  Медицинской Карте
-              </Text>
+             <View style={{
+               marginTop: 16,
+               backgroundColor: Colors.WHITE,
+               flexDirection: 'row',
+               justifyContent: 'space-between',
+               paddingLeft: 16,
+               paddingRight: 16,
+               height: 44,
+               alignItems: 'center'
+             }}>
+               <Text style={{fontSize: 13, color: Colors.TYPOGRAPHY_COLOR_DARK}}>Больше не показывать</Text>
+               <Switch
+                 value={this.state.popupSwitch}
+                 onValueChange={() => {
+                   this.setState({
+                     ...this.state,
+                     popupSwitch: !this.state.popupSwitch
+                   })
+                 }}
+               />
+             </View>
 
-            </View>
-            <View style={{marginTop: 16}}>
-              <Text style={{
-                fontSize: 16,
-                color: Colors.MAIN_GREEN,
-                textAlign: 'center'
-              }}>{`${name} ${surname} ${formedGender}`}</Text>
-              <Text
-                style={{ fontSize: 16, color: Colors.MAIN_GREEN, textAlign: 'center'}}
-              >{date}</Text>
-            </View>
+             <TouchableHighlight
+               style={{alignItems: 'center'}}
+               underlayColor={'transparent'}
+               onPress={this.handlePopupSubmit}>
+               <Text style={{
+                 color: Colors.BLUE_BTN,
+                 fontSize: 17,
+                 marginTop: 12,
+                 marginBottom: 12
+               }}>OK</Text>
+             </TouchableHighlight>
+           </View>
+         </Overlay>
+         {(Boolean(indicatorsPart && indicatorsPart.length) &&
+           <FlatList
+             ref='indicatorsList'
+             extraData={this.state.indicatorsForShowArr}
+             ListHeaderComponent={this.renderHeader}
+             windowSize={5}
+             keyExtractor={(item, index) => index.toString()}
+             data={indicatorsPart}
+             renderItem={this.renderIndicatorsList}
+             onEndReached={() => {this.handleLoadMore()}}
+             onEndReachedThreshold={0.9}
+           />
+         )}
 
-            <View style={{
-              marginTop: 16,
-              backgroundColor: Colors.WHITE,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingLeft: 16,
-              paddingRight: 16,
-              height: 44,
-              alignItems: 'center'
-            }}>
-              <Text style={{fontSize: 13, color: Colors.TYPOGRAPHY_COLOR_DARK}}>Больше не показывать</Text>
-              <Switch
-                value={this.state.popupSwitch}
-                onValueChange={() => {
-                  this.setState({
-                    ...this.state,
-                    popupSwitch: !this.state.popupSwitch
-                  })
-                }}
-              />
-            </View>
-
-            <TouchableHighlight
-              style={{alignItems: 'center'}}
-              underlayColor={'transparent'}
-              onPress={this.handlePopupSubmit}>
-              <Text style={{
-                color: Colors.BLUE_BTN,
-                fontSize: 17,
-                marginTop: 12,
-                marginBottom: 12
-              }}>OK</Text>
-            </TouchableHighlight>
-          </View>
-        </Overlay>
-
-
-        <KeyboardAwareScrollView>
-          <View style={commonStyles.containerIndents}>
-            <Text style={{fontSize: 14, color: Colors.TYPOGRAPHY_COLOR_DARK, paddingTop: 16, paddingBottom: 16}}>
-              Нормы (сверяйте результаты с нормальными показателями той лаборатории, которая проводила анализы, учитывая единицы измерения)
-            </Text>
-          </View>
-
-         <View style={{paddingBottom: 80}}>
-           {(Boolean(indicatorsForShowArr && indicatorsForShowArr.length)) && (
-             indicatorsForShowArr.map((item, index) => {
-
-               console.log(item);
-
-               return (
-                 <MedicalIndicatorForm
-                   key={index}
-                   index={index}
-                   custom={item.custom}
-                   title={item.inputFields.title}
-                   unit={item.inputFields.unit}
-                   norma={item.inputFields.norma.toString()}
-                   result={item.inputFields.result}
-                   patternTypeID={item.patternTypeID}
-                   patternIndicatorID={item.patternIndicatorID}
-                   createdIndicatorID={item.createdIndicatorID}
-                   updateIndicatorsList={(value, index, action)=> this.handleIndicatorsListForSave(value, index, action)}
-                 />
-               )
-             })
-           )}
-         </View>
-        </KeyboardAwareScrollView>
-        <AddButton handlePress={this.handlePressAddButton}/>
-      </SafeAreaView>
-
+       {/*</KeyboardAvoidingView>*/}
+       {/*<AddButton handlePress={this.handlePressAddButton}/>*/}
+     </View>
     )
   }
 
@@ -531,16 +500,22 @@ class IndicatorsList extends Component {
 
 function mapStateToProps(state) {
   console.log(state);
+  console.log(state.tests.indicatorsListForShow);
 
   return {
     currentUserData: state.authedUser.currentUserData,
-    testTypesList: state.tests.testTypesList,
-    chosenTestType: state.tests.chosenTestType,
+    testTypesTitleList: state.tests.testTypesTitleList,
+    formedTestTypesList: state.tests.formedTestTypesList,
+    chosenTestType:  state.tests.chosenTestType,
+
+    indicatorsListForShow: state.tests.indicatorsListForShow,
     indicatorsListForSave: state.tests.indicatorsListForSave,
+    setIndicatorAfterSave: state.tests.setIndicatorAfterSave,
   }
 }
 
 // export default withNavigation(connect(mapStateToProps)(IndicatorsList))
 export default connect(mapStateToProps)(IndicatorsList)
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+});

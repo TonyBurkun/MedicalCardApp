@@ -1,10 +1,13 @@
 
 export const SET_CHOSEN_TEST_TYPE = 'SET_CHOSEN_TEST_TYPE';
-export const SET_TEST_TYPES = 'SET_TEST_TYPE';
+export const SET_TEST_TYPES_TITLES = 'SET_TEST_TYPES_TITLES';
+export const SET_FORMED_TEST_TYPES = 'SET_FORMED_TEST_TYPES';
 export const REMOVE_CHOSEN_TEST_TYPE = 'REMOVE_CHOSEN_TEST_TYPE';
 export const SHOW_WARNING_POPUP_BEFORE_SAVE = 'SHOW_WARNING_POPUP_BEFORE_SAVE';
+export const SAVE_INDICATORS_LIST_FOR_SHOW = 'SAVE_INDICATORS_LIST_FOR_SHOW';
 
 export const SET_CHOSEN_TESTS = 'SET_CHOSEN_TESTS';
+export const SET_CHOSEN_INDICATORS_AFTER_SAVE = 'SET_CHOSEN_INDICATORS_AFTER_SAVE';
 
 
 export const SET_TESTS = 'SET_TESTS';
@@ -22,10 +25,17 @@ export function setChosenTestType(chosenTestTypeList){
   }
 }
 
-export function setTestTypes(testTypesList){
+export function setTestTypesTitle(testTypesTitleList){
   return {
-    type: SET_TEST_TYPES,
-    testTypesList: testTypesList
+    type: SET_TEST_TYPES_TITLES,
+    testTypesTitleList: testTypesTitleList
+  }
+}
+
+export function setFormedTestTypes(formedTestTypesList){
+  return {
+    type: SET_FORMED_TEST_TYPES,
+    formedTestTypesList: formedTestTypesList
   }
 }
 
@@ -34,6 +44,14 @@ export function setChosenIndicators(indicatorsForSave){
   return {
     type: SET_CHOSEN_TESTS,
     indicatorsForSave: indicatorsForSave
+  }
+}
+
+
+export function setIndicatorAfterSave(indicatorsForSave){
+  return {
+    type: SET_CHOSEN_INDICATORS_AFTER_SAVE,
+    indicatorsForTestCreation: indicatorsForSave
   }
 }
 
@@ -73,6 +91,13 @@ export function updateTest(test){
   return {
     type: UPDATE_TEST,
     test: test
+  }
+}
+
+export function saveIndicatorsListForShow(indicatorsListForShow) {
+  return {
+    type: SAVE_INDICATORS_LIST_FOR_SHOW,
+    indicatorsListForShow,
   }
 }
 

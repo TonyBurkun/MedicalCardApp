@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import {View, Text, StyleSheet} from 'react-native'
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 import PropTypes from 'prop-types'
 import commonStyles from "../../../utils/commonStyles";
 import * as Colors from "../../../utils/colors";
@@ -40,17 +40,16 @@ class SelectFromList extends Component {
       case 'testList':
         console.log('HERE TEST LIST');
         console.log(nextProps);
-        const {store} = nextProps;
-        const chosenTestType = store.tests.chosenTestType;
-        const valueListArr = this.props.data;
-        console.log(chosenTestType);
-        console.log(valueListArr);
+        const {tests} = nextProps;
+        const chosenTestType = tests.chosenTestType;
+        if (chosenTestType.length) {
+          const chosenTestTypeID = chosenTestType[0];
+          const {testTypesTitleList} = tests;
+          this.setState({
+            chosenValueStr: testTypesTitleList[chosenTestTypeID]
+          });
+        }
 
-       const chosenValueStr = convertChosenValueToStr(chosenTestType, valueListArr);
-       console.log(chosenValueStr);
-       this.setState({
-         chosenValueStr: chosenValueStr
-       });
         break;
 
       default:
@@ -60,20 +59,20 @@ class SelectFromList extends Component {
   }
 
 
-  showItemsList = () => {
-    const route = this.props.selectRoute;
-    this.props.navigation.navigate(route);
-  };
-
   render() {
 
 
     const {placeholder} = this.props;
     const {chosenValueStr} = this.state;
+    console.log(this.state);
+
 
     return (
-      <View
-        style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+      <TouchableOpacity
+        style={[commonStyles.tableBlockItem, {position: 'relative'}]}
+        onPress={this.props.pressOnSelect}
+      >
+
         <Text style={{
           position: 'absolute',
           left: 12,
@@ -82,9 +81,6 @@ class SelectFromList extends Component {
           color: Colors.GRAY_TEXT
         }}> {chosenValueStr.length > 0 && placeholder}</Text>
         <Text
-          onPress={() => {
-            this.showItemsList()
-          }}
           style={!chosenValueStr.length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {
             paddingTop: 28,
             fontSize: 16,
@@ -98,11 +94,8 @@ class SelectFromList extends Component {
           color={Colors.GRAY_TEXT}
           size={40}
           containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}
-          onPress={() => {
-            this.showItemsList()
-          }}
         />
-      </View>
+      </TouchableOpacity>
     )
   }
 
@@ -114,7 +107,7 @@ function mapStateToProps(state) {
   console.log(state);
 
   return {
-   store: state
+   tests: state.tests
 
   }
 }
@@ -126,7 +119,6 @@ const styles = StyleSheet.create({});
 
 SelectFromList.propTypes = {
   placeholder: PropTypes.string,
-  selectRoute: PropTypes.string.isRequired,
   type: PropTypes.string,
   data: PropTypes.array,
 

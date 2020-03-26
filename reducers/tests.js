@@ -1,18 +1,23 @@
-import {SET_TEST_TYPES, SET_TESTS} from '../actions/tests'
+import {SET_TESTS, SET_FORMED_TEST_TYPES, SET_TEST_TYPES_TITLES} from '../actions/tests'
 import {ADD_TEST} from '../actions/tests'
 import {UPDATE_TEST} from '../actions/tests'
 import {DELETE_TEST} from '../actions/tests'
 import {SET_CHOSEN_TEST_TYPE} from '../actions/tests'
 import {SET_CHOSEN_TESTS} from '../actions/tests'
+import {SET_CHOSEN_INDICATORS_AFTER_SAVE} from '../actions/tests'
 import {SHOW_WARNING_POPUP_BEFORE_SAVE} from '../actions/tests'
-import {updateUserData} from "../utils/API";
+import {SAVE_INDICATORS_LIST_FOR_SHOW} from '../actions/tests'
+
 
 
 const initialState = {
   testsList:[],
-  testTypesList: [],
+  testTypesTitleList: [],
+  formedTestTypesList: {},
   chosenTestType: [],
-  indicatorsListForSave: [],
+  indicatorsListForShow: [],
+  indicatorsListForSave: {},
+  setIndicatorAfterSave: [],
   showWarningPopUp: false,
 };
 
@@ -22,21 +27,40 @@ function tests (state = initialState, action) {
   switch (action.type) {
 
     case SET_CHOSEN_TEST_TYPE:
+      console.log(action);
       return {
         ...state,
         chosenTestType: action.chosenTestTypeList
       };
 
-    case SET_TEST_TYPES:
+    case SET_TEST_TYPES_TITLES:
       return {
         ...state,
-        testTypesList: action.testTypesList
+        testTypesTitleList: action.testTypesTitleList
+      };
+
+    case SET_FORMED_TEST_TYPES:
+      return {
+        ...state,
+        formedTestTypesList: action.formedTestTypesList
+      };
+
+    case SAVE_INDICATORS_LIST_FOR_SHOW:
+      return {
+        ...state,
+        indicatorsListForShow: action.indicatorsListForShow
       };
 
     case SET_CHOSEN_TESTS:
       return {
         ...state,
         indicatorsListForSave: action.indicatorsForSave
+      };
+
+    case SET_CHOSEN_INDICATORS_AFTER_SAVE:
+      return {
+        ...state,
+        setIndicatorAfterSave: action.indicatorsForTestCreation
       };
 
     case SHOW_WARNING_POPUP_BEFORE_SAVE:

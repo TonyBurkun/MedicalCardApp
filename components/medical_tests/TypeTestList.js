@@ -9,17 +9,18 @@ class TypeTestList extends Component {
 
   constructor(props) {
     super(props);
+    console.log('here');
 
     this.state = {}
 
   }
 
   render() {
-    const {chosenTestType, testTypesList} = this.props.tests;
+    console.log(this.props);
+    const {chosenTestType, testTypesTitleList} = this.props;
 
-    const testTypesTitleList = testTypesList.map(item => {
-      return item['title'];
-    });
+
+
 
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: Colors.WHITE}}>
@@ -34,6 +35,8 @@ class TypeTestList extends Component {
 function mapStateToProps (state) {
   return {
     tests: state.tests,
+    testTypesTitleList: state.tests.testTypesTitleList,
+    chosenTestType: state.tests.chosenTestType,
   }
 }
 

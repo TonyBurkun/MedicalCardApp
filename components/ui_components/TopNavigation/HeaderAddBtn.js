@@ -9,7 +9,7 @@ import {setChosenDoctorSpecializations} from '../../../actions/doctorSpecializat
 import {setChosenDoctors} from "../../../actions/doctors";
 import {saveChosenLabel} from "../../../actions/labels";
 import {saveChosenPillsType, setChosenPills} from "../../../actions/pills"
-import {setChosenIndicators, setChosenTestType, showPopUpWarning} from "../../../actions/tests";
+import {setChosenIndicators, setChosenTestType, setIndicatorAfterSave, showPopUpWarning} from "../../../actions/tests";
 import {TRY_SAVE_NOT_FILLED_INDICATOR} from "../../../utils/systemMessages";
 
 
@@ -29,88 +29,6 @@ class HeaderAddBtn extends Component{
   }
 
 
-  handlePressBtn = () => {
-
-    const {type} = this.props;
-    console.log(type);
-
-    switch (type) {
-      case 'doctorSpecializations':
-        this.props.dispatch(setChosenDoctorSpecializations(this.state.activeItemArr));
-        this.props.navigation.goBack();
-        break;
-
-      case 'chosenDoctors':
-        this.props.dispatch(setChosenDoctors(this.state.activeItemArr));
-        this.props.navigation.goBack();
-        break;
-
-      case 'chosenLabels':
-        this.props.dispatch(saveChosenLabel(this.state.activeItemArr));
-        this.props.navigation.goBack();
-        break;
-
-      case 'chosePillsType':
-        console.log('press save pills');
-        this.props.dispatch(saveChosenPillsType(this.state.activeItemArr));
-        this.props.navigation.goBack();
-        break;
-
-      case 'chosenPills':
-        console.log('add Pills');
-        this.props.dispatch(setChosenPills(this.state.activeItemArr));
-        this.props.navigation.goBack();
-        break;
-
-      case 'chosenTestType':
-        console.log('add Tests');
-        const {chosenTestType} = this.props.tests;
-        this.props.dispatch(setChosenTestType(this.state.activeItemArr));
-        if (this.state.activeItemArr[0] !== chosenTestType[0]) {
-          this.props.dispatch(setChosenIndicators([]));
-        }
-        this.props.navigation.goBack();
-        break;
-
-      case 'chosenIndicators':
-        console.log('add Indicators');
-        const showWarningPopupBeforeSave = this.props.tests.showWarningPopUp;
-
-        if (showWarningPopupBeforeSave){
-          Alert.alert(
-            TRY_SAVE_NOT_FILLED_INDICATOR.title,
-            TRY_SAVE_NOT_FILLED_INDICATOR.message,
-            [
-              {
-                text: TRY_SAVE_NOT_FILLED_INDICATOR.buttonText,
-                onPress: () => {
-                  this.props.dispatch(setChosenIndicators(this.state.activeItemArr));
-                  this.props.dispatch(showPopUpWarning(false));
-                  this.props.navigation.goBack();
-                },
-              },
-              {
-                text: TRY_SAVE_NOT_FILLED_INDICATOR.cancelButtonText,
-                style: 'cancel',
-              }
-            ],
-            {cancelable: false}
-          );
-
-        } else {
-          this.props.dispatch(setChosenIndicators(this.state.activeItemArr));
-          this.props.dispatch(showPopUpWarning(false));
-          this.props.navigation.goBack();
-        }
-        break;
-
-      default:
-        break;
-    }
-
-    // this.props.navigation.goBack();
-  };
-
   componentDidMount(){
     console.log('mount');
     console.log(this.props.navigation.state.params);
@@ -129,8 +47,6 @@ class HeaderAddBtn extends Component{
     }
 
     if (params && params.chosenLabelsID){
-      console.log('here');
-      console.log(params);
       this.setState({
         activeItemArr: params.chosenLabelsID
       });
@@ -176,6 +92,76 @@ class HeaderAddBtn extends Component{
 
 
   }
+
+
+  handlePressBtn = () => {
+
+    const {type} = this.props;
+    console.log(type);
+
+    switch (type) {
+      case 'doctorSpecializations':
+        this.props.dispatch(setChosenDoctorSpecializations(this.state.activeItemArr));
+        this.props.navigation.goBack();
+        break;
+
+      case 'chosenDoctors':
+        this.props.dispatch(setChosenDoctors(this.state.activeItemArr));
+        this.props.navigation.goBack();
+        break;
+
+      case 'chosenLabels':
+        this.props.dispatch(saveChosenLabel(this.state.activeItemArr));
+        this.props.navigation.goBack();
+        break;
+
+      case 'chosePillsType':
+        console.log('press save pills');
+        this.props.dispatch(saveChosenPillsType(this.state.activeItemArr));
+        this.props.navigation.goBack();
+        break;
+
+      case 'chosenPills':
+        console.log('add Pills');
+        this.props.dispatch(setChosenPills(this.state.activeItemArr));
+        this.props.navigation.goBack();
+        break;
+
+      case 'chosenTestType':
+        const {chosenTestType} = this.props.tests;
+        // const {formedTestTypesList} = this.props.tests;
+        // const test = formedTestTypesList[this.state.activeItemArr[0]];
+        // console.log(this.state.activeItemArr);
+        // const chosenTestTypeObj = {};
+        // chosenTestTypeObj.id = test.id;
+        // chosenTestTypeObj.index = this.state.activeItemArr;
+
+
+
+
+        this.props.dispatch(setChosenTestType(this.state.activeItemArr));
+
+        if (this.state.activeItemArr[0] !== chosenTestType[0]) {
+          this.props.dispatch(setChosenIndicators([]));
+          this.props.dispatch(setIndicatorAfterSave([]));
+        }
+        this.props.navigation.goBack();
+        break;
+
+      case 'chosenIndicators':
+        console.log('add Indicators');
+        this.props.dispatch(setIndicatorAfterSave(this.state.activeItemArr));
+        this.props.dispatch(setChosenIndicators({}));
+        this.props.navigation.goBack();
+        break;
+
+      default:
+        break;
+    }
+
+    // this.props.navigation.goBack();
+  };
+
 
 
   render() {

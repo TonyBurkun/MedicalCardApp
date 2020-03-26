@@ -4,15 +4,20 @@ import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import InternetNotification from "../ui_components/InternetNotification";
 import * as Colors from "../../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import {addCheckFieldToArr, convertObjToArr, isIphone5, setInverseChosenItemInArr} from "../../utils/helpers";
+import {
+  addCheckFieldToArr,
+  convertObjToArr, getIndicatorsArrForShow,
+  isIphone5,
+  setInverseChosenItemInArr,
+  sortArrByObjectProp
+} from "../../utils/helpers";
 import {geTestsListByCurrentUser, getLabelsForUser, getTestTypesList} from "../../utils/API";
-import {setTest, setTestTypes} from "../../actions/tests";
+import {setFormedTestTypes, setTest, setTestTypes, setTestTypesTitle} from "../../actions/tests";
 import {connect} from 'react-redux'
 import {setLabels} from "../../actions/labels";
 import OneTestListItem from "./OneTestListItem";
 import {NO_DATA_TO_SHOW} from "../../utils/textConstants";
 import {Overlay} from "react-native-elements";
-
 
 
 class MedicalTestsList extends Component{
@@ -28,48 +33,147 @@ class MedicalTestsList extends Component{
       chosenLabels: false,
       isLoaded: false,
       showList: false,
-      // uploadedData: true,
+      gettingData: false,
     }
   }
 
   componentDidMount(){
+    console.log(this.props);
 
-    getTestTypesList()
-      .then(data => {
-        this.props.dispatch(setTestTypes(data));
-        this.setState({
-          testTypesList: data
-        });
-      })
-      .catch(error => {console.log('can not get Test Type List: ', error)});
-
-    getLabelsForUser()
-      .then(data => {
-        this.props.dispatch(setLabels(data));
-
-        let labelsListArr = convertObjToArr(data);
-        labelsListArr = addCheckFieldToArr(labelsListArr);
-        this.setState({
-          labelsList: labelsListArr
-        })
-      })
-      .catch(error => {console.log('can not get Labels list for the user', error)});
-
-    geTestsListByCurrentUser()
-      .then(data => {
-        this.props.dispatch(setTest(data));
-        let testsListArr = convertObjToArr(data);
+    const {currentUserData} = this.props;
 
 
-        this.setState({
-          testsList: testsListArr,
-          testsListOrigin: testsListArr,
-          isLoaded: true,
-          showList: Boolean(testsListArr.length),
-          // uploadedData: false
-        })
-      })
-      .catch(error => {console.log('can not get Tests List: ', error)});
+
+     Promise.all([getTestTypesList(), getLabelsForUser(), geTestsListByCurrentUser()])
+       .then(([testTypeListObj, labelsList, testListByCurrentUser]) => {
+
+         // TEST TYPE LIST
+         let testTypesList = convertObjToArr(testTypeListObj);
+         testTypesList = sortArrByObjectProp(testTypesList, 'id');
+
+         const testTypesTitleList = testTypesList.map(item => {
+           return item.title;
+         });
+         this.props.dispatch(setTestTypesTitle(testTypesTitleList));
+
+
+         let formedTestTypesListObj = {};
+
+         const splitDateArr = currentUserData.date.split('-');
+         const MMDDYY = splitDateArr[1] + '-' + splitDateArr[0] + '-' + splitDateArr[2];
+
+         const dateInMilliseconds = new Date(MMDDYY).getTime();
+         const currentDateInMilliseconds = new Date().getTime();
+
+
+         const ageInMilliseconds = currentDateInMilliseconds - dateInMilliseconds;
+         const userAge = Math.round(ageInMilliseconds/1000/60/60/24);
+
+
+         for (let i = 0; i < testTypesList.length; i++) {
+           let currentTestTypeObj = testTypesList[i];
+
+           console.log(currentTestTypeObj);
+
+           const formedIndicatorsList = getIndicatorsArrForShow(currentTestTypeObj, userAge, currentUserData.gender);
+           let formedTestTypeObj = {};
+           console.log(formedIndicatorsList);
+
+           formedTestTypeObj.indicators = formedIndicatorsList;
+           formedTestTypeObj.title = currentTestTypeObj.title;
+           formedTestTypeObj.id = currentTestTypeObj.id;
+
+           console.log(formedTestTypeObj);
+
+
+           formedTestTypesListObj[testTypesList[i].id] = formedTestTypeObj;
+
+
+         }
+
+
+
+
+
+
+         // testTypesList.forEach((item) => {
+         //   let currentTestTypeObj = item;
+         //   console.log(currentTestTypeObj);
+         //   // let formedTestTypeObj = {currentTestTypeObj};
+         //   const formedIndicatorsList = getIndicatorsArrForShow(currentTestTypeObj, userAge, currentUserData.gender);
+         //   console.log(formedIndicatorsList);
+         //
+         //
+         //   let formedTestTypeObj = {};
+         //   formedTestTypeObj.indicators = formedIndicatorsList;
+         //   formedTestTypeObj.title = currentTestTypeObj.title;
+         //   formedTestTypeObj.id = currentTestTypeObj.id;
+         //
+         //
+         //   formedTestTypesListObj[item.id] = formedTestTypeObj;
+         // });
+
+
+
+
+         // for (let typeItem in testTypeListObj) {
+         //   if (testTypeListObj.hasOwnProperty(typeItem)) {
+         //     let currentTestTypeObj = testTypeListObj[typeItem];
+         //     let formedTestTypeObj = {};
+         //     const formedIndicatorsList = getIndicatorsArrForShow(currentTestTypeObj, currentUserData.date, currentUserData.gender)
+         //
+         //     formedTestTypeObj.indicators = [...formedIndicatorsList];
+         //     formedTestTypeObj.title = currentTestTypeObj.title;
+         //     formedTestTypeObj.id = currentTestTypeObj.id;
+         //
+         //     formedTestTypesListObj[typeItem] = formedTestTypeObj;
+         //   }
+         // }
+
+         console.log(formedTestTypesListObj);
+
+         this.props.dispatch(setFormedTestTypes(formedTestTypesListObj));
+
+
+
+
+         // LABELS LIST
+         this.props.dispatch(setLabels(labelsList));
+         let labelsListArr = convertObjToArr(labelsList);
+         labelsListArr = addCheckFieldToArr(labelsListArr);
+
+
+
+         // USER TESTS LIST
+         this.props.dispatch(setTest(testListByCurrentUser));
+         let testsListArr = convertObjToArr(testListByCurrentUser);
+
+
+
+
+
+
+
+
+
+
+
+
+         this.setState({
+           testTypesList: formedTestTypesListObj,
+           labelsList: labelsListArr,
+           testsList: testsListArr,
+           testsListOrigin: testsListArr,
+           showList: Boolean(testsListArr.length),
+           isLoaded: true,
+           gettingData: false,
+         });
+
+
+       })
+       .catch(error => {
+         console.log('getting data on the Test tab fulfilled with error: ', error);
+       });
   }
 
    componentWillReceiveProps(nextProps) {
@@ -92,19 +196,6 @@ class MedicalTestsList extends Component{
     }
 
 
-    // this.forceUpdate();
-
-     console.log(this.state.testsList);
-     console.log(newTestsListArr);
-
-     // if (prevTestsList !== newTestsListArr) {
-     //   console.log('not equal');
-     //   this.setState({
-     //     testsList: newTestsListArr,
-     //     testsListOrigin: newTestsListArr,
-     //     showList: Boolean(newTestsListArr.length),
-     //   });
-     // }
 
      this.setState({
        testsList: newTestsListArr,
@@ -194,8 +285,6 @@ class MedicalTestsList extends Component{
 
   };
 
-
-
   handleChoosingTest = (testID) => {
 
     const {testsList} = this.props;
@@ -209,43 +298,41 @@ class MedicalTestsList extends Component{
 
 
   render() {
+    console.log(this.state);
     const {testsList,  labelsList, isLoaded, showList} = this.state;
     console.log(testsList);
 
-
-    testsList.sort((a,b) => {
-
-      if (a.dateModified > b.dateModified) {
-        return -1;
-      }
-      if (a.dateModified < b.dateModified) {
-        return 1;
-      }
-      return 0
-
-    });
-
-
-    testsList.sort((a,b) => {
-
-      if (a.date.toLowerCase() > b.date.toLowerCase()) {
-        return -1;
-      }
-      if (a.date.toLowerCase() < b.date.toLowerCase()) {
-        return 1;
-      }
-      return 0
-
-    });
+    // testsList.sort((a,b) => {
+    //
+    //   if (a.dateModified > b.dateModified) {
+    //     return -1;
+    //   }
+    //   if (a.dateModified < b.dateModified) {
+    //     return 1;
+    //   }
+    //   return 0
+    //
+    // });
+    // testsList.sort((a,b) => {
+    //
+    //   if (a.date.toLowerCase() > b.date.toLowerCase()) {
+    //     return -1;
+    //   }
+    //   if (a.date.toLowerCase() < b.date.toLowerCase()) {
+    //     return 1;
+    //   }
+    //   return 0
+    //
+    // });
 
     return(
       <SafeAreaView style={styles.container}>
-        {/*<Overlay*/}
-        {/*  isVisible={this.state.uploadedData}*/}
-        {/*  width="auto"*/}
-        {/*  height="auto">*/}
-        {/*  <ActivityIndicator/>*/}
-        {/*</Overlay>*/}
+        <Overlay
+          isVisible={this.state.gettingData}
+          width="auto"
+          height="auto">
+          <ActivityIndicator/>
+        </Overlay>
         <InternetNotification topDimension={0}/>
 
         {Boolean(isLoaded) &&
@@ -295,27 +382,7 @@ class MedicalTestsList extends Component{
             </View>
           )}
         </Fragment>
-
         }
-
-        {/*{!testsList.length &&*/}
-        {/*<View style={{flex: 1, position: 'relative'}}>*/}
-        {/*  <View style={styles.mainTextWrapper}>*/}
-        {/*    <Text style={[!isIphone5()? styles.mainText: styles.mainText__smallPhone]}>Здесь отображаются карточки Анализов которые Вы добавили самостоятельно.</Text>*/}
-        {/*    <Text style={[!isIphone5()? styles.subText: styles.subText__smallPhone]}>Создавайте, редактируйте или удаляйте Анализы.</Text>*/}
-        {/*  </View>*/}
-        {/*  <Image*/}
-        {/*    style={styles.personImage}*/}
-        {/*    source={require('../../assets/person/pills.png')}/>*/}
-        {/*  <View style={styles.tipWrapper}>*/}
-        {/*    <Text style={styles.tipText}>Добавить анализ</Text>*/}
-        {/*    <Image*/}
-        {/*      style={styles.tipArrow}*/}
-        {/*      source={require('../../assets/vector/pills_vector.png')}/>*/}
-
-        {/*  </View>*/}
-        {/*</View>*/}
-        {/*}*/}
       </SafeAreaView>
     )
   }
@@ -325,6 +392,7 @@ function mapStateToProps(state) {
   console.log(state);
 
   return {
+    currentUserData: state.authedUser.currentUserData,
     labelsList: state.labels.labels,
     testsList: state.tests.testsList,
   }
