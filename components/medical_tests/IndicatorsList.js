@@ -99,6 +99,7 @@ class IndicatorsList extends Component {
        console.log(formedTestTypesListArr);
 
        const currentTestTypeObj = formedTestTypesListArr[chosenTestType[0]];
+       // console.log(currentTestTypeObj);
        let indicatorsListForShow = currentTestTypeObj.indicators;
 
        let formedGender = '';
@@ -115,8 +116,8 @@ class IndicatorsList extends Component {
 
 
        // let {currentUserData, chosenTestType, testTypesList} = this.props;
-       // let {indicatorsListForSave} = this.props; // i guess i should be removed with all reference
-       // let {setIndicatorAfterSave} = this.props;
+       let {indicatorsListForSave} = this.props; // i guess i should be removed with all reference
+       let {setIndicatorAfterSave} = this.props;
        // let indicatorsListForShow = JSON.parse(JSON.stringify(this.props.indicatorsListForShow));
        // let indicatorsListForShow = testTypesList[chosenTestType.id].indicators;
 
@@ -125,28 +126,28 @@ class IndicatorsList extends Component {
        // console.log(indicatorsListForShow);
        // console.log(setIndicatorAfterSave);
        //
-       // for (let i = 0; i < setIndicatorAfterSave.length; i++) {
-       //   let item = setIndicatorAfterSave[i];
-       //   console.log(item);
-       //   if (!item.custom) {
-       //     let updatingIndicator = indicatorsListForShow[item.indicatorID];
-       //     updatingIndicator.inputFields.result = item.inputFields.result;
-       //   } else {
-       //     indicatorsListForShow.push(item)
-       //   }
-       //
-       //
-       //   if (item.custom) {
-       //     indicatorsListForSave[item.customIndicatorID] = item;
-       //   } else {
-       //     indicatorsListForSave[item.indicatorID] = item;
-       //   }
-       //
-       //   this.props.dispatch(setChosenIndicators(indicatorsListForSave));
-       //
-       //
-       //
-       // }
+       for (let i = 0; i < setIndicatorAfterSave.length; i++) {
+         let item = setIndicatorAfterSave[i];
+         console.log(item);
+         if (!item.custom) {
+           let updatingIndicator = indicatorsListForShow[item.indicatorID];
+           updatingIndicator.inputFields.result = item.inputFields.result;
+         } else {
+           indicatorsListForShow.push(item)
+         }
+
+
+         if (item.custom) {
+           indicatorsListForSave[item.customIndicatorID] = item;
+         } else {
+           indicatorsListForSave[item.indicatorID] = item;
+         }
+
+         this.props.dispatch(setChosenIndicators(indicatorsListForSave));
+
+
+
+       }
        //
        // console.log(indicatorsListForSave);
        // console.log(indicatorsListForShow);
@@ -386,7 +387,7 @@ class IndicatorsList extends Component {
       surname,
       date,
       formedGender,
-      currentTestTypeObj,
+      // currentTestTypeObj,
       indicatorsForShowArr,
       indicatorsPart,
     } = this.state;

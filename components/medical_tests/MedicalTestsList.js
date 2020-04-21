@@ -1,18 +1,19 @@
 import React, {Component, Fragment} from 'react'
-import {View, Text, Image, StyleSheet, Platform, FlatList, TouchableOpacity, ActivityIndicator} from 'react-native'
+import {ActivityIndicator, FlatList, Image, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import InternetNotification from "../ui_components/InternetNotification";
 import * as Colors from "../../utils/colors";
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {heightPercentageToDP as hp, widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {
   addCheckFieldToArr,
-  convertObjToArr, getIndicatorsArrForShow,
+  convertObjToArr,
+  getIndicatorsArrForShow,
   isIphone5,
   setInverseChosenItemInArr,
   sortArrByObjectProp
 } from "../../utils/helpers";
 import {geTestsListByCurrentUser, getLabelsForUser, getTestTypesList} from "../../utils/API";
-import {setFormedTestTypes, setTest, setTestTypes, setTestTypesTitle} from "../../actions/tests";
+import {setFormedTestTypes, setTest, setTestTypesTitle} from "../../actions/tests";
 import {connect} from 'react-redux'
 import {setLabels} from "../../actions/labels";
 import OneTestListItem from "./OneTestListItem";
@@ -42,98 +43,8 @@ class MedicalTestsList extends Component{
 
     const {currentUserData} = this.props;
 
-
-
      Promise.all([getTestTypesList(), getLabelsForUser(), geTestsListByCurrentUser()])
        .then(([testTypeListObj, labelsList, testListByCurrentUser]) => {
-
-         // TEST TYPE LIST
-         let testTypesList = convertObjToArr(testTypeListObj);
-         testTypesList = sortArrByObjectProp(testTypesList, 'id');
-
-         const testTypesTitleList = testTypesList.map(item => {
-           return item.title;
-         });
-         this.props.dispatch(setTestTypesTitle(testTypesTitleList));
-
-
-         let formedTestTypesListObj = {};
-
-         const splitDateArr = currentUserData.date.split('-');
-         const MMDDYY = splitDateArr[1] + '-' + splitDateArr[0] + '-' + splitDateArr[2];
-
-         const dateInMilliseconds = new Date(MMDDYY).getTime();
-         const currentDateInMilliseconds = new Date().getTime();
-
-
-         const ageInMilliseconds = currentDateInMilliseconds - dateInMilliseconds;
-         const userAge = Math.round(ageInMilliseconds/1000/60/60/24);
-
-
-         for (let i = 0; i < testTypesList.length; i++) {
-           let currentTestTypeObj = testTypesList[i];
-
-           console.log(currentTestTypeObj);
-
-           const formedIndicatorsList = getIndicatorsArrForShow(currentTestTypeObj, userAge, currentUserData.gender);
-           let formedTestTypeObj = {};
-           console.log(formedIndicatorsList);
-
-           formedTestTypeObj.indicators = formedIndicatorsList;
-           formedTestTypeObj.title = currentTestTypeObj.title;
-           formedTestTypeObj.id = currentTestTypeObj.id;
-
-           console.log(formedTestTypeObj);
-
-
-           formedTestTypesListObj[testTypesList[i].id] = formedTestTypeObj;
-
-
-         }
-
-
-
-
-
-
-         // testTypesList.forEach((item) => {
-         //   let currentTestTypeObj = item;
-         //   console.log(currentTestTypeObj);
-         //   // let formedTestTypeObj = {currentTestTypeObj};
-         //   const formedIndicatorsList = getIndicatorsArrForShow(currentTestTypeObj, userAge, currentUserData.gender);
-         //   console.log(formedIndicatorsList);
-         //
-         //
-         //   let formedTestTypeObj = {};
-         //   formedTestTypeObj.indicators = formedIndicatorsList;
-         //   formedTestTypeObj.title = currentTestTypeObj.title;
-         //   formedTestTypeObj.id = currentTestTypeObj.id;
-         //
-         //
-         //   formedTestTypesListObj[item.id] = formedTestTypeObj;
-         // });
-
-
-
-
-         // for (let typeItem in testTypeListObj) {
-         //   if (testTypeListObj.hasOwnProperty(typeItem)) {
-         //     let currentTestTypeObj = testTypeListObj[typeItem];
-         //     let formedTestTypeObj = {};
-         //     const formedIndicatorsList = getIndicatorsArrForShow(currentTestTypeObj, currentUserData.date, currentUserData.gender)
-         //
-         //     formedTestTypeObj.indicators = [...formedIndicatorsList];
-         //     formedTestTypeObj.title = currentTestTypeObj.title;
-         //     formedTestTypeObj.id = currentTestTypeObj.id;
-         //
-         //     formedTestTypesListObj[typeItem] = formedTestTypeObj;
-         //   }
-         // }
-
-         console.log(formedTestTypesListObj);
-
-         this.props.dispatch(setFormedTestTypes(formedTestTypesListObj));
-
 
 
 
@@ -150,13 +61,39 @@ class MedicalTestsList extends Component{
 
 
 
+         // TEST TYPE LIST
+         let testTypesList = convertObjToArr(testTypeListObj);
+         testTypesList = sortArrByObjectProp(testTypesList, 'id');
+
+         const testTypesTitleList = testTypesList.map(item => {
+           return item.title;
+         });
+         this.props.dispatch(setTestTypesTitle(testTypesTitleList));
+
+         const splitDateArr = currentUserData.date.split('-');
+         const [day, month, year] = splitDateArr;
+
+         const dateInMilliseconds = new Date(year, month, day).getTime();
+         const currentDateInMilliseconds = new Date().getTime();
+
+         const ageInMilliseconds = currentDateInMilliseconds - dateInMilliseconds;
+         const userAge = Math.round(ageInMilliseconds/1000/60/60/24);
 
 
+         let formedTestTypesListObj = {};
 
+         for (let i = 0; i < testTypesList.length; i++) {
+           let currentTestTypeObj = testTypesList[i];
+           let formedTestTypeObj = {};
 
+           formedTestTypeObj.title = currentTestTypeObj.title;
+           formedTestTypeObj.id = currentTestTypeObj.id;
+           formedTestTypeObj.indicators = getIndicatorsArrForShow(currentTestTypeObj, userAge, currentUserData.gender);
 
+           formedTestTypesListObj[formedTestTypeObj.id] = formedTestTypeObj;
+         }
 
-
+         this.props.dispatch(setFormedTestTypes(formedTestTypesListObj));
 
 
          this.setState({
@@ -299,7 +236,7 @@ class MedicalTestsList extends Component{
 
   render() {
     console.log(this.state);
-    const {testsList,  labelsList, isLoaded, showList} = this.state;
+    const {testsList, labelsList, isLoaded, showList} = this.state;
     console.log(testsList);
 
     // testsList.sort((a,b) => {

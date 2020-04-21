@@ -201,7 +201,9 @@ export function sortArrByObjectProp(arr, objProp) {
 
 export function getIndicatorsArrForShow(currentTestTypeObj = {}, userAge, userGender) {
 
-  const _getTestFieldsValue = (item = null, currentTestTypeID, gender) => {
+  let age = userAge;
+  let gender = userGender;
+  function _getTestFieldsValue (item = null, currentTestTypeID, gender){
 
     let indicatorFields = new IndicatorForm();
     // let indicatorFields = {
@@ -225,7 +227,7 @@ export function getIndicatorsArrForShow(currentTestTypeObj = {}, userAge, userGe
       indicatorFields.inputFields.title = item['indicator_title'];
       indicatorFields.inputFields.unit = item['unit'];
 
-      console.log(item.norma);
+
 
       if (item['norma']['global'] && item['norma']['global'].length) {
         // if the test types has global value which identical for both male and female
@@ -238,29 +240,30 @@ export function getIndicatorsArrForShow(currentTestTypeObj = {}, userAge, userGe
           indicatorFields.inputFields['norma'] = globalNorma['from'] + '-' + globalNorma['to']
         }
 
+        return indicatorFields;
+
       }
 
-      if ((item['norma'][gender])) {
+      if (Boolean(item['norma'][gender])) {
         // if the test types doesn't include global value and need to find the value depends on male or female and age
         const valuesByGender = item['norma'][gender];
-        let normaValueForShow = '';
-        console.log(userAge);
-        console.log(valuesByGender);
 
-        let valuesByUserAge = valuesByGender.find(item => item['from'] < userAge && userAge < item['to']);
-        console.log(valuesByUserAge);
+        let normaValueForShow = '';
+
+        let valuesByUserAge = valuesByGender.find(item => {
+          return (item['from'] <= age && age <= item['to'])
+        });
+
 
 
         if (valuesByUserAge.value['from'] === valuesByUserAge.value['to']) {
           normaValueForShow = valuesByUserAge.value['to']
-        }
-        if (valuesByUserAge.value.from !== valuesByUserAge.value['to']) {
+        } else {
           normaValueForShow = valuesByUserAge.value['from'] + '-' + valuesByUserAge.value['to']
         }
-        //
-        console.log(normaValueForShow);
+
         indicatorFields.inputFields['norma'] = normaValueForShow;
-        console.log(indicatorFields);
+
 
 
         // valuesByGender.forEach(item => {
@@ -290,23 +293,20 @@ export function getIndicatorsArrForShow(currentTestTypeObj = {}, userAge, userGe
         //   indicatorFields.inputFields['norma'] = valuesByUserAgeArr.value['from'] + '-' + valuesByUserAgeArr.value['to']
         // }
 
-
-        // return indicatorFields;
+        return indicatorFields;
       }
-      // return indicatorFields;
     }
-    return indicatorFields
-  };
+  }
 
   let indicatorsArrForShow = [];
 
   if (currentTestTypeObj['indicators']) {
     const indicatorsArr = currentTestTypeObj['indicators'];
     indicatorsArrForShow = indicatorsArr.map((item) => {
-      return _getTestFieldsValue(item, currentTestTypeObj.id, userGender);
+      return _getTestFieldsValue(item, currentTestTypeObj.id, gender);
     });
-    console.log(indicatorsArrForShow);
-    // alert(JSON.stringify(indicatorsArrForShow));
+
+    return indicatorsArrForShow;
 
   } else {
     let indicatorFields = new IndicatorForm();
@@ -314,9 +314,6 @@ export function getIndicatorsArrForShow(currentTestTypeObj = {}, userAge, userGe
     indicatorFields.testTypeID = 'test_type_0';
 
     indicatorsArrForShow.push(indicatorFields);
-
+    return indicatorsArrForShow;
   }
-
-
-  return indicatorsArrForShow;
 }

@@ -331,15 +331,15 @@ class MedicalTestCreate extends Component {
     });
   };
   handleShowTestTypeList = () => {
-    console.log('here');
-    console.log(this.props);
-    // const {testTypesTitleList} = this.props;
-    // this.props.navigation.navigate('TypeTestList', {testTypesTitleList: testTypesTitleList})
     this.props.navigation.navigate('TypeTestList');
   };
 
   handleShowIndicatorsList = () => {
     this.props.navigation.navigate('MedicalIndicators')
+  };
+
+  showItemsList = (param, screenTitle, radio = '') => {
+    this.props.navigation.navigate(param, {listType: param, screenTitle: screenTitle, radio: radio});
   };
 
 
@@ -615,7 +615,7 @@ class MedicalTestCreate extends Component {
     console.log(this.props);
     console.log(this.state);
     const {isFormEdit} = this.state;
-    const { labels, chosenTestType, indicatorsListForSave} = this.props;
+    const { labels, chosenTestType, setIndicatorAfterSave} = this.props;
     const {testTypesList, indicatorsForShowArr} = this.state;
     const {other, date, imagesArr} = this.state.formField;
 
@@ -640,14 +640,11 @@ class MedicalTestCreate extends Component {
 
 
 
-    console.log(chosenTestType);
-    console.log(chosenTestType.length);
-
 
 
 
     const isEnabled = date.length > 0 &&
-                      indicatorsListForSave.length > 0 &&
+      setIndicatorAfterSave.length > 0 &&
                       chosenTestType.length > 0;
 
 
@@ -655,7 +652,6 @@ class MedicalTestCreate extends Component {
 
 
     const {chosenLabelsID} = this.props || [];
-    console.log(chosenLabelsID);
 
     return (
       <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0}]}>
@@ -673,41 +669,8 @@ class MedicalTestCreate extends Component {
               <SelectFromList
                 placeholder={'Тип анализа (обязательно)'}
                 type={'testList'}
-                // testTypesList={testTypesList}
                 pressOnSelect = {() => {this.handleShowTestTypeList()}}
               />
-
-              {/*<View*/}
-              {/*  style={[commonStyles.tableBlockItem, {position: 'relative'}]}>*/}
-              {/*  <Text style={{*/}
-              {/*    position: 'absolute',*/}
-              {/*    left: 12,*/}
-              {/*    top: 5,*/}
-              {/*    fontSize: 14,*/}
-              {/*    color: Colors.GRAY_TEXT*/}
-              {/*  }}> {getTestTypeTitleStr(chosenTestType, testTypesTitleList) .length > 0 && 'Тип анализа (обязательно)'}</Text>*/}
-              {/*  <Text*/}
-
-              {/*    onPress = {() => {this.handleShowTestTypeList()}}*/}
-              {/*    style={!getTestTypeTitleStr(chosenTestType, testTypesTitleList) .length ? commonStyles.tableBlockItemText : [commonStyles.tableBlockItemText, {*/}
-              {/*      paddingTop: 28,*/}
-              {/*      fontSize: 16,*/}
-              {/*      color: Colors.TYPOGRAPHY_COLOR_DARK*/}
-              {/*    }]}>*/}
-              {/*    {!getTestTypeTitleStr(chosenTestType, testTypesTitleList) .length ? 'Тип анализа (обязательно)' : getTestTypeTitleStr (chosenTestType, testTypesTitleList) }*/}
-              {/*  </Text>*/}
-              {/*  <Icon*/}
-              {/*    name='chevron-right'*/}
-              {/*    type='evilicon'*/}
-              {/*    color={Colors.GRAY_TEXT}*/}
-              {/*    size={40}*/}
-              {/*    containerStyle={{position: 'absolute', right: 0, top: '50%', marginTop: -16}}*/}
-
-              {/*    onPress = {() => {this.handleShowTestTypeList()}}*/}
-              {/*  />*/}
-              {/*</View>*/}
-
-
 
               {Boolean(Object.keys(chosenTestType).length) &&
               <SelectFromList
@@ -728,7 +691,6 @@ class MedicalTestCreate extends Component {
               <Text
                 onPress={() => {
                   this.showItemsList('ChoseLabel', 'Метки')
-                  // this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
                 }}
                 style={commonStyles.tableBlockItemText}>
                 Добавить метку(и)
@@ -741,7 +703,6 @@ class MedicalTestCreate extends Component {
                 containerStyle={{position: 'absolute', right: 0, top: 0, marginTop: 12}}
                 onPress={() => {
                   this.showItemsList('ChoseLabel', 'Метки')
-                  // this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
                 }}
               />
               <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingLeft: 16, paddingRight: 16}}>
@@ -891,6 +852,7 @@ function mapStateToProps(state) {
     testTypesTitleList: state.tests.testTypesTitleList,
     chosenTestType: state.tests.chosenTestType,
     indicatorsListForSave: state.tests.indicatorsListForSave,
+    setIndicatorAfterSave: state.tests.setIndicatorAfterSave,
     testsList: state.tests.testsList,
 
     labels: labels.labels,

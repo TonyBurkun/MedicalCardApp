@@ -60,6 +60,16 @@ class MedicalIndicatorForm extends PureComponent {
 
   handleChangeResult = async (newValue, nameField) => {
 
+  console.log(newValue);
+  console.log(nameField);
+
+  let prevValue = this.state.formField[nameField];
+
+
+
+
+
+
    const _validationIndicatorFormBeforeSaving = () => {
      const {custom, testTypeID,  indicatorID, createdIndicatorID} = this.state;
      const indicatorsListForSave = {...this.props.indicatorsListForSave};
@@ -160,6 +170,8 @@ class MedicalIndicatorForm extends PureComponent {
         [nameField]: newValue,
       }
     }, () => {
+
+
       _validationIndicatorFormBeforeSaving();
 
     });
@@ -198,8 +210,8 @@ class MedicalIndicatorForm extends PureComponent {
     console.log(this.state);
     console.log(this.props.data.inputFields);
 
-    // const {title, unit, norma, result} = this.state.formField;
-    const {title, result, norma, unit} = this.props.data.inputFields;
+    const {title, unit, norma, result} = this.state.formField;
+    // const {title, result, norma, unit} = this.props.data.inputFields;
     const {custom} = this.state;
 
 
@@ -214,8 +226,6 @@ class MedicalIndicatorForm extends PureComponent {
         borderBottomWidth: 1,
         borderBottomColor: Colors.BORDER_COLOR
       }}>
-        <Text>{JSON.stringify(this.props.data.inputFields.norma)}</Text>
-        <Text>{4}</Text>
         <Text style={{color: Colors.BLUE_BTN, fontSize: 12, marginBottom: 16}}>ПОКАЗАТЕЛЬ</Text>
         <TextInput
           value={title}
