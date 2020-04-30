@@ -1,28 +1,27 @@
-import React, {Component, Fragment} from 'react'
-import {View, Text, StyleSheet, Switch, TouchableHighlight, ScrollView, ActivityIndicator, FlatList, KeyboardAvoidingView} from 'react-native'
+import React, {Component} from 'react'
+import {
+  ActivityIndicator,
+  FlatList,
+  InteractionManager,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableHighlight,
+  View
+} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
 import {Overlay} from "react-native-elements";
 import * as Colors from '../../utils/colors'
 import {connect} from "react-redux";
 import {SHOW_POPUP_BEFORE_ADD_INDICATORS} from "../../utils/textConstants";
-import {SafeAreaView} from "react-navigation";
 import commonStyles from "../../utils/commonStyles";
 import InternetNotification from "../ui_components/InternetNotification";
-import {KeyboardAwareFlatList, KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import MedicalIndicatorForm from "../ui_components/InputField/MedicalIndicatorForm";
 import {generateUniqID} from "../../utils/API";
 import AddButton from "../ui_components/Buttons/AddButton";
-import {setChosenIndicators, showPopUpWarning} from "../../actions/tests";
-import {convertObjToArr, getIndicatorsArrForShow, sortArrByObjectProp} from "../../utils/helpers";
-import HeaderAddBtn from "../ui_components/TopNavigation/HeaderAddBtn";
+import {setChosenIndicators} from "../../actions/tests";
+import {convertObjToArr, getTestTypeID} from "../../utils/helpers";
 import {IndicatorForm} from '../../utils/dataPattern'
-import { InteractionManager } from 'react-native';
-
-
-
-
-
-
 
 
 class IndicatorsList extends Component {
@@ -41,15 +40,17 @@ class IndicatorsList extends Component {
       date: '',
       gender: '',
       chosenTestType: [],
+      testTypeID: '',
       // testTypesList: [],
       currentTestTypeObj: {},
       formedGender: '',
       // indicatorsListForSave: [],
       indicatorsForShowArr: [],
       localIndicatorsForSaveArr: [],
-      indicatorsPart: [],
+      // indicatorsPart: [],
       page: 1,
-      step: 4
+      step: 4,
+
     }
   }
 
@@ -82,9 +83,11 @@ class IndicatorsList extends Component {
 
 
 
-   componentDidMount(){
+  componentDidMount(){
     console.log('DID MOUNT ');
     console.log(this.props);
+
+
 
 
      InteractionManager.runAfterInteractions(() => {
@@ -93,14 +96,21 @@ class IndicatorsList extends Component {
 
 
        const {currentUserData, testTypesTitleList, formedTestTypesList, chosenTestType} = this.props;
+       let testTypeID = getTestTypeID(chosenTestType, formedTestTypesList);
+
        const {gender} = currentUserData;
        const formedTestTypesListArr = convertObjToArr(formedTestTypesList);
-       const {step} = this.state;
        console.log(formedTestTypesListArr);
 
        const currentTestTypeObj = formedTestTypesListArr[chosenTestType[0]];
-       // console.log(currentTestTypeObj);
+       console.log(currentTestTypeObj);
        let indicatorsListForShow = currentTestTypeObj.indicators;
+       if (currentTestTypeObj.id ===  "test_type_0") {
+         indicatorsListForShow[0].customIndicatorID = generateUniqID();
+       }
+
+       console.log(indicatorsListForShow);
+       console.log(indicatorsListForShow.length);
 
        let formedGender = '';
        if (gender === 'male') {
@@ -111,63 +121,52 @@ class IndicatorsList extends Component {
        }
 
 
-
-
-
-
-       // let {currentUserData, chosenTestType, testTypesList} = this.props;
        let {indicatorsListForSave} = this.props; // i guess i should be removed with all reference
        let {setIndicatorAfterSave} = this.props;
-       // let indicatorsListForShow = JSON.parse(JSON.stringify(this.props.indicatorsListForShow));
-       // let indicatorsListForShow = testTypesList[chosenTestType.id].indicators;
 
 
-       // console.log(indicatorsListForSave);
-       // console.log(indicatorsListForShow);
-       // console.log(setIndicatorAfterSave);
-       //
+       console.log(setIndicatorAfterSave);
+       if (setIndicatorAfterSave.length) {
+         indicatorsListForShow.splice(0,1);
+       }
+
+
+
+
+
+
+       console.log(indicatorsListForSave);
+       console.log(indicatorsListForShow);
+       console.log(setIndicatorAfterSave.length);
+
        for (let i = 0; i < setIndicatorAfterSave.length; i++) {
          let item = setIndicatorAfterSave[i];
          console.log(item);
          if (!item.custom) {
            let updatingIndicator = indicatorsListForShow[item.indicatorID];
            updatingIndicator.inputFields.result = item.inputFields.result;
-         } else {
-           indicatorsListForShow.push(item)
-         }
 
-
-         if (item.custom) {
-           indicatorsListForSave[item.customIndicatorID] = item;
-         } else {
            indicatorsListForSave[item.indicatorID] = item;
+         } else {
+           indicatorsListForShow.push(item);
+
+           indicatorsListForSave[item.customIndicatorID] = item;
          }
+
+         // if (item.custom) {
+         //   indicatorsListForSave[item.customIndicatorID] = item;
+         // } else {
+         //   indicatorsListForSave[item.indicatorID] = item;
+         // }
 
          this.props.dispatch(setChosenIndicators(indicatorsListForSave));
-
-
-
        }
-       //
-       // console.log(indicatorsListForSave);
-       // console.log(indicatorsListForShow);
-       // console.log(setIndicatorAfterSave);
 
 
-
-       // testTypesList = convertObjToArr(testTypesList);
-       // testTypesList = sortArrByObjectProp(testTypesList, 'id');
-       //
-       // console.log(testTypesList);
-       // console.log(chosenTestType);
-       // const currentTestTypeObj = testTypesList[chosenTestType.index];
-       //
-       //
-       // console.log(currentTestTypeObj);
-       //
-
-       let indicatorsPart = indicatorsListForShow.slice(0, step);
-       console.log(indicatorsPart);
+       // let indicatorsPart = indicatorsListForShow.slice(0, step);
+       // console.log(indicatorsPart);
+       console.log(indicatorsListForSave);
+       console.log(indicatorsListForShow);
        this.setState({
          ...this.state,
          name: currentUserData.name || '',
@@ -176,11 +175,12 @@ class IndicatorsList extends Component {
          gender: currentUserData.gender || '',
          formedGender,
          chosenTestType,
+         testTypeID,
          // testTypesList,
          currentTestTypeObj,
          // indicatorsListForSave,
          indicatorsForShowArr: indicatorsListForShow,
-         indicatorsPart: indicatorsPart,
+         // indicatorsPart: indicatorsPart,
          showLoader: false
 
        });
@@ -227,76 +227,12 @@ class IndicatorsList extends Component {
 
   };
 
-  handleIndicatorsListForSave =  async (value, index, action) => {
 
-    console.log(value);
-    console.log(action);
-    console.log(index);
-    // action should be null or true.
-    // if the true - indicator will be removed
-    const {indicatorsPart} = this.state;
-    // const {indicatorsListForSave} = this.props;
-    console.log(indicatorsPart);
-
-    let editedIndicatorsForShowArr = indicatorsPart.map((item, itemIndex) => {
-      if (index === itemIndex){
-        item = value;
-        item.readyForSave = Boolean(action);
-      }
-      return item
-    });
-
-    console.log(editedIndicatorsForShowArr);
-
-
-    await this.setState({
+  handleIndicatorsForShowArr = (indicatorsForShowArr) => {
+    this.setState({
       ...this.state,
-      indicatorsPart: editedIndicatorsForShowArr
-    });
-
-
-
-
-
-    const localIndicatorsForSaveArr = editedIndicatorsForShowArr.filter((item) => {
-      return item.readyForSave
-    });
-
-    console.log(localIndicatorsForSaveArr);
-
-
-    const notCompleteIndicators = editedIndicatorsForShowArr.filter((item, index) => {
-      const itemInputFields = item.inputFields;
-      let counter = 0;
-      let inputsCount = 0;
-
-
-      if (item.custom){
-        const inputFilesKeys = Object.keys(itemInputFields);
-        inputsCount = inputFilesKeys.length;
-        for (const key in inputFilesKeys) {
-          if (itemInputFields[inputFilesKeys[key]].length > 0) {
-            counter = ++counter;
-          }
-        }
-
-      }
-
-      if (counter < inputsCount && counter !== 0) {
-        return item
-      }
-
-    });
-
-    if (notCompleteIndicators.length) {
-      this.props.dispatch(showPopUpWarning(true));
-    } else {
-      this.props.dispatch(showPopUpWarning(false));
-    }
-
-    const {routeName} = this.props.navigation.state;
-    this.props.navigation.navigate(routeName, {type: 'onlyAddItem', chosenItemsID: localIndicatorsForSaveArr})
-
+      indicatorsForShowArr
+    })
   };
 
   renderHeader = () => {
@@ -316,64 +252,86 @@ class IndicatorsList extends Component {
   renderIndicatorsList = ({item, index}) => {
     console.log('HEre');
     console.log(item);
+    const {handleIndicatorsForShowArr} = this.state;
     return (
       <MedicalIndicatorForm
         // key={item.id}
         data={item}
-        // custom={item.custom}
-        // title={item.inputFields.title}
-        // unit={item.inputFields.unit}
-        // norma={item.inputFields.norma.toString()}
-        // result={item.inputFields.result}
-        // patternTypeIndex={item.patternTypeIndex}
-        // patternIndicatorID={item.patternIndicatorID}
-        // createdIndicatorID={item.createdIndicatorID}
-        // updateIndicatorsList={(value, index, action)=> this.handleIndicatorsListForSave(value, index, action)}
+        indicatorsForShowArr = {this.state.indicatorsForShowArr}
+        handleIndicatorsForShowArr = {(handleIndicatorsForShowArr) => this.handleIndicatorsForShowArr(handleIndicatorsForShowArr)}
       />
     )
   };
-
-  handleLoadMore = () => {
-    let {page, step, indicatorsPart} = this.state;
-    let {indicatorsForShowArr} = this.state;
-    let start = page * step;
-    page = page + 1;
-
-    let end = page * step;
-
-
-    if (start < indicatorsForShowArr.length) {
-      let nextIndicatorsPart = indicatorsForShowArr.slice(start, end);
-      indicatorsPart = [...indicatorsPart, ...nextIndicatorsPart];
-      this.setState({
-        ...this.state,
-        indicatorsPart,
-        page,
-      })
-    }
-
-  };
+  //This method needs for partly render of flat list
+  // handleLoadMore = () => {
+  //   let {page, step, indicatorsPart} = this.state;
+  //   let {indicatorsForShowArr} = this.state;
+  //   let start = page * step;
+  //   page = page + 1;
+  //
+  //   let end = page * step;
+  //
+  //
+  //   if (start < indicatorsForShowArr.length) {
+  //     let nextIndicatorsPart = indicatorsForShowArr.slice(start, end);
+  //     indicatorsPart = [...indicatorsPart, ...nextIndicatorsPart];
+  //     this.setState({
+  //       ...this.state,
+  //       indicatorsPart,
+  //       page,
+  //     })
+  //   }
+  //
+  // };
 
 
   handlePressAddButton = () => {
-    let {indicatorsForShowArr, indicatorsPart} = this.state;
-    const currentTestTypeID = this.props.chosenTestType.id;
+
+    let {indicatorsForShowArr, testTypeID} = this.state;
     let indicatorFields = new IndicatorForm();
     indicatorFields.custom = true;
-    indicatorFields.testTypeID = currentTestTypeID;
+    indicatorFields.testTypeID = testTypeID;
     indicatorFields.customIndicatorID = generateUniqID();
 
+    console.log(indicatorsForShowArr);
+    console.log(indicatorFields);
 
-    if (indicatorsForShowArr.length === indicatorsPart.length) {
-      indicatorsPart = [...indicatorsPart, indicatorFields]
-    } else {
+    const _abilityToAddCustomIndicator = (indicatorsForShowArr) => {
+      const lastIndicatorElement = indicatorsForShowArr[indicatorsForShowArr.length-1];
+
+      if (lastIndicatorElement.custom){
+          return !!(lastIndicatorElement.inputFields.result || lastIndicatorElement.inputFields.unit || lastIndicatorElement.inputFields.title || lastIndicatorElement.inputFields.norma);
+
+
+      } else {
+        return true;
+      }
+    };
+
+    console.log(_abilityToAddCustomIndicator(indicatorsForShowArr));
+
+    let canAddNewIndicator = _abilityToAddCustomIndicator(indicatorsForShowArr);
+
+    if (canAddNewIndicator) {
       indicatorsForShowArr = [...indicatorsForShowArr, indicatorFields];
+
+      console.log(indicatorsForShowArr);
     }
 
     this.setState({
       indicatorsForShowArr,
-      indicatorsPart,
-    })
+    }, () => {
+      setTimeout(() => {
+        this.refs.indicatorsList.scrollToIndex({index: indicatorsForShowArr.length-1, animated: true});
+      },400)
+
+
+    });
+
+
+
+
+
   };
 
 
@@ -387,9 +345,7 @@ class IndicatorsList extends Component {
       surname,
       date,
       formedGender,
-      // currentTestTypeObj,
       indicatorsForShowArr,
-      indicatorsPart,
     } = this.state;
 
     console.log(indicatorsForShowArr);
@@ -476,22 +432,29 @@ class IndicatorsList extends Component {
              </TouchableHighlight>
            </View>
          </Overlay>
-         {(Boolean(indicatorsPart && indicatorsPart.length) &&
+         {(Boolean(indicatorsForShowArr && indicatorsForShowArr.length) &&
            <FlatList
              ref='indicatorsList'
              extraData={this.state.indicatorsForShowArr}
              ListHeaderComponent={this.renderHeader}
-             windowSize={5}
              keyExtractor={(item, index) => index.toString()}
-             data={indicatorsPart}
+             data={this.state.indicatorsForShowArr}
              renderItem={this.renderIndicatorsList}
-             onEndReached={() => {this.handleLoadMore()}}
-             onEndReachedThreshold={0.9}
+             //The settings below in order to load the list partly
+             // windowSize={5}
+             // data={indicatorsPart}
+             // onEndReached={() => {this.handleLoadMore()}}
+             // onEndReachedThreshold={0.9}
+             contentContainerStyle={{paddingBottom:100}}
+             initialScrollIndex={0}
+             getItemLayout={(data, index) => (
+               {length: 176, offset: 176 * index, index}
+             )}
            />
          )}
 
        {/*</KeyboardAvoidingView>*/}
-       {/*<AddButton handlePress={this.handlePressAddButton}/>*/}
+       <AddButton handlePress={this.handlePressAddButton}/>
      </View>
     )
   }

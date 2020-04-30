@@ -19,7 +19,7 @@ class MedicalIndicatorForm extends PureComponent {
     this.state = {
       testTypeID: null,
       indicatorID: null,
-      createdIndicatorID: null,
+      customIndicatorID: null,
       formReadyForSave: true,
       custom: false,
       formField: {
@@ -38,7 +38,7 @@ class MedicalIndicatorForm extends PureComponent {
     console.log(this.props.title);
 
     const {title, result, norma, unit} = this.props.data.inputFields;
-    const {custom, testTypeID, indicatorID, createdIndicatorID} = this.props.data;
+    const {custom, testTypeID, indicatorID, customIndicatorID} = this.props.data;
 
 
     this.setState({
@@ -46,7 +46,7 @@ class MedicalIndicatorForm extends PureComponent {
       custom,
       testTypeID,
       indicatorID,
-      createdIndicatorID,
+      customIndicatorID,
       formField: {
        ...this.state.formField,
         title,
@@ -60,163 +60,89 @@ class MedicalIndicatorForm extends PureComponent {
 
   handleChangeResult = async (newValue, nameField) => {
 
+    console.log(this.props);
+    const {testTypeID,  indicatorID} = this.state;
+
+    const indicatorsForShowArr= [...this.props.indicatorsForShowArr];
+    let indicatorsForShowObj = {};
+
+    indicatorsForShowArr.forEach((item) => {
+      // console.log(item);
+      if (item.custom) {
+        indicatorsForShowObj[item.customIndicatorID] = item;
+        indicatorsForShowObj[item.customIndicatorID].indicatorTypeID = testTypeID;
+      } else {
+        indicatorsForShowObj[item.indicatorID] = item;
+      }
+    });
+
+
+    if (this.state.custom) {
+      indicatorsForShowObj[this.state.customIndicatorID].inputFields[nameField] = newValue;
+    } else {
+      indicatorsForShowObj[indicatorID].inputFields[nameField] = newValue;
+    }
+
+    this.props.handleIndicatorsForShowArr(indicatorsForShowArr);
+
   console.log(newValue);
   console.log(nameField);
 
-  let prevValue = this.state.formField[nameField];
 
 
 
 
 
-
-   const _validationIndicatorFormBeforeSaving = () => {
+   const _addIIndicatorToSave = () => {
+     console.log(this.state);
+     console.log(this.props);
      const {custom, testTypeID,  indicatorID, createdIndicatorID} = this.state;
+     const {customIndicatorID} = this.props.data;
      const indicatorsListForSave = {...this.props.indicatorsListForSave};
 
-     console.log(indicatorsListForSave);
 
 
      let indicatorForSaveObj = new IndicatorForm();
      indicatorForSaveObj.testTypeID = testTypeID;
      indicatorForSaveObj.indicatorID = indicatorID;
-     indicatorForSaveObj.createdIndicatorID = custom && generateUniqID();
      indicatorForSaveObj.custom = custom;
+     indicatorForSaveObj.customIndicatorID = customIndicatorID;
+
      indicatorForSaveObj.inputFields = {...this.state.formField};
 
-
-
-
-
-     const indicatorReadyForSave = _checkingIndicatorFill(this.state.formField);
-     const isIndicatorStoredToSave = _checkingIndicatorExistenceToSave();
-
-     console.log(this.state.formField);
-     console.log(indicatorReadyForSave);
-
-     if (indicatorReadyForSave && !custom) {
-       console.log('here');
-       indicatorsListForSave[indicatorForSaveObj.indicatorID] = indicatorForSaveObj;
+     if (custom) {
+       indicatorsListForSave[customIndicatorID] = indicatorForSaveObj;
+     } else {
+       indicatorsListForSave[indicatorID] = indicatorForSaveObj;
      }
 
 
-     if (indicatorReadyForSave && custom) {
-       indicatorsListForSave[indicatorForSaveObj.createdIndicatorID] = indicatorForSaveObj;
-     }
-
-     if (!indicatorReadyForSave && !custom && isIndicatorStoredToSave) {
-       delete indicatorsListForSave[indicatorForSaveObj.indicatorID];
-     }
-
-     if (!indicatorReadyForSave && custom && isIndicatorStoredToSave) {
-       delete indicatorsListForSave[indicatorForSaveObj.createdIndicatorID];
-     }
-
-
-
-     console.log(indicatorsListForSave);
-     console.log(this.props);
 
      this.props.dispatch(setChosenIndicators(indicatorsListForSave));
      let indicatorsListForSaveArr = convertObjToArr(indicatorsListForSave);
-     console.log(indicatorsListForSaveArr);
-     // this.props.navigation.navigate('MedicalIndicators', {type: 'onlyAddItem', chosenItemsID: indicatorsListForSaveArr})
+
      this.props.navigation.setParams({type: 'onlyAddItem', chosenItemsID: indicatorsListForSaveArr});
-
-
 
    };
 
 
 
 
-    const _checkingIndicatorFill = (formFieldObj) => {
-      let indicatorFilled = true;
-      for (let key in formFieldObj) {
-        if (formFieldObj.hasOwnProperty(key)) {
-          if (!Boolean(formFieldObj[key])) {
-            indicatorFilled = false;
-          }
-        }
-      }
-
-      return indicatorFilled;
-    };
-    const _checkingIndicatorExistenceToSave = () => {
-      const {indicatorsListForSave} = this.props;
-      const {custom, indicatorID, createdIndicatorID} = this.state;
-      let isIndicatorExist;
-
-
-      if (!custom)  {
-        indicatorsListForSave[indicatorID] ? isIndicatorExist = true : isIndicatorExist = false;
-      } else {
-        indicatorsListForSave[createdIndicatorID] ? isIndicatorExist = true : isIndicatorExist = false;
-      }
-
-      console.log(isIndicatorExist);
-
-      return isIndicatorExist;
-    };
-
-
-
 
     this.setState({
       ...this.state,
-      // formReadyForSave: true,
       formField: {
         ...this.state.formField,
         [nameField]: newValue,
       }
     }, () => {
-
-
-      _validationIndicatorFormBeforeSaving();
-
+      _addIIndicatorToSave();
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    console.log(this.props);
-
-    // const indicatorIndexForSave = this.props.index;
-    // const indicatorDataForSave = prepareIndicatorDataForSaving(patternTypeIndex, patternIndicatorID, createdIndicatorID, title, norma, unit, result);
-    // console.log(indicatorDataForSave);
-
-    // this.props.updateIndicatorsList(indicatorDataForSave, indicatorIndexForSave, formReadyForSave);
   };
 
   render() {
-
-    console.log(this.state);
-    console.log(this.props.data.inputFields);
-
     const {title, unit, norma, result} = this.state.formField;
-    // const {title, result, norma, unit} = this.props.data.inputFields;
     const {custom} = this.state;
-
-
-
-
 
 
     return (
@@ -313,18 +239,8 @@ const styles = StyleSheet.create({
 
 MedicalIndicatorForm.propTypes = {
   custom: PropTypes.bool.isRequired,
-  // title: PropTypes.string,
-  // norma: PropTypes.string,
-  // unit: PropTypes.string,
-  // index: PropTypes.number,
-  // result: PropTypes.string
 };
 
 MedicalIndicatorForm.defaultProps = {
   custom: false,
-  // title: '',
-  // norma: '',
-  // unit: '',
-  // result: ''
-
 };

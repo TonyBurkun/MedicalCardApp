@@ -16,7 +16,7 @@ const initialState = {
   formedTestTypesList: {},
   chosenTestType: [],
   indicatorsListForShow: [],
-  indicatorsListForSave: {},
+  indicatorsListForSave: [],
   setIndicatorAfterSave: [],
   showWarningPopUp: false,
 };
@@ -52,6 +52,7 @@ function tests (state = initialState, action) {
       };
 
     case SET_CHOSEN_TESTS:
+      console.log(action.indicatorsForSave);
       return {
         ...state,
         indicatorsListForSave: action.indicatorsForSave

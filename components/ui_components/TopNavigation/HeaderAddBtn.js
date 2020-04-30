@@ -150,7 +150,19 @@ class HeaderAddBtn extends Component{
 
       case 'chosenIndicators':
         console.log('add Indicators');
-        this.props.dispatch(setIndicatorAfterSave(this.state.activeItemArr));
+        const {activeItemArr} = this.state;
+        console.log(activeItemArr);
+        let noEmptyActiveItemsArr =  activeItemArr.filter((item, index) => {
+          if (!item.custom && item.inputFields.result) {
+            return item;
+          }
+
+          if (item && (item.inputFields.result || item.inputFields.title || item.inputFields.unit ||  item.inputFields.norma)){
+            return item
+          }
+        });
+
+        this.props.dispatch(setIndicatorAfterSave(noEmptyActiveItemsArr));
         this.props.dispatch(setChosenIndicators({}));
         this.props.navigation.goBack();
         break;

@@ -1,5 +1,6 @@
 import {Dimensions} from 'react-native'
 import {IndicatorForm} from '../utils/dataPattern'
+import {generateUniqID} from "./API";
 
 export function isIphone5() {
   const windowHeight = Dimensions.get('window').height;
@@ -313,7 +314,23 @@ export function getIndicatorsArrForShow(currentTestTypeObj = {}, userAge, userGe
     indicatorFields.custom = true;
     indicatorFields.testTypeID = 'test_type_0';
 
+
     indicatorsArrForShow.push(indicatorFields);
     return indicatorsArrForShow;
   }
+}
+
+
+
+export function getTestTypeID(chosenTestTypeArr, formedTestTypesList){
+
+  let indexChosenTestType = chosenTestTypeArr[0];
+
+  let formedTestTypeListArr = convertObjToArr(formedTestTypesList);
+  console.log(formedTestTypeListArr);
+
+  let chosenTestTypeObj = formedTestTypeListArr[indexChosenTestType];
+
+  return chosenTestTypeObj.id;
+
 }
