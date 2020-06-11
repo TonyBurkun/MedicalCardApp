@@ -33,6 +33,7 @@ export function setTestTypesTitle(testTypesTitleList){
 }
 
 export function setFormedTestTypes(formedTestTypesList){
+  console.log('SET FORMED TEST TYPES');
   return {
     type: SET_FORMED_TEST_TYPES,
     formedTestTypesList: formedTestTypesList

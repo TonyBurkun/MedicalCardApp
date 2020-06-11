@@ -1,6 +1,5 @@
 import {Dimensions} from 'react-native'
 import {IndicatorForm} from '../utils/dataPattern'
-import {generateUniqID} from "./API";
 
 export function isIphone5() {
   const windowHeight = Dimensions.get('window').height;
@@ -19,13 +18,16 @@ export function getCurrentDate() {
   return today;
 }
 
-
 export function convertObjToArr(obj) {
+
+  console.log(obj);
   const copyObj = JSON.parse(JSON.stringify(obj));
   console.log(copyObj);
   const objListKeys = Object.keys(copyObj);
 
   return objListKeys.map((item) => {
+    // console.log(item);
+    // console.log(copyObj[item]);
     return copyObj[item];
   });
 
@@ -195,10 +197,21 @@ export function sortArrByObjectProp(arr, objProp) {
       return 1;
     return 0 // Никакой сортировки
   });
-  console.log(arr);
   return arr;
 }
 
+
+export function getUserAgeInMilliseconds(userDate){
+  const splitDateArr = userDate.split('-');
+  const [day, month, year] = splitDateArr;
+
+  const dateInMilliseconds = new Date(year, month, day).getTime();
+  const currentDateInMilliseconds = new Date().getTime();
+
+  const ageInMilliseconds = currentDateInMilliseconds - dateInMilliseconds;
+
+  return Math.round(ageInMilliseconds / 1000 / 60 / 60 / 24);
+}
 
 export function getIndicatorsArrForShow(currentTestTypeObj = {}, userAge, userGender) {
 
@@ -207,23 +220,11 @@ export function getIndicatorsArrForShow(currentTestTypeObj = {}, userAge, userGe
   function _getTestFieldsValue (item = null, currentTestTypeID, gender){
 
     let indicatorFields = new IndicatorForm();
-    // let indicatorFields = {
-    //   testTypeID: null,
-    //   indicatorID: null,
-    //   customIndicatorID: null,
-    //   inputFields: {
-    //     title: '',
-    //     unit: '',
-    //     norma: '',
-    //     result: '',
-    //   },
-    //   custom: false,
-    // };
-
     indicatorFields.testTypeID = currentTestTypeID;
 
 
     if (Boolean(item)) {
+      console.log(item);
       indicatorFields.indicatorID = item.id;
       indicatorFields.inputFields.title = item['indicator_title'];
       indicatorFields.inputFields.unit = item['unit'];
@@ -265,35 +266,6 @@ export function getIndicatorsArrForShow(currentTestTypeObj = {}, userAge, userGe
 
         indicatorFields.inputFields['norma'] = normaValueForShow;
 
-
-
-        // valuesByGender.forEach(item => {
-        //   console.log(item['from'], userAge, item['to']);
-        //   console.log(userAge);
-        //   indicatorFields.inputFields.norma = item;
-        //   if ( item['from'] < userAge && userAge < item['to']){
-        //
-        //     // if (item.value['from'] === item.value['to']) {
-        //     //   indicatorFields.inputFields['norma'] = item.value['to']
-        //     // }
-        //     // if (item.value['from'] !== item.value['to']) {
-        //     //   indicatorFields.inputFields['norma'] = item.value['from'] + '-' + item.value['to']
-        //     // }
-        //
-        //   }
-        // });
-
-
-        // console.log(valuesByUserAgeArr);
-        // indicatorFields.inputFields['norma'] =  valuesByUserAgeArr.value['from'] + '-' + valuesByUserAgeArr.value['to'];
-        //
-        // if (valuesByUserAgeArr.value['from'] === valuesByUserAgeArr.value['to']) {
-        //   indicatorFields.inputFields['norma'] = valuesByUserAgeArr.value['to']
-        // }
-        // if (valuesByUserAgeArr.value['from'] !== valuesByUserAgeArr.value['to']) {
-        //   indicatorFields.inputFields['norma'] = valuesByUserAgeArr.value['from'] + '-' + valuesByUserAgeArr.value['to']
-        // }
-
         return indicatorFields;
       }
     }
@@ -320,17 +292,36 @@ export function getIndicatorsArrForShow(currentTestTypeObj = {}, userAge, userGe
   }
 }
 
+export function getFormedTestTypesList(testTypesList, userAge, gender){
+  let formedTestTypesListObj = {};
+
+  for (let i = 0; i < testTypesList.length; i++) {
+    let currentTestTypeObj = testTypesList[i];
+    let formedTestTypeObj = {};
+
+    formedTestTypeObj.title = currentTestTypeObj.title;
+    formedTestTypeObj.id = currentTestTypeObj.id;
+    formedTestTypeObj.indicators = getIndicatorsArrForShow(currentTestTypeObj, userAge, gender);
+
+    formedTestTypesListObj[formedTestTypeObj.id] = formedTestTypeObj;
+  }
+
+  console.log(formedTestTypesListObj);
+  return formedTestTypesListObj;
+}
 
 
 export function getTestTypeID(chosenTestTypeArr, formedTestTypesList){
-
   let indexChosenTestType = chosenTestTypeArr[0];
-
   let formedTestTypeListArr = convertObjToArr(formedTestTypesList);
-  console.log(formedTestTypeListArr);
-
   let chosenTestTypeObj = formedTestTypeListArr[indexChosenTestType];
 
   return chosenTestTypeObj.id;
+}
 
+export function getTestTypeIndexByID(testTypeID, formedTestTypesList) {
+  let formedTestTypesListArr = convertObjToArr(formedTestTypesList);
+  return formedTestTypesListArr.findIndex(item => {
+    return item.id === testTypeID;
+  });
 }

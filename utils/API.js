@@ -611,6 +611,7 @@ export async function saveIndicatorImageToStorage (imageID, imageName, localUri)
 
 
 export function createNewTest(testData){
+  console.log(testData.id);
   const uid = getUIDfromFireBase();
   firebase.database().ref(`tests/${uid}/${testData.id}`).set(testData);
 }

@@ -18,7 +18,7 @@ import {
   addTest,
   deleteTest, saveIndicatiorsListToShow, saveIndicatorsListForShow,
   setChosenIndicators,
-  setChosenTestType,
+  setChosenTestType, setIndicatorAfterSave,
   setTest,
   setTestTypes,
   updateTest
@@ -29,7 +29,7 @@ import {
   addCheckFieldToArr,
   convertObjToArr,
   getCurrentDate,
-  getIndicatorsArrForShow,
+  getIndicatorsArrForShow, getTestTypeIndexByID,
   sortArrByObjectProp
 } from "../../utils/helpers";
 import {Icon, Image, Overlay} from "react-native-elements";
@@ -45,6 +45,7 @@ import withNavigationFocus from "react-navigation/src/views/withNavigationFocus"
 import PillLabel from "../ui_components/PillLabel";
 
 import { InteractionManager } from 'react-native';
+import {MedicalTest} from "../../models/medicalTest";
 
 
 
@@ -94,13 +95,15 @@ class MedicalTestCreate extends Component {
 
   async componentDidMount(){
     console.log('DID MOUNT TEST CREATE/EDIT');
+    console.log(this.state);
 
     console.log(this.props);
 
     InteractionManager.runAfterInteractions(() => {
 
 
-      let {formedTestTypesList, labels, testsList, chosenTestType} = this.props;
+      let {labels, testsList, chosenTestType} = this.props;
+      const formedTestTypesList = {...this.props.formedTestTypesList};
       // testTypesList = convertObjToArr(testTypesList);
       // testTypesList = sortArrByObjectProp(testTypesList, 'id');
       labels = convertObjToArr(labels);
@@ -119,154 +122,44 @@ class MedicalTestCreate extends Component {
 
 
     const {isFormEdit} = this.state;
-     // getTestTypesList()
-     //  .then(data => {
-     //    this.props.dispatch(setTestTypes(data));
-     //    this.setState({
-     //      testTypesList: data
-     //    });
-     //  })
-     //  .catch(error => {console.log('can not get Test Type List: ', error)});
 
-     // getLabelsForUser()
-     //  .then(data => {
-     //    this.props.dispatch(setLabels(data));
-     //
-     //    let labelsListArr = convertObjToArr(data);
-     //    labelsListArr = addCheckFieldToArr(labelsListArr);
-     //    this.setState({
-     //      labelsList: labelsListArr
-     //    })
-     //  })
-     //  .catch(error => {console.log('can not get Labels list for the user', error)});
+    if (isFormEdit){
+      console.log('EDIT TEST');
+      console.log(this.props);
+      const {currentTest} =  this.props.navigation.state.params;
+      const {chosenLabelsID} = this.props;
+      const formedTestTypesList = {...this.props.formedTestTypesList};
+      const currentTestID = currentTest.id;
+      console.log(currentTest);
 
-     // geTestsListByCurrentUser()
-     //  .then(data => {
-     //    this.props.dispatch(setTest(data));
-     //    let testsListArr = convertObjToArr(data);
-     //
-     //
-     //    this.setState({
-     //      testsList: testsListArr,
-     //      testsListOrigin: testsListArr,
-     //      // showList: Boolean(testsListArr.length),
-     //      showLoader: false
-     //    })
-     //  })
-     //  .catch(error => {console.log('can not get Tests List: ', error)});
+      const chosenTestTypeIndex = getTestTypeIndexByID(currentTest.testType, formedTestTypesList);
+
+      console.log(chosenTestTypeIndex);
+
+      this.props.dispatch(setChosenTestType([chosenTestTypeIndex]));
+      this.props.dispatch(saveChosenLabel(currentTest.labels || []));
+      this.props.dispatch(setIndicatorAfterSave(currentTest.indicators));
+      //
+      this.setState({
+        ...this.state,
+        formField: {
+          ...this.state.formField,
+          date: currentTest.date,
+          other: currentTest.other,
+          imagesArr: currentTest.images || [],
+          prevImagesArr: currentTest.images || [],
+        }
+
+      });
+
+      console.log(this.props);
+      console.log(currentTest.labels);
+    }
 
 
-
-
-
-
-    // if (isFormEdit){
-    //   console.log('EDIT TEST');
-    //   const currentTestID = this.props.navigation.state.params.currentTest.id;
-    //   const {testsList} = this.props;
-    //   const currentTest = testsList[currentTestID];
-    //   const chosenTestTypesArr = [];
-    //   chosenTestTypesArr.push(currentTest.testType);
-    //   let prevImagesArr = [];
-    //   const chosenLabels = currentTest.labels || [];
-    //   const chosenIndicators = currentTest.indicators || [];
-    //
-    //   // console.log(this.state);
-    //   console.log(currentTest);
-    //
-    //
-    //
-    //   this.props.dispatch(setChosenTestType(chosenTestTypesArr));
-    //   this.props.dispatch(saveChosenLabel(chosenLabels));
-    //   this.props.dispatch(setChosenIndicators(chosenIndicators));
-    //
-    //   this.setState({
-    //     ...this.state,
-    //     formField: {
-    //       ...this.state.formField,
-    //       date: currentTest.date,
-    //       other: currentTest.other,
-    //       imagesArr: currentTest.images || [],
-    //       prevImagesArr: currentTest.images || [],
-    //       testLabels: chosenLabels
-    //     }
-    //
-    //   })
-    // }
 
   };
 
-
-  // componentWillReceiveProps(nextProps) {
-  //   console.log(this.state);
-  //   console.log(nextProps);
-  //
-  //   const {chosenTestType} = this.state;
-  //   const newChosenTestType = nextProps.chosenTestType;
-  //   console.log(chosenTestType);
-  //   console.log(newChosenTestType);
-  //   console.log(this.props.chosenTestType, newChosenTestType);
-  //
-  //   if (chosenTestType && chosenTestType.id !== newChosenTestType && newChosenTestType.id) {
-  //
-  //     let {currentUserData, testTypesList, indicatorsListForSave} = this.props;
-  //     // testTypesList = convertObjToArr(testTypesList);
-  //     // testTypesList = sortArrByObjectProp(testTypesList, 'id');
-  //
-  //     console.log(testTypesList);
-  //     console.log(newChosenTestType);
-  //     const currentTestTypeObj = testTypesList[newChosenTestType.id];
-  //     const currentTestTypeIndex =  newChosenTestType.index;
-  //
-  //
-  //
-  //     console.log(currentUserData);
-  //     console.log(currentTestTypeIndex);
-  //     console.log(currentTestTypeObj);
-  //
-  //     const indicatorsForShowArr = getIndicatorsArrForShow(currentTestTypeObj, currentUserData.date, currentUserData.gender);
-  //     console.log(indicatorsForShowArr);
-  //
-  //     this.props.dispatch(saveIndicatorsListForShow(indicatorsForShowArr));
-  //
-  //     this.setState({
-  //       ...this.state,
-  //       chosenTestType: newChosenTestType,
-  //       indicatorsForShowArr,
-  //       testTypesList,
-  //       currentTestTypeObj,
-  //       indicatorsListForSave,
-  //     });
-  //
-  //   }
-  //
-  // }
-
-  // static getDerivedStateFromProps(nextProps, prevState){
-  //   if(nextProps.chosenTestType.id !== prevState.chosenTestType.id){
-  //
-  //     const newChosenTestType = nextProps.chosenTestType;
-  //
-  //     let {currentUserData, testTypesList} = nextProps;
-  //     const currentTestTypeObj = testTypesList[newChosenTestType.id];
-  //
-  //     const indicatorsForShowArr = getIndicatorsArrForShow(currentTestTypeObj, currentUserData.date, currentUserData.gender);
-  //
-  //     return {
-  //       chosenTestType: nextProps.chosenTestType,
-  //       indicatorsForShowArr,
-  //
-  //     };
-  //   }
-  //   else return null;
-  // }
-  //
-  // componentDidUpdate(prevProps, prevState) {
-  //   console.log(prevProps, prevState);
-  //   const {indicatorsForShowArr} = this.state;
-  //   console.log(indicatorsForShowArr);
-  //   this.props.dispatch(saveIndicatorsListForShow(indicatorsForShowArr));
-  // }
 
   componentWillUnmount(){
     this.props.dispatch(setChosenTestType([]));
@@ -335,7 +228,15 @@ class MedicalTestCreate extends Component {
   };
 
   handleShowIndicatorsList = () => {
-    this.props.navigation.navigate('MedicalIndicators')
+    let isEdit = Boolean(this.props.navigation.state.params);
+    console.log(isEdit);
+    if (isEdit) {
+      this.props.navigation.navigate('MedicalIndicators', {isEdit, editedTestID: this.props.navigation.state.params.currentTest.id})
+    } else {
+      this.props.navigation.navigate('MedicalIndicators', {isEdit})
+    }
+
+    // this.props.navigation.navigate('MedicalIndicators', {isEdit:  Boolean(this.props.navigation.state.params), editedTestID: this.props.navigation.state.params.currentTest.id})
   };
 
   showItemsList = (param, screenTitle, radio = '') => {
@@ -350,22 +251,17 @@ class MedicalTestCreate extends Component {
     // const {isProfile} = this.state;
     //
     const {other, date, imagesArr} = this.state.formField;
-    const { labels, chosenLabelsID, testTypesList, chosenTestType, indicatorsListForSave} = this.props;
+    const { labels, chosenLabelsID, chosenTestType, indicatorsListForSave, indicatorAfterSave} = this.props;
+    const formedTestTypesList = {...this.props.formedTestTypesList};
     const {isFormEdit} = this.state;
+    const uid = getUIDfromFireBase();
 
-
-    // console.log(other);
-    // console.log(date);
-    // console.log(imagesArr);
-    // console.log(labels);
-    // console.log(chosenLabelsID);
-    // console.log(chosenTestType);
-    // console.log(indicatorsListForSave);
+    console.log(chosenLabelsID);
 
 
     if (!isFormEdit) {
       const generatedID = generateUniqID();
-      const uid = getUIDfromFireBase();
+
 
       this.setState({
         showLoader: true
@@ -378,34 +274,35 @@ class MedicalTestCreate extends Component {
       console.log(indicatorsListForSave);
 
 
-      const indicatorsListWithID = indicatorsListForSave.map(item => {
-        item.createdIndicatorID = generateUniqID();
+      const indicatorsList = indicatorAfterSave.map(item => {
+        if (!item.custom) {
+          item.customIndicatorID = generateUniqID();
+        }
         return item;
       });
 
-      console.log(indicatorsListWithID);
+      console.log(indicatorsList);
+      // console.log(indicatorsListWithID);
 
 
       if (imagesArr.length === uploadedFilesUrlArr.length) {
-        const testData = {
-          id: generatedID,
-          createdByUser: uid,
-          images: uploadedFilesUrlArr,
-          labels: chosenLabelsID,
-          testType: chosenTestType[0],
-          indicators: indicatorsListWithID,
-          date,
-          other,
-          dateModified: new Date().getTime(),
-        };
+        let testTypeListArr = convertObjToArr(formedTestTypesList);
+        let chosenTestTypeID = testTypeListArr[chosenTestType[0]].id;
+        console.log(chosenTestTypeID);
 
-        console.log(testData.id);
-        createNewTest(testData);
-        this.props.dispatch(addTest(testData));
+        const testForSave = new MedicalTest(generateUniqID(), uid, uploadedFilesUrlArr, chosenLabelsID, chosenTestTypeID, indicatorsList, date, other);
+
+        console.log(testForSave);
+
+
+        createNewTest(testForSave);
+        this.props.dispatch(addTest(testForSave));
         this.props.dispatch(setChosenTestType([]));
         this.props.dispatch(setChosenIndicators([]));
         this.props.dispatch(saveChosenLabel([]));
 
+
+        console.log('here');
 
         this.setState({
           showLoader: false
@@ -417,6 +314,7 @@ class MedicalTestCreate extends Component {
     }
 
     if (isFormEdit) {
+      console.log(this.props);
       const {currentTest} = this.props.navigation.state.params;
       const testID = currentTest.id;
       const {imagesArr, prevImagesArr} = this.state.formField;
@@ -486,29 +384,43 @@ class MedicalTestCreate extends Component {
       console.log(imagesAfterEditArr);
 
 
-      const indicatorsListWithID = indicatorsListForSave.map(item => {
-        item.createdIndicatorID = generateUniqID();
+      // const indicatorsListWithID = indicatorsListForSave.map(item => {
+      //   item.createdIndicatorID = generateUniqID();
+      //   return item;
+      // });
+
+      let testTypeListArr = convertObjToArr(formedTestTypesList);
+      let chosenTestTypeID = testTypeListArr[chosenTestType[0]].id;
+
+
+      console.log(indicatorAfterSave);
+
+      const indicatorsList = indicatorAfterSave.map(item => {
+
+
+
+        if (!item.custom && !item.customIndicatorID) {
+          console.log(item);
+          console.log(item.customIndicatorID);
+          item.customIndicatorID = generateUniqID();
+        }
         return item;
       });
 
-      console.log(indicatorsListWithID);
+      const testForSave = new MedicalTest(testID, uid, uploadedFilesUrlArr, chosenLabelsID, chosenTestTypeID, indicatorsList, date, other);
 
-      const testData = {
-        id: testID,
-        createdByUser: currentTest.createdByUser,
-        images: imagesAfterEditArr,
-        labels: chosenLabelsID,
-        testType: chosenTestType[0],
-        indicators: indicatorsListWithID,
-        date,
-        other,
-        dateModified: new Date().getTime(),
-      };
+      console.log(testForSave);
+
+      console.log(this.props);
 
 
-      updateChosenTest(testID, testData);
-      this.props.dispatch(updateTest(testData));
 
+      updateChosenTest(testID, testForSave);
+      this.props.dispatch(updateTest(testForSave));
+
+      console.log(indicatorAfterSave);
+
+      // this.props.dispatch(setIndicatorAfterSave([]));
       this.props.dispatch(setChosenIndicators([]));
       this.props.dispatch(setChosenTestType([]));
       this.props.dispatch(setChosenIndicators([]));
@@ -523,60 +435,6 @@ class MedicalTestCreate extends Component {
 
 
     }
-
-
-
-
-
-    // const {
-    //   chosenChildhoodDiseases,
-    //   chosenVaccinations,
-    //   chosenPregnancyOutcome,
-    //   chosenGynecologicalDiseases,
-    //   chosenDisability,
-    //   chosenBadHabits,
-    //   chosenGenitalInfections
-    // } = this.props.medicalCard;
-    //
-    // const medicalCardDataObj = {
-    //   allergicReactions,
-    //   chosenChildhoodDiseases,
-    //   chosenVaccinations,
-    //   chosenPregnancyOutcome,
-    //   chosenGynecologicalDiseases,
-    //   transferredIVF,
-    //   chosenDisability,
-    //   chosenBadHabits,
-    //   chosenGenitalInfections,
-    //   other,
-    //   dateModified: new Date().getTime(),
-    // };
-    //
-    // this.props.dispatch(setAllergicReactions(this.state.formField.allergicReactions));
-    // this.props.dispatch(setTransferredIVF(this.state.formField.transferredIVF));
-    // this.props.dispatch(setOther(this.state.formField.other));
-    //
-    // if (!isProfile){
-    //   //This code run when the user fill Medical Card not in the Profile.
-    //   //Create Medical Card during the creation the new USER
-    //
-    //
-    //   const UID = getUIDfromFireBase();
-    //   const generatedID = generateUniqID();
-    //   createMedicalCardInDB(generatedID, {uid: UID});
-    //   updateMedicalCardInDB(generatedID, medicalCardDataObj);
-    //   addMedicalCardIDtoCurrentUser(generatedID);
-    //
-    //   this.props.navigation.navigate('MainNavigation');
-    // }
-    //
-    // if (isProfile){
-    //   //Updating the Medical Card from Profile screen
-    //
-    //   const {medicalCardID} = this.state;
-    //   updateMedicalCardInDB(medicalCardID, medicalCardDataObj);
-    //   this.props.navigation.goBack();
-    // }
 
   };
 
@@ -615,36 +473,13 @@ class MedicalTestCreate extends Component {
     console.log(this.props);
     console.log(this.state);
     const {isFormEdit} = this.state;
-    const { labels, chosenTestType, setIndicatorAfterSave} = this.props;
-    const {testTypesList, indicatorsForShowArr} = this.state;
+    const { labels, chosenTestType, indicatorAfterSave} = this.props;
     const {other, date, imagesArr} = this.state.formField;
 
 
 
-    // function getTestTypeTitleStr (chosenTestType, testTypesTitleList) {
-    //   console.log(chosenTestType);
-    //   console.log(testTypesTitleList);
-    //   let chosenTestTypeTitleStr = '';
-    //   if (chosenTestType && Object.keys(chosenTestType).length && testTypesTitleList && testTypesTitleList.length) {
-    //     chosenTestType.index.forEach((item) => {
-    //       console.log(testTypesTitleList);
-    //       console.log(item);
-    //       chosenTestTypeTitleStr = chosenTestTypeTitleStr + testTypesTitleList[item] + ', '
-    //     });
-    //     chosenTestTypeTitleStr = chosenTestTypeTitleStr.substr(0, chosenTestTypeTitleStr.length - 2);
-    //   }
-    //
-    //   return chosenTestTypeTitleStr;
-    // }
-
-
-
-
-
-
-
     const isEnabled = date.length > 0 &&
-      setIndicatorAfterSave.length > 0 &&
+      indicatorAfterSave.length > 0 &&
                       chosenTestType.length > 0;
 
 
@@ -652,6 +487,8 @@ class MedicalTestCreate extends Component {
 
 
     const {chosenLabelsID} = this.props || [];
+
+    console.log(chosenLabelsID);
 
     return (
       <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0}]}>
@@ -852,7 +689,7 @@ function mapStateToProps(state) {
     testTypesTitleList: state.tests.testTypesTitleList,
     chosenTestType: state.tests.chosenTestType,
     indicatorsListForSave: state.tests.indicatorsListForSave,
-    setIndicatorAfterSave: state.tests.setIndicatorAfterSave,
+    indicatorAfterSave: state.tests.setIndicatorAfterSave,
     testsList: state.tests.testsList,
 
     labels: labels.labels,
@@ -861,6 +698,7 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(MedicalTestCreate)
+
 
 const styles = StyleSheet.create({
 

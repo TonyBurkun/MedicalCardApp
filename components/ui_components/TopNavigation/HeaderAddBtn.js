@@ -153,14 +153,16 @@ class HeaderAddBtn extends Component{
         const {activeItemArr} = this.state;
         console.log(activeItemArr);
         let noEmptyActiveItemsArr =  activeItemArr.filter((item, index) => {
-          if (!item.custom && item.inputFields.result) {
+          if (!item.custom && item.inputFields.result.length) {
             return item;
           }
 
-          if (item && (item.inputFields.result || item.inputFields.title || item.inputFields.unit ||  item.inputFields.norma)){
+          if (item.custom && (item.inputFields.result || item.inputFields.title || item.inputFields.unit ||  item.inputFields.norma)){
             return item
           }
         });
+
+        console.log(noEmptyActiveItemsArr);
 
         this.props.dispatch(setIndicatorAfterSave(noEmptyActiveItemsArr));
         this.props.dispatch(setChosenIndicators({}));

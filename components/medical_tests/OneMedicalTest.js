@@ -10,7 +10,7 @@ import DateLabel from "../ui_components/DateLabel";
 import commonStyles from "../../utils/commonStyles";
 import GreenTitle from "../ui_components/titles/GreenTitle";
 import {Image} from "react-native-elements";
-import {getIndicatorInReadableFormat} from "../../utils/helpers";
+// import {getIndicatorInReadableFormat} from "../../utils/helpers";
 import {setChosenTestType} from "../../actions/tests";
 import {saveChosenLabel} from "../../actions/labels";
 
@@ -46,7 +46,6 @@ class OneMedicalTest extends Component {
     }
 
     function handleEditBtn(){
-      console.log(currentTest);
       navigation.navigate('CreateTest', {currentTest: currentTest});
     }
 
@@ -69,34 +68,37 @@ class OneMedicalTest extends Component {
 
   async componentDidMount(){
     console.log(this.props);
-    const {tests, navigation, testTypesList, currentUserData} = this.props;
-    if (testTypesList && testTypesList.length) {
-      await this.setState({
-        testTypesList: testTypesList
-      });
-    } else {
-      await getTestTypesList()
-        .then(data => {
-          this.setState({
-            testTypesList: data
-          });
-        })
-        .catch(error => console.log('can not get Test Type List:', error));
-    }
+    const {tests, navigation, currentUserData, testsList} = this.props;
+    // const {testID, currentTest} = this.props.navigation.state.params;
 
-    if (currentUserData && Object.keys(currentUserData).length) {
-      await this.setState({
-        currentUserData: currentUserData
-      });
-    } else {
-      await getCurrentUserData()
-        .then(data => {
-          this.setState({
-            currentUserData: data
-          });
-        })
-        .catch(error => console.log('can not get Current User Data:', error));
-    }
+
+    // if (testTypesList && testTypesList.length) {
+    //   await this.setState({
+    //     testTypesList: testTypesList
+    //   });
+    // } else {
+    //   await getTestTypesList()
+    //     .then(data => {
+    //       this.setState({
+    //         testTypesList: data
+    //       });
+    //     })
+    //     .catch(error => console.log('can not get Test Type List:', error));
+    // }
+
+    // if (currentUserData && Object.keys(currentUserData).length) {
+    //   await this.setState({
+    //     currentUserData: currentUserData
+    //   });
+    // } else {
+    //   await getCurrentUserData()
+    //     .then(data => {
+    //       this.setState({
+    //         currentUserData: data
+    //       });
+    //     })
+    //     .catch(error => console.log('can not get Current User Data:', error));
+    // }
 
 
 
@@ -107,20 +109,20 @@ class OneMedicalTest extends Component {
     if (navigation.state.params && navigation.state.params.currentTest) {
       const currentTest = navigation.state.params.currentTest;
       const testType = currentTest.testType;
-      const {testTypesList, currentUserData} = this.state;
-      const currentTestTypeTitle = testTypesList[testType].title;
-      const date = currentUserData.date;
-      const gender = currentUserData.gender;
+      const {formedTestTypesList, currentUserData} = this.props;
+      const currentTestTypeTitle = formedTestTypesList[testType].title;
+      const {date, gender} = currentUserData;
 
-      console.log(testTypesList);
+
+      console.log(formedTestTypesList);
       console.log(currentTest.indicators);
       console.log(currentTest.date);
       console.log(currentUserData);
       console.log(currentTest.indicators);
 
-      const testIndicators = getIndicatorInReadableFormat(testTypesList, currentTest.indicators, date, gender);
+      const testIndicators = currentTest.indicators;
 
-      console.log(testIndicators);
+      // console.log(testIndicators);
 
 
 
@@ -128,7 +130,7 @@ class OneMedicalTest extends Component {
       this.setState({
         currentTest,
         testType,
-        testTypesList: this.props.testTypesList,
+        formedTestTypesList: this.props.formedTestTypesList,
         currentTestTypeTitle,
         testIndicators
 
@@ -142,29 +144,20 @@ class OneMedicalTest extends Component {
     console.log(nextProps);
     const testID = this.props.navigation.state.params.testID;
     const {testsList} = nextProps;
-    console.log(testsList);
-    console.log(testsList[testID]);
-
-
 
 
     const {testTypesList, currentUserData} = this.state;
-    const date = currentUserData.date;
-    const gender = currentUserData.gender;
+    const formedTestTypesList = {...this.state.formedTestTypesList};
+    const {date, gender} = currentUserData;
     const updatedTest = testsList[testID];
     const updatedTestType = updatedTest.testType;
-    const updatedTestTypeTitle = testTypesList[updatedTestType].title;
-
-    console.log(updatedTestTypeTitle);
+    const updatedTestTypeTitle = formedTestTypesList[updatedTestType].title;
 
 
 
-    const testIndicators = getIndicatorInReadableFormat(testTypesList, updatedTest.indicators, date, gender);
 
+    const testIndicators = updatedTest.indicators;
 
-    console.log(testTypesList);
-    console.log(date);
-    console.log(gender);
 
     this.setState({
       currentTest: updatedTest,
@@ -190,14 +183,14 @@ class OneMedicalTest extends Component {
         index === 0 ? {marginLeft: 16}: {marginLeft: 0}, index === testIndicators.length - 1 ? {marginRight: 16} : {marginRight: 8}
       ]}>
         <TextInput
-          value={item.title}
+          value={item.inputFields.title}
           editable={false}
           style={styles.input}
         />
         <View style={{marginTop: 8}}>
           <Text style={styles.inputTitle}>РЕЗУЛЬТАТ</Text>
           <TextInput
-            value={item.result}
+            value={item.inputFields.result}
             editable={false}
             style={styles.input}
           />
@@ -206,7 +199,7 @@ class OneMedicalTest extends Component {
           <View style={{width: 82, marginRight: 8}}>
             <Text style={styles.inputTitle}>НОРМА</Text>
             <TextInput
-              value={item.norma.toString()}
+              value={item.inputFields.norma}
               editable={false}
               style={[styles.input, {textAlign: 'center'}]}
             />
@@ -214,7 +207,7 @@ class OneMedicalTest extends Component {
           <View style={{width: 82}}>
             <Text style={styles.inputTitle}>ЕД.ИЗМ</Text>
             <TextInput
-              value={item.unit}
+              value={item.inputFields.unit}
               editable={false}
               style={[styles.input, {textAlign: 'center'}]}
             />
@@ -327,7 +320,7 @@ function mapStateToProps(state) {
   console.log(state);
   return {
     currentUserData: state.authedUser.currentUserData,
-    testTypesList: state.tests.testTypesList,
+    formedTestTypesList: state.tests.formedTestTypesList,
     labelsList: state.labels.labels,
     testsList: state.tests.testsList,
     indicatorsListForSave: state.tests.indicatorsListForSave,

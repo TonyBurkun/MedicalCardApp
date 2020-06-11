@@ -36,7 +36,8 @@ class OneTestListItem extends Component {
     } else {
       getTestTypesList()
         .then(data => {
-          this.props.dispatch(setTestTypes(data));
+          console.log(data);
+          // this.props.dispatch(setTestTypes(data));
           const currentTestType = data[testData.testType];
           this.setState({
             testTypesList: data,
@@ -51,9 +52,10 @@ class OneTestListItem extends Component {
   componentWillReceiveProps(nextProps){
     console.log(nextProps);
 
+
     const {testType} = nextProps.testData;
-    const {testTypesList} = this.props.tests;
-    const testTypeTitle = testTypesList[testType].title;
+    const {formedTestTypesList} = this.props.tests;
+    const testTypeTitle = formedTestTypesList[testType].title;
     this.setState({
       testTypeTitle
     });

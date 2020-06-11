@@ -20,8 +20,10 @@ import MedicalIndicatorForm from "../ui_components/InputField/MedicalIndicatorFo
 import {generateUniqID} from "../../utils/API";
 import AddButton from "../ui_components/Buttons/AddButton";
 import {setChosenIndicators} from "../../actions/tests";
-import {convertObjToArr, getTestTypeID} from "../../utils/helpers";
+import {convertObjToArr, convertObjToArr2, getTestTypeID} from "../../utils/helpers";
 import {IndicatorForm} from '../../utils/dataPattern'
+import {setTransferredIVF} from "../../actions/transferredIVF";
+import { withNavigationFocus } from 'react-navigation';
 
 
 class IndicatorsList extends Component {
@@ -48,8 +50,8 @@ class IndicatorsList extends Component {
       indicatorsForShowArr: [],
       localIndicatorsForSaveArr: [],
       // indicatorsPart: [],
-      page: 1,
-      step: 4,
+      // page: 1,
+      // step: 4,
 
     }
   }
@@ -87,30 +89,32 @@ class IndicatorsList extends Component {
     console.log('DID MOUNT ');
     console.log(this.props);
 
-
-
-
      InteractionManager.runAfterInteractions(() => {
        console.log(this.state);
        console.log(this.props);
 
+       const isEdit = Boolean(this.props.navigation.state.params.isEdit);
+       console.log(isEdit);
 
-       const {currentUserData, testTypesTitleList, formedTestTypesList, chosenTestType} = this.props;
+       const {currentUserData, chosenTestType} = this.props;
+       const formedTestTypesList = {...this.props.formedTestTypesList};
        let testTypeID = getTestTypeID(chosenTestType, formedTestTypesList);
-
        const {gender} = currentUserData;
        const formedTestTypesListArr = convertObjToArr(formedTestTypesList);
-       console.log(formedTestTypesListArr);
 
        const currentTestTypeObj = formedTestTypesListArr[chosenTestType[0]];
-       console.log(currentTestTypeObj);
        let indicatorsListForShow = currentTestTypeObj.indicators;
+       let {indicatorsListForSave} = this.props; // i guess i should be removed with all reference
+       let {setIndicatorAfterSave} = this.props;
+
        if (currentTestTypeObj.id ===  "test_type_0") {
          indicatorsListForShow[0].customIndicatorID = generateUniqID();
        }
 
-       console.log(indicatorsListForShow);
-       console.log(indicatorsListForShow.length);
+       if (setIndicatorAfterSave.length && currentTestTypeObj.id ===  "test_type_0") {
+         indicatorsListForShow.splice(0,1);
+       }
+
 
        let formedGender = '';
        if (gender === 'male') {
@@ -121,52 +125,54 @@ class IndicatorsList extends Component {
        }
 
 
-       let {indicatorsListForSave} = this.props; // i guess i should be removed with all reference
-       let {setIndicatorAfterSave} = this.props;
 
+       if (!isEdit) {
+         console.log(indicatorsListForShow);
+         console.log(currentTestTypeObj);
 
-       console.log(setIndicatorAfterSave);
-       if (setIndicatorAfterSave.length) {
-         indicatorsListForShow.splice(0,1);
-       }
+         for (let i = 0; i < setIndicatorAfterSave.length; i++) {
+           let item = setIndicatorAfterSave[i];
+           if (!item.custom) {
+             let updatingIndicator = indicatorsListForShow[item.indicatorID];
+             updatingIndicator.inputFields.result = item.inputFields.result;
+             indicatorsListForSave[item.indicatorID] = item;
+           } else {
+             indicatorsListForShow.push(item);
+             indicatorsListForSave[item.customIndicatorID] = item;
+           }
 
-
-
-
-
-
-       console.log(indicatorsListForSave);
-       console.log(indicatorsListForShow);
-       console.log(setIndicatorAfterSave.length);
-
-       for (let i = 0; i < setIndicatorAfterSave.length; i++) {
-         let item = setIndicatorAfterSave[i];
-         console.log(item);
-         if (!item.custom) {
-           let updatingIndicator = indicatorsListForShow[item.indicatorID];
-           updatingIndicator.inputFields.result = item.inputFields.result;
-
-           indicatorsListForSave[item.indicatorID] = item;
-         } else {
-           indicatorsListForShow.push(item);
-
-           indicatorsListForSave[item.customIndicatorID] = item;
+           // this.props.dispatch(setChosenIndicators(indicatorsListForSave));
          }
 
-         // if (item.custom) {
-         //   indicatorsListForSave[item.customIndicatorID] = item;
-         // } else {
-         //   indicatorsListForSave[item.indicatorID] = item;
-         // }
 
-         this.props.dispatch(setChosenIndicators(indicatorsListForSave));
        }
 
 
-       // let indicatorsPart = indicatorsListForShow.slice(0, step);
-       // console.log(indicatorsPart);
-       console.log(indicatorsListForSave);
-       console.log(indicatorsListForShow);
+       if (isEdit) {
+         console.log('indicators list edit');
+         const editedTestID = this.props.navigation.state.params.editedTestID;
+         console.log(editedTestID);
+
+         const editedTest = this.props.testsList[editedTestID];
+         const editedTestFilledIndicatorsList = editedTest.indicators;
+         console.log(editedTestFilledIndicatorsList);
+
+         for (let i = 0; i < editedTestFilledIndicatorsList.length; i++) {
+           let item = editedTestFilledIndicatorsList[i];
+           if (!item.custom) {
+             let updatingIndicator = indicatorsListForShow[item.indicatorID];
+             updatingIndicator.inputFields.result = item.inputFields.result;
+             indicatorsListForSave[item.indicatorID] = item;
+           } else {
+             indicatorsListForShow.push(item);
+             indicatorsListForSave[item.customIndicatorID] = item;
+           }
+         }
+       }
+
+       this.props.dispatch(setChosenIndicators(indicatorsListForSave));
+
+
        this.setState({
          ...this.state,
          name: currentUserData.name || '',
@@ -176,13 +182,9 @@ class IndicatorsList extends Component {
          formedGender,
          chosenTestType,
          testTypeID,
-         // testTypesList,
          currentTestTypeObj,
-         // indicatorsListForSave,
          indicatorsForShowArr: indicatorsListForShow,
-         // indicatorsPart: indicatorsPart,
          showLoader: false
-
        });
 
 
@@ -211,6 +213,7 @@ class IndicatorsList extends Component {
 
   }
 
+
   handlePopupSubmit = async () => {
 
     const {popupSwitch, showNormPopup} = this.state;
@@ -226,7 +229,6 @@ class IndicatorsList extends Component {
 
 
   };
-
 
   handleIndicatorsForShowArr = (indicatorsForShowArr) => {
     this.setState({
@@ -250,8 +252,6 @@ class IndicatorsList extends Component {
   };
 
   renderIndicatorsList = ({item, index}) => {
-    console.log('HEre');
-    console.log(item);
     const {handleIndicatorsForShowArr} = this.state;
     return (
       <MedicalIndicatorForm
@@ -262,28 +262,6 @@ class IndicatorsList extends Component {
       />
     )
   };
-  //This method needs for partly render of flat list
-  // handleLoadMore = () => {
-  //   let {page, step, indicatorsPart} = this.state;
-  //   let {indicatorsForShowArr} = this.state;
-  //   let start = page * step;
-  //   page = page + 1;
-  //
-  //   let end = page * step;
-  //
-  //
-  //   if (start < indicatorsForShowArr.length) {
-  //     let nextIndicatorsPart = indicatorsForShowArr.slice(start, end);
-  //     indicatorsPart = [...indicatorsPart, ...nextIndicatorsPart];
-  //     this.setState({
-  //       ...this.state,
-  //       indicatorsPart,
-  //       page,
-  //     })
-  //   }
-  //
-  // };
-
 
   handlePressAddButton = () => {
 
@@ -293,29 +271,19 @@ class IndicatorsList extends Component {
     indicatorFields.testTypeID = testTypeID;
     indicatorFields.customIndicatorID = generateUniqID();
 
-    console.log(indicatorsForShowArr);
-    console.log(indicatorFields);
-
     const _abilityToAddCustomIndicator = (indicatorsForShowArr) => {
       const lastIndicatorElement = indicatorsForShowArr[indicatorsForShowArr.length-1];
 
       if (lastIndicatorElement.custom){
           return !!(lastIndicatorElement.inputFields.result || lastIndicatorElement.inputFields.unit || lastIndicatorElement.inputFields.title || lastIndicatorElement.inputFields.norma);
-
-
       } else {
         return true;
       }
     };
 
-    console.log(_abilityToAddCustomIndicator(indicatorsForShowArr));
-
-    let canAddNewIndicator = _abilityToAddCustomIndicator(indicatorsForShowArr);
-
-    if (canAddNewIndicator) {
+    // let canAddNewIndicator = _abilityToAddCustomIndicator(indicatorsForShowArr);
+    if (_abilityToAddCustomIndicator(indicatorsForShowArr)) {
       indicatorsForShowArr = [...indicatorsForShowArr, indicatorFields];
-
-      console.log(indicatorsForShowArr);
     }
 
     this.setState({
@@ -348,114 +316,102 @@ class IndicatorsList extends Component {
       indicatorsForShowArr,
     } = this.state;
 
-    console.log(indicatorsForShowArr);
-
-
-
-
-
-
-
     return (
-     <View style={{flex: 1, position: 'relative', backgroundColor: Colors.MAIN_BACKGROUND}}>
-       {/*<KeyboardAvoidingView behavior='position' keyboardVerticalOffset={0} style={{flex: 1, paddingBottom: 34}}>*/}
-         <InternetNotification topDimension={0}/>
-         <Overlay
-           isVisible={this.state.showLoader}
-           width="auto"
-           height="auto">
-           <ActivityIndicator/>
-         </Overlay>
-         <Overlay
-           isVisible={this.state.showNormPopup}
-           overlayBackgroundColor={Colors.MAIN_BACKGROUND}
-           overlayStyle={{borderRadius: 20, height: 'auto', paddingLeft: 0, paddingRight: 0, paddingBottom: 0}}
-         >
-           <View>
-             <View style={{paddingLeft: 25, paddingRight: 25}}>
-               <Text style={{
-                 fontSize: 17, fontWeight: 'bold', textAlign: 'center', color: Colors.BLACK_TITLE_BTN,
-                 marginTop: 10,
-               }}>Показатели</Text>
-               <Text style={{
-                 textAlign: 'center', fontSize: 13, color: Colors.TYPOGRAPHY_COLOR_DARK,
-                 marginTop: 8,
-               }}>
-                 Поле “Норма” в показателях отображается согласно данных (дата рождения и пол) заполненных в  Медицинской Карте
-               </Text>
-             </View>
-             <View>
-             </View>
-             <View style={{marginTop: 16}}>
-               <Text style={{
-                 fontSize: 16,
-                 color: Colors.MAIN_GREEN,
-                 textAlign: 'center'
-               }}>{`${name} ${surname} ${formedGender}`}</Text>
-               <Text
-                 style={{ fontSize: 16, color: Colors.MAIN_GREEN, textAlign: 'center'}}
-               >{date}</Text>
-             </View>
+      <View style={{flex: 1, position: 'relative', backgroundColor: Colors.MAIN_BACKGROUND}}>
+        {/*<KeyboardAvoidingView behavior='position' keyboardVerticalOffset={0} style={{flex: 1, paddingBottom: 34}}>*/}
+        <InternetNotification topDimension={0}/>
+        <Overlay
+          isVisible={this.state.showLoader}
+          width="auto"
+          height="auto">
+          <ActivityIndicator/>
+        </Overlay>
+        <Overlay
+          isVisible={this.state.showNormPopup}
+          overlayBackgroundColor={Colors.MAIN_BACKGROUND}
+          overlayStyle={{borderRadius: 20, height: 'auto', paddingLeft: 0, paddingRight: 0, paddingBottom: 0}}
+        >
+          <View>
+            <View style={{paddingLeft: 25, paddingRight: 25}}>
+              <Text style={{
+                fontSize: 17, fontWeight: 'bold', textAlign: 'center', color: Colors.BLACK_TITLE_BTN,
+                marginTop: 10,
+              }}>Показатели</Text>
+              <Text style={{
+                textAlign: 'center', fontSize: 13, color: Colors.TYPOGRAPHY_COLOR_DARK,
+                marginTop: 8,
+              }}>
+                Поле “Норма” в показателях отображается согласно данных (дата рождения и пол) заполненных в  Медицинской Карте
+              </Text>
+            </View>
+            <View>
+            </View>
+            <View style={{marginTop: 16}}>
+              <Text style={{
+                fontSize: 16,
+                color: Colors.MAIN_GREEN,
+                textAlign: 'center'
+              }}>{`${name} ${surname} ${formedGender}`}</Text>
+              <Text
+                style={{ fontSize: 16, color: Colors.MAIN_GREEN, textAlign: 'center'}}
+              >{date}</Text>
+            </View>
 
-             <View style={{
-               marginTop: 16,
-               backgroundColor: Colors.WHITE,
-               flexDirection: 'row',
-               justifyContent: 'space-between',
-               paddingLeft: 16,
-               paddingRight: 16,
-               height: 44,
-               alignItems: 'center'
-             }}>
-               <Text style={{fontSize: 13, color: Colors.TYPOGRAPHY_COLOR_DARK}}>Больше не показывать</Text>
-               <Switch
-                 value={this.state.popupSwitch}
-                 onValueChange={() => {
-                   this.setState({
-                     ...this.state,
-                     popupSwitch: !this.state.popupSwitch
-                   })
-                 }}
-               />
-             </View>
+            <View style={{
+              marginTop: 16,
+              backgroundColor: Colors.WHITE,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingLeft: 16,
+              paddingRight: 16,
+              height: 44,
+              alignItems: 'center'
+            }}>
+              <Text style={{fontSize: 13, color: Colors.TYPOGRAPHY_COLOR_DARK}}>Больше не показывать</Text>
+              <Switch
+                value={this.state.popupSwitch}
+                onValueChange={() => {
+                  this.setState({
+                    ...this.state,
+                    popupSwitch: !this.state.popupSwitch
+                  })
+                }}
+              />
+            </View>
 
-             <TouchableHighlight
-               style={{alignItems: 'center'}}
-               underlayColor={'transparent'}
-               onPress={this.handlePopupSubmit}>
-               <Text style={{
-                 color: Colors.BLUE_BTN,
-                 fontSize: 17,
-                 marginTop: 12,
-                 marginBottom: 12
-               }}>OK</Text>
-             </TouchableHighlight>
-           </View>
-         </Overlay>
-         {(Boolean(indicatorsForShowArr && indicatorsForShowArr.length) &&
-           <FlatList
-             ref='indicatorsList'
-             extraData={this.state.indicatorsForShowArr}
-             ListHeaderComponent={this.renderHeader}
-             keyExtractor={(item, index) => index.toString()}
-             data={this.state.indicatorsForShowArr}
-             renderItem={this.renderIndicatorsList}
-             //The settings below in order to load the list partly
-             // windowSize={5}
-             // data={indicatorsPart}
-             // onEndReached={() => {this.handleLoadMore()}}
-             // onEndReachedThreshold={0.9}
-             contentContainerStyle={{paddingBottom:100}}
-             initialScrollIndex={0}
-             getItemLayout={(data, index) => (
-               {length: 176, offset: 176 * index, index}
-             )}
-           />
-         )}
+            <TouchableHighlight
+              style={{alignItems: 'center'}}
+              underlayColor={'transparent'}
+              onPress={this.handlePopupSubmit}>
+              <Text style={{
+                color: Colors.BLUE_BTN,
+                fontSize: 17,
+                marginTop: 12,
+                marginBottom: 12
+              }}>OK</Text>
+            </TouchableHighlight>
+          </View>
+        </Overlay>
+        {(Boolean(indicatorsForShowArr && indicatorsForShowArr.length) &&
+          <FlatList
+            ref='indicatorsList'
+            extraData={this.state.indicatorsForShowArr}
+            ListHeaderComponent={this.renderHeader}
+            keyExtractor={(item, index) => index.toString()}
+            data={this.state.indicatorsForShowArr}
+            renderItem={this.renderIndicatorsList}
 
-       {/*</KeyboardAvoidingView>*/}
-       <AddButton handlePress={this.handlePressAddButton}/>
-     </View>
+            contentContainerStyle={{paddingBottom:100}}
+            initialScrollIndex={0}
+            getItemLayout={(data, index) => (
+              {length: 176, offset: 176 * index, index}
+            )}
+          />
+        )}
+
+        {/*</KeyboardAvoidingView>*/}
+        <AddButton handlePress={this.handlePressAddButton}/>
+      </View>
     )
   }
 
@@ -464,13 +420,13 @@ class IndicatorsList extends Component {
 
 function mapStateToProps(state) {
   console.log(state);
-  console.log(state.tests.indicatorsListForShow);
 
   return {
     currentUserData: state.authedUser.currentUserData,
     testTypesTitleList: state.tests.testTypesTitleList,
     formedTestTypesList: state.tests.formedTestTypesList,
     chosenTestType:  state.tests.chosenTestType,
+    testsList: state.tests.testsList,
 
     indicatorsListForShow: state.tests.indicatorsListForShow,
     indicatorsListForSave: state.tests.indicatorsListForSave,
@@ -478,8 +434,8 @@ function mapStateToProps(state) {
   }
 }
 
-// export default withNavigation(connect(mapStateToProps)(IndicatorsList))
-export default connect(mapStateToProps)(IndicatorsList)
+export default withNavigationFocus(connect(mapStateToProps)(IndicatorsList))
+// export default connect(mapStateToProps)(IndicatorsList)
 
 const styles = StyleSheet.create({
 });

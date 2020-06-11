@@ -35,11 +35,9 @@ class MedicalIndicatorForm extends PureComponent {
   componentDidMount() {
 
     console.log(this.props);
-    console.log(this.props.title);
 
     const {title, result, norma, unit} = this.props.data.inputFields;
     const {custom, testTypeID, indicatorID, customIndicatorID} = this.props.data;
-
 
     this.setState({
      ...this.state,
@@ -64,10 +62,11 @@ class MedicalIndicatorForm extends PureComponent {
     const {testTypeID,  indicatorID} = this.state;
 
     const indicatorsForShowArr= [...this.props.indicatorsForShowArr];
+    console.log(indicatorsForShowArr);
     let indicatorsForShowObj = {};
 
     indicatorsForShowArr.forEach((item) => {
-      // console.log(item);
+      console.log(item);
       if (item.custom) {
         indicatorsForShowObj[item.customIndicatorID] = item;
         indicatorsForShowObj[item.customIndicatorID].indicatorTypeID = testTypeID;
@@ -85,18 +84,13 @@ class MedicalIndicatorForm extends PureComponent {
 
     this.props.handleIndicatorsForShowArr(indicatorsForShowArr);
 
-  console.log(newValue);
-  console.log(nameField);
-
-
-
 
 
 
    const _addIIndicatorToSave = () => {
      console.log(this.state);
      console.log(this.props);
-     const {custom, testTypeID,  indicatorID, createdIndicatorID} = this.state;
+     const {custom, testTypeID,  indicatorID} = this.state;
      const {customIndicatorID} = this.props.data;
      const indicatorsListForSave = {...this.props.indicatorsListForSave};
 

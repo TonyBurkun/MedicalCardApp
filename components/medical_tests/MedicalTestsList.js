@@ -6,8 +6,8 @@ import * as Colors from "../../utils/colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {
   addCheckFieldToArr,
-  convertObjToArr,
-  getIndicatorsArrForShow,
+  convertObjToArr, getFormedTestTypesList,
+  getIndicatorsArrForShow, getUserAgeInMilliseconds,
   isIphone5,
   setInverseChosenItemInArr,
   sortArrByObjectProp
@@ -68,31 +68,12 @@ class MedicalTestsList extends Component{
          const testTypesTitleList = testTypesList.map(item => {
            return item.title;
          });
+
+         const userAge = getUserAgeInMilliseconds(currentUserData.date);
+         const formedTestTypesListObj = getFormedTestTypesList(testTypesList, userAge, currentUserData.gender);
+        console.log(formedTestTypesListObj);
+
          this.props.dispatch(setTestTypesTitle(testTypesTitleList));
-
-         const splitDateArr = currentUserData.date.split('-');
-         const [day, month, year] = splitDateArr;
-
-         const dateInMilliseconds = new Date(year, month, day).getTime();
-         const currentDateInMilliseconds = new Date().getTime();
-
-         const ageInMilliseconds = currentDateInMilliseconds - dateInMilliseconds;
-         const userAge = Math.round(ageInMilliseconds/1000/60/60/24);
-
-
-         let formedTestTypesListObj = {};
-
-         for (let i = 0; i < testTypesList.length; i++) {
-           let currentTestTypeObj = testTypesList[i];
-           let formedTestTypeObj = {};
-
-           formedTestTypeObj.title = currentTestTypeObj.title;
-           formedTestTypeObj.id = currentTestTypeObj.id;
-           formedTestTypeObj.indicators = getIndicatorsArrForShow(currentTestTypeObj, userAge, currentUserData.gender);
-
-           formedTestTypesListObj[formedTestTypeObj.id] = formedTestTypeObj;
-         }
-
          this.props.dispatch(setFormedTestTypes(formedTestTypesListObj));
 
 
