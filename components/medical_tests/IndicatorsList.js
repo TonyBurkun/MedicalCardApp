@@ -82,6 +82,23 @@ class IndicatorsList extends Component {
   _clearAsyncStorage = async() => {
     await AsyncStorage.clear();
   };
+  _updateIndicatorsListForSave = (indicatorsListForSave, indicatorsListForShow, savedIndicatorsList) => {
+
+    for (let i = 0; i < savedIndicatorsList.length; i++) {
+      let item = savedIndicatorsList[i];
+      if (!item.custom) {
+        let updatingIndicator = indicatorsListForShow[item.indicatorID];
+        updatingIndicator.inputFields.result = item.inputFields.result;
+        indicatorsListForSave[item.indicatorID] = item;
+      } else {
+        indicatorsListForShow.push(item);
+        indicatorsListForSave[item.customIndicatorID] = item;
+      }
+    }
+
+
+    return indicatorsListForSave;
+  };
 
 
 
@@ -124,51 +141,40 @@ class IndicatorsList extends Component {
          formedGender = '(ж)'
        }
 
-
-
-       if (!isEdit) {
-         console.log(indicatorsListForShow);
-         console.log(currentTestTypeObj);
-
-         for (let i = 0; i < setIndicatorAfterSave.length; i++) {
-           let item = setIndicatorAfterSave[i];
-           if (!item.custom) {
-             let updatingIndicator = indicatorsListForShow[item.indicatorID];
-             updatingIndicator.inputFields.result = item.inputFields.result;
-             indicatorsListForSave[item.indicatorID] = item;
-           } else {
-             indicatorsListForShow.push(item);
-             indicatorsListForSave[item.customIndicatorID] = item;
-           }
-
-           // this.props.dispatch(setChosenIndicators(indicatorsListForSave));
-         }
-
-
-       }
-
-
-       if (isEdit) {
-         console.log('indicators list edit');
-         const editedTestID = this.props.navigation.state.params.editedTestID;
-         console.log(editedTestID);
-
-         const editedTest = this.props.testsList[editedTestID];
-         const editedTestFilledIndicatorsList = editedTest.indicators;
-         console.log(editedTestFilledIndicatorsList);
-
-         for (let i = 0; i < editedTestFilledIndicatorsList.length; i++) {
-           let item = editedTestFilledIndicatorsList[i];
-           if (!item.custom) {
-             let updatingIndicator = indicatorsListForShow[item.indicatorID];
-             updatingIndicator.inputFields.result = item.inputFields.result;
-             indicatorsListForSave[item.indicatorID] = item;
-           } else {
-             indicatorsListForShow.push(item);
-             indicatorsListForSave[item.customIndicatorID] = item;
-           }
+       for (let i = 0; i < setIndicatorAfterSave.length; i++) {
+         let item = setIndicatorAfterSave[i];
+         if (!item.custom) {
+           let updatingIndicator = indicatorsListForShow[item.indicatorID];
+           updatingIndicator.inputFields.result = item.inputFields.result;
+           indicatorsListForSave[item.indicatorID] = item;
+         } else {
+           indicatorsListForShow.push(item);
+           indicatorsListForSave[item.customIndicatorID] = item;
          }
        }
+
+
+
+       // if (isEdit) {
+       //   const editedTestID = this.props.navigation.state.params.editedTestID;
+       //   const editedTest = this.props.testsList[editedTestID];
+       //   const editedTestFilledIndicatorsList = editedTest.indicators;
+       //   console.log(editedTestFilledIndicatorsList);
+       //   console.log(setIndicatorAfterSave);
+       //
+       //   for (let i = 0; i < editedTestFilledIndicatorsList.length; i++) {
+       //     let item = editedTestFilledIndicatorsList[i];
+       //     if (!item.custom) {
+       //       let updatingIndicator = indicatorsListForShow[item.indicatorID];
+       //       updatingIndicator.inputFields.result = item.inputFields.result;
+       //       indicatorsListForSave[item.indicatorID] = item;
+       //     } else {
+       //       indicatorsListForShow.push(item);
+       //       indicatorsListForSave[item.customIndicatorID] = item;
+       //     }
+       //   }
+       // }
+
 
        this.props.dispatch(setChosenIndicators(indicatorsListForSave));
 

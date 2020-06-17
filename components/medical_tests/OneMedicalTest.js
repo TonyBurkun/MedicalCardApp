@@ -11,7 +11,7 @@ import commonStyles from "../../utils/commonStyles";
 import GreenTitle from "../ui_components/titles/GreenTitle";
 import {Image} from "react-native-elements";
 // import {getIndicatorInReadableFormat} from "../../utils/helpers";
-import {setChosenTestType} from "../../actions/tests";
+import {setChosenTestType, setIndicatorAfterSave} from "../../actions/tests";
 import {saveChosenLabel} from "../../actions/labels";
 
 
@@ -157,7 +157,9 @@ class OneMedicalTest extends Component {
 
 
     const testIndicators = updatedTest.indicators;
+    console.log(testIndicators);
 
+    // this.props.dispatch(setIndicatorAfterSave(testIndicators));
 
     this.setState({
       currentTest: updatedTest,
@@ -176,6 +178,8 @@ class OneMedicalTest extends Component {
 
   renderIndicatorsItem = ({item, index}) => {
     const testIndicators = this.state.currentTest.indicators || [];
+
+    let {title, result, norma, unit} = item.inputFields;
     console.log(item);
     return (
       <View style={[
@@ -183,14 +187,14 @@ class OneMedicalTest extends Component {
         index === 0 ? {marginLeft: 16}: {marginLeft: 0}, index === testIndicators.length - 1 ? {marginRight: 16} : {marginRight: 8}
       ]}>
         <TextInput
-          value={item.inputFields.title}
+          value={title.toString()}
           editable={false}
           style={styles.input}
         />
         <View style={{marginTop: 8}}>
           <Text style={styles.inputTitle}>РЕЗУЛЬТАТ</Text>
           <TextInput
-            value={item.inputFields.result}
+            value={result.toString()}
             editable={false}
             style={styles.input}
           />
@@ -199,7 +203,7 @@ class OneMedicalTest extends Component {
           <View style={{width: 82, marginRight: 8}}>
             <Text style={styles.inputTitle}>НОРМА</Text>
             <TextInput
-              value={item.inputFields.norma}
+              value={norma.toString()}
               editable={false}
               style={[styles.input, {textAlign: 'center'}]}
             />
@@ -207,7 +211,7 @@ class OneMedicalTest extends Component {
           <View style={{width: 82}}>
             <Text style={styles.inputTitle}>ЕД.ИЗМ</Text>
             <TextInput
-              value={item.inputFields.unit}
+              value={unit.toString()}
               editable={false}
               style={[styles.input, {textAlign: 'center'}]}
             />

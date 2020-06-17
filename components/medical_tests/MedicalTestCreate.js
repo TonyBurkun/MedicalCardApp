@@ -130,7 +130,8 @@ class MedicalTestCreate extends Component {
       const {chosenLabelsID} = this.props;
       const formedTestTypesList = {...this.props.formedTestTypesList};
       const currentTestID = currentTest.id;
-      console.log(currentTest);
+      const testsList = this.props.testsList;
+
 
       const chosenTestTypeIndex = getTestTypeIndexByID(currentTest.testType, formedTestTypesList);
 
@@ -138,7 +139,8 @@ class MedicalTestCreate extends Component {
 
       this.props.dispatch(setChosenTestType([chosenTestTypeIndex]));
       this.props.dispatch(saveChosenLabel(currentTest.labels || []));
-      this.props.dispatch(setIndicatorAfterSave(currentTest.indicators));
+      // this.props.dispatch(setIndicatorAfterSave(currentTest.indicators));
+      this.props.dispatch(setIndicatorAfterSave(testsList[currentTestID].indicators));
       //
       this.setState({
         ...this.state,

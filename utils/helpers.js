@@ -19,15 +19,10 @@ export function getCurrentDate() {
 }
 
 export function convertObjToArr(obj) {
-
-  console.log(obj);
   const copyObj = JSON.parse(JSON.stringify(obj));
-  console.log(copyObj);
   const objListKeys = Object.keys(copyObj);
 
   return objListKeys.map((item) => {
-    // console.log(item);
-    // console.log(copyObj[item]);
     return copyObj[item];
   });
 
@@ -77,115 +72,6 @@ export function updateUserDataFields(newUserFieldsObj, prevUserFieldsObj) {
 
   return prevUserFieldsObj;
 }
-
-
-// export function prepareIndicatorDataForSaving(
-//   patternTypeIndex = null,
-//   indicatorID = null,
-//   createdIndicatorID = null,
-//   title = '',
-//   norma = '',
-//   unit = '',
-//   result = '',
-// ) {
-//
-//   const indicatorDataObj = {};
-//   indicatorDataObj.inputFields = {};
-//
-//   indicatorDataObj.patternTypeIndex = patternTypeIndex;
-//   indicatorDataObj.indicatorID = indicatorID;
-//   indicatorDataObj.createdIndicatorID = createdIndicatorID;
-//   indicatorDataObj.inputFields.title = title;
-//   indicatorDataObj.inputFields.norma = norma;
-//   indicatorDataObj.inputFields.unit = unit;
-//   indicatorDataObj.inputFields.result = result;
-//   indicatorDataObj.custom = !Boolean(patternTypeIndex);
-//   indicatorDataObj.readyForSave = false;
-//
-//   return indicatorDataObj;
-// }
-
-
-// export function getIndicatorInReadableFormat(testTypesList, indicatorsList, date, gender) {
-//   console.group();
-//   console.log(testTypesList);
-//   console.log(indicatorsList);
-//   console.log(date);
-//   console.log(gender);
-//   console.groupEnd();
-//
-//
-//   return indicatorsList.map((item) => {
-//     const indicatorFields = {};
-//
-//     if (!Boolean(item.custom)) {
-//
-//       const patternTypeIndex = item.patternTypeIndex;
-//       const patternIndicatorID = item.patternIndicatorID;
-//       const patternTest = testTypesList[patternTypeIndex];
-//       const patternIndicator = patternTest.indicators[patternIndicatorID];
-//
-//
-//       const splitDateArr = date.split('-');
-//       const MMDDYY = splitDateArr[1] + '-' + splitDateArr[0] + '-' + splitDateArr[2];
-//       const dateInMilliseconds = new Date(MMDDYY).getTime();
-//       const currentDateInMilliseconds = new Date().getTime();
-//       const ageInMilliseconds = currentDateInMilliseconds - dateInMilliseconds;
-//       const userAge = Math.round(ageInMilliseconds / 1000 / 60 / 60 / 24);
-//
-//
-//       indicatorFields.title = patternIndicator['indicator_title'];
-//       indicatorFields.unit = patternIndicator['unit'];
-//
-//       if (patternIndicator['norma']['global'] && patternIndicator['norma']['global'].length) {
-//         // if the test types has global value which identical for both male and female
-//
-//         const globalNorma = patternIndicator['norma']['global'][0].value;
-//
-//         if (globalNorma.from === globalNorma.to) {
-//           indicatorFields.norma = globalNorma.to;
-//         } else {
-//           indicatorFields.norma = globalNorma.from + '-' + globalNorma.to
-//         }
-//
-//       }
-//
-//       if (!(patternIndicator['norma']['global'] && patternIndicator['norma']['global'].length)) {
-//         // if the test types doesn't include global value and need to find the value depends on male or female and age
-//         const valuesByGender = patternIndicator['norma'][gender];
-//         if (Boolean(valuesByGender)) {
-//           valuesByGender.map(item => {
-//
-//             if (item.from <= userAge && userAge <= item.to) {
-//
-//               if (item.value.from === item.value.to) {
-//                 indicatorFields.norma = item.value.to
-//               }
-//               if (item.value.from !== item.value.to) {
-//                 indicatorFields.norma = item.value.from + '-' + item.value.to
-//               }
-//
-//             }
-//           })
-//         }
-//
-//       }
-//
-//       indicatorFields.result = item.inputFields.result;
-//     }
-//
-//     if (Boolean(item.custom)) {
-//       indicatorFields.title = item.inputFields.title;
-//       indicatorFields.unit = item.inputFields.unit;
-//       indicatorFields.norma = item.inputFields.norma;
-//       indicatorFields.result = item.inputFields.result;
-//     }
-//
-//
-//     return indicatorFields;
-//   })
-//
-// }
 
 
 export function sortArrByObjectProp(arr, objProp) {
@@ -305,8 +191,6 @@ export function getFormedTestTypesList(testTypesList, userAge, gender){
 
     formedTestTypesListObj[formedTestTypeObj.id] = formedTestTypeObj;
   }
-
-  console.log(formedTestTypesListObj);
   return formedTestTypesListObj;
 }
 

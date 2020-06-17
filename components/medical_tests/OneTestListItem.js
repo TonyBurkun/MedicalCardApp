@@ -88,8 +88,6 @@ class OneTestListItem extends Component {
           {Boolean(testLabelsID.length && labelsList.length) &&
             <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 8, marginBottom: -8}}>
               {testLabelsID.map((item, index) => {
-                console.log(item);
-                console.log(labelsList);
                 return   <ChosenLabel key={index} title={labelsList[item].title} color={labelsList[item].color}/>
               })}
             </View>
@@ -97,7 +95,6 @@ class OneTestListItem extends Component {
           <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 16, marginBottom: -8}}>
             {testImagesArr.map((item, index) => {
               return (
-
                 <View
                   key={index}
                   style={{borderRadius: 12, overflow: 'hidden', marginRight: 8, marginBottom: 8}}>
