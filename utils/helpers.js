@@ -209,3 +209,24 @@ export function getTestTypeIndexByID(testTypeID, formedTestTypesList) {
     return item.id === testTypeID;
   });
 }
+
+
+export function sortIndicatorsListForShowByFilledFields(indicatorsListForShow){
+  let customIndicators = indicatorsListForShow.filter(item => {
+    return item.custom === true;
+  });
+
+  let noEmptyIndicatorsPattern = indicatorsListForShow.filter(item => {
+    return item.custom === false && item.inputFields.result.length > 0;
+  });
+
+
+  let emptyIndicatorsPattern = indicatorsListForShow.filter(item => {
+    return item.custom === false && item.inputFields.result.length === 0;
+  });
+
+
+  return  [...customIndicators, ...noEmptyIndicatorsPattern, ...emptyIndicatorsPattern]
+
+
+};

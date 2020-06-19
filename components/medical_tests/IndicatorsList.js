@@ -20,7 +20,11 @@ import MedicalIndicatorForm from "../ui_components/InputField/MedicalIndicatorFo
 import {generateUniqID} from "../../utils/API";
 import AddButton from "../ui_components/Buttons/AddButton";
 import {setChosenIndicators} from "../../actions/tests";
-import {convertObjToArr, convertObjToArr2, getTestTypeID} from "../../utils/helpers";
+import {
+  convertObjToArr,
+  getTestTypeID,
+  sortIndicatorsListForShowByFilledFields,
+} from "../../utils/helpers";
 import {IndicatorForm} from '../../utils/dataPattern'
 import {setTransferredIVF} from "../../actions/transferredIVF";
 import { withNavigationFocus } from 'react-navigation';
@@ -110,8 +114,6 @@ class IndicatorsList extends Component {
        console.log(this.state);
        console.log(this.props);
 
-       const isEdit = Boolean(this.props.navigation.state.params.isEdit);
-       console.log(isEdit);
 
        const {currentUserData, chosenTestType} = this.props;
        const formedTestTypesList = {...this.props.formedTestTypesList};
@@ -153,30 +155,10 @@ class IndicatorsList extends Component {
          }
        }
 
-
-
-       // if (isEdit) {
-       //   const editedTestID = this.props.navigation.state.params.editedTestID;
-       //   const editedTest = this.props.testsList[editedTestID];
-       //   const editedTestFilledIndicatorsList = editedTest.indicators;
-       //   console.log(editedTestFilledIndicatorsList);
-       //   console.log(setIndicatorAfterSave);
-       //
-       //   for (let i = 0; i < editedTestFilledIndicatorsList.length; i++) {
-       //     let item = editedTestFilledIndicatorsList[i];
-       //     if (!item.custom) {
-       //       let updatingIndicator = indicatorsListForShow[item.indicatorID];
-       //       updatingIndicator.inputFields.result = item.inputFields.result;
-       //       indicatorsListForSave[item.indicatorID] = item;
-       //     } else {
-       //       indicatorsListForShow.push(item);
-       //       indicatorsListForSave[item.customIndicatorID] = item;
-       //     }
-       //   }
-       // }
-
-
        this.props.dispatch(setChosenIndicators(indicatorsListForSave));
+
+       let sortedIndicatorsListForShow = sortIndicatorsListForShowByFilledFields(indicatorsListForShow);
+
 
 
        this.setState({
@@ -189,7 +171,7 @@ class IndicatorsList extends Component {
          chosenTestType,
          testTypeID,
          currentTestTypeObj,
-         indicatorsForShowArr: indicatorsListForShow,
+         indicatorsForShowArr: sortedIndicatorsListForShow,
          showLoader: false
        });
 

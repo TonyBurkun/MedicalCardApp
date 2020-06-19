@@ -623,6 +623,8 @@ export async function geTestsListByCurrentUser(){
 }
 
 export async function removeTestImages(testID, imageName) {
+  console.log('delete Images');
+  console.log(testID,imageName);
   await firebase.storage()
     .ref(`indicator-images/${testID}/${imageName}.jpg`).delete();
 }

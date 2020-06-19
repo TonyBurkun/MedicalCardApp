@@ -13,6 +13,7 @@ import {Image} from "react-native-elements";
 // import {getIndicatorInReadableFormat} from "../../utils/helpers";
 import {setChosenTestType, setIndicatorAfterSave} from "../../actions/tests";
 import {saveChosenLabel} from "../../actions/labels";
+import {sortIndicatorsListForShowByFilledFields} from "../../utils/helpers";
 
 
 
@@ -25,7 +26,8 @@ class OneMedicalTest extends Component {
       currentTestTypeTitle: '',
       currentTest: {},
       currentUserData: {},
-      testTypesList: []
+      testTypesList: [],
+      testIndicators: []
     }
 
   }
@@ -69,7 +71,7 @@ class OneMedicalTest extends Component {
   async componentDidMount(){
     console.log(this.props);
     const {tests, navigation, currentUserData, testsList} = this.props;
-    // const {testID, currentTest} = this.props.navigation.state.params;
+
 
 
     // if (testTypesList && testTypesList.length) {
@@ -114,13 +116,11 @@ class OneMedicalTest extends Component {
       const {date, gender} = currentUserData;
 
 
-      console.log(formedTestTypesList);
-      console.log(currentTest.indicators);
-      console.log(currentTest.date);
-      console.log(currentUserData);
-      console.log(currentTest.indicators);
-
       const testIndicators = currentTest.indicators;
+
+      let sortedTestIndicators = sortIndicatorsListForShowByFilledFields(testIndicators);
+
+
 
       // console.log(testIndicators);
 
@@ -132,7 +132,7 @@ class OneMedicalTest extends Component {
         testType,
         formedTestTypesList: this.props.formedTestTypesList,
         currentTestTypeTitle,
-        testIndicators
+        testIndicators: sortedTestIndicators
 
       });
     }
@@ -157,15 +157,14 @@ class OneMedicalTest extends Component {
 
 
     const testIndicators = updatedTest.indicators;
-    console.log(testIndicators);
+    let sortedTestIndicators = sortIndicatorsListForShowByFilledFields(testIndicators);
 
-    // this.props.dispatch(setIndicatorAfterSave(testIndicators));
 
     this.setState({
       currentTest: updatedTest,
       currentTestTypeTitle: updatedTestTypeTitle,
       testType: updatedTest.testType,
-      testIndicators
+      testIndicators: sortedTestIndicators
 
     });
 
@@ -223,14 +222,13 @@ class OneMedicalTest extends Component {
 
   render() {
     console.log(this.state);
-    const {currentTest, testType, testTypesList, currentTestTypeTitle} = this.state;
+    const {currentTest, testType, testTypesList, currentTestTypeTitle, testIndicators} = this.state;
     const {labelsList} = this.props;
 
     const {date} = currentTest;
     const testLabels = currentTest.labels || [];
     const testImages = currentTest.images || [];
     const testConclusion = currentTest.other || '';
-    const testIndicators = this.state.testIndicators || [];
 
 
     return (

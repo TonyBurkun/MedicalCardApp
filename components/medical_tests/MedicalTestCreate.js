@@ -96,7 +96,6 @@ class MedicalTestCreate extends Component {
   async componentDidMount(){
     console.log('DID MOUNT TEST CREATE/EDIT');
     console.log(this.state);
-
     console.log(this.props);
 
     InteractionManager.runAfterInteractions(() => {
@@ -104,11 +103,7 @@ class MedicalTestCreate extends Component {
 
       let {labels, testsList, chosenTestType} = this.props;
       const formedTestTypesList = {...this.props.formedTestTypesList};
-      // testTypesList = convertObjToArr(testTypesList);
-      // testTypesList = sortArrByObjectProp(testTypesList, 'id');
       labels = convertObjToArr(labels);
-
-
 
       this.setState({
         showLoader: false,
@@ -126,22 +121,20 @@ class MedicalTestCreate extends Component {
     if (isFormEdit){
       console.log('EDIT TEST');
       console.log(this.props);
-      const {currentTest} =  this.props.navigation.state.params;
-      const {chosenLabelsID} = this.props;
-      const formedTestTypesList = {...this.props.formedTestTypesList};
-      const currentTestID = currentTest.id;
-      const testsList = this.props.testsList;
 
+      const currentTestID = this.props.navigation.state.params.currentTest.id;
+      const testsList = this.props.testsList;
+      const currentTest = testsList[currentTestID];
+      const formedTestTypesList = {...this.props.formedTestTypesList};
 
       const chosenTestTypeIndex = getTestTypeIndexByID(currentTest.testType, formedTestTypesList);
 
-      console.log(chosenTestTypeIndex);
 
       this.props.dispatch(setChosenTestType([chosenTestTypeIndex]));
       this.props.dispatch(saveChosenLabel(currentTest.labels || []));
       // this.props.dispatch(setIndicatorAfterSave(currentTest.indicators));
-      this.props.dispatch(setIndicatorAfterSave(testsList[currentTestID].indicators));
-      //
+      this.props.dispatch(setIndicatorAfterSave(currentTest.indicators));
+
       this.setState({
         ...this.state,
         formField: {
@@ -210,6 +203,7 @@ class MedicalTestCreate extends Component {
   };
 
   handleRemoveImage = (index) => {
+    console.log(this.state);
     let {imagesArr} = this.state.formField;
 
     let newImagesArr = JSON.parse(JSON.stringify(imagesArr));
@@ -230,15 +224,7 @@ class MedicalTestCreate extends Component {
   };
 
   handleShowIndicatorsList = () => {
-    let isEdit = Boolean(this.props.navigation.state.params);
-    console.log(isEdit);
-    if (isEdit) {
-      this.props.navigation.navigate('MedicalIndicators', {isEdit, editedTestID: this.props.navigation.state.params.currentTest.id})
-    } else {
-      this.props.navigation.navigate('MedicalIndicators', {isEdit})
-    }
-
-    // this.props.navigation.navigate('MedicalIndicators', {isEdit:  Boolean(this.props.navigation.state.params), editedTestID: this.props.navigation.state.params.currentTest.id})
+    this.props.navigation.navigate('MedicalIndicators');
   };
 
   showItemsList = (param, screenTitle, radio = '') => {
@@ -249,32 +235,22 @@ class MedicalTestCreate extends Component {
 
   handleSubmitForm = async () => {
     console.log('press save Btn');
-
-    // const {isProfile} = this.state;
-    //
     const {other, date, imagesArr} = this.state.formField;
     const { labels, chosenLabelsID, chosenTestType, indicatorsListForSave, indicatorAfterSave} = this.props;
     const formedTestTypesList = {...this.props.formedTestTypesList};
     const {isFormEdit} = this.state;
     const uid = getUIDfromFireBase();
 
-    console.log(chosenLabelsID);
 
 
     if (!isFormEdit) {
       const generatedID = generateUniqID();
-
 
       this.setState({
         showLoader: true
       });
 
       const uploadedFilesUrlArr = await _uploadImagesToStore(generatedID, imagesArr);
-      console.log(uploadedFilesUrlArr);
-
-
-      console.log(indicatorsListForSave);
-
 
       const indicatorsList = indicatorAfterSave.map(item => {
         if (!item.custom) {
@@ -283,19 +259,12 @@ class MedicalTestCreate extends Component {
         return item;
       });
 
-      console.log(indicatorsList);
-      // console.log(indicatorsListWithID);
-
 
       if (imagesArr.length === uploadedFilesUrlArr.length) {
         let testTypeListArr = convertObjToArr(formedTestTypesList);
         let chosenTestTypeID = testTypeListArr[chosenTestType[0]].id;
-        console.log(chosenTestTypeID);
 
-        const testForSave = new MedicalTest(generateUniqID(), uid, uploadedFilesUrlArr, chosenLabelsID, chosenTestTypeID, indicatorsList, date, other);
-
-        console.log(testForSave);
-
+        const testForSave = new MedicalTest(generatedID, uid, uploadedFilesUrlArr, chosenLabelsID, chosenTestTypeID, indicatorsList, date, other);
 
         createNewTest(testForSave);
         this.props.dispatch(addTest(testForSave));
@@ -303,8 +272,6 @@ class MedicalTestCreate extends Component {
         this.props.dispatch(setChosenIndicators([]));
         this.props.dispatch(saveChosenLabel([]));
 
-
-        console.log('here');
 
         this.setState({
           showLoader: false
@@ -409,7 +376,7 @@ class MedicalTestCreate extends Component {
         return item;
       });
 
-      const testForSave = new MedicalTest(testID, uid, uploadedFilesUrlArr, chosenLabelsID, chosenTestTypeID, indicatorsList, date, other);
+      const testForSave = new MedicalTest(testID, uid, imagesAfterEditArr, chosenLabelsID, chosenTestTypeID, indicatorsList, date, other);
 
       console.log(testForSave);
 
@@ -440,12 +407,13 @@ class MedicalTestCreate extends Component {
 
   };
 
-  handleRemoveNote = () => {
+  handleRemoveTest = () => {
     const {isFormEdit} = this.state;
 
     if (isFormEdit) {
       const currentTestID = this.props.navigation.state.params.currentTest.id;
-      const editedTest = this.props.testsList[currentTestID];
+      const testsList = this.props.testsList;
+      const editedTest = testsList[currentTestID];
       const testImages = editedTest.images || [];
 
       console.log(editedTest);
@@ -665,7 +633,7 @@ class MedicalTestCreate extends Component {
 
             {isFormEdit &&
             <View style={[commonStyles.containerIndents, {borderWidth: 0}]}>
-              <RemoveButton handleRemove={(event) => this.handleRemoveNote(event)} title={'УДАЛИТЬ АНАЛИЗ'}/>
+              <RemoveButton handleRemove={(event) => this.handleRemoveTest(event)} title={'УДАЛИТЬ АНАЛИЗ'}/>
             </View>
 
             }
