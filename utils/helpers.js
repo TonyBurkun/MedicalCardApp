@@ -228,5 +228,31 @@ export function sortIndicatorsListForShowByFilledFields(indicatorsListForShow){
 
   return  [...customIndicators, ...noEmptyIndicatorsPattern, ...emptyIndicatorsPattern]
 
-
 };
+
+export function sortTestList(testsList){
+  testsList.sort((a,b) => {
+
+    if (a.dateModified > b.dateModified) {
+      return -1;
+    }
+    if (a.dateModified < b.dateModified) {
+      return 1;
+    }
+    return 0
+
+  });
+  testsList.sort((a,b) => {
+
+    if (a.date.toLowerCase() > b.date.toLowerCase()) {
+      return -1;
+    }
+    if (a.date.toLowerCase() < b.date.toLowerCase()) {
+      return 1;
+    }
+    return 0
+
+  });
+
+  return testsList;
+}

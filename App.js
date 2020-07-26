@@ -57,6 +57,7 @@ import TermsOfUse from "./components/profile/TermsOfUse";
 import HeaderAddBtn from "./components/ui_components/TopNavigation/HeaderAddBtn";
 import TypeTestList from "./components/medical_tests/TypeTestList";
 import OneMedicalTest from "./components/medical_tests/OneMedicalTest";
+import {saveChosenLabelForTestList} from "./actions/labels";
 
 
 

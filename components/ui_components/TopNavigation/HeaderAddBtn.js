@@ -7,7 +7,7 @@ import * as Colors from '../../../utils/colors'
 import GroupButtonsTitle from "../titles/GroupButtonsTitle";
 import {setChosenDoctorSpecializations} from '../../../actions/doctorSpecializations'
 import {setChosenDoctors} from "../../../actions/doctors";
-import {saveChosenLabel} from "../../../actions/labels";
+import {saveChosenLabel, saveChosenLabelForNoteList, saveChosenLabelForTestList} from "../../../actions/labels";
 import {saveChosenPillsType, setChosenPills} from "../../../actions/pills"
 import {setChosenIndicators, setChosenTestType, setIndicatorAfterSave, showPopUpWarning} from "../../../actions/tests";
 import {TRY_SAVE_NOT_FILLED_INDICATOR} from "../../../utils/systemMessages";
@@ -24,7 +24,9 @@ class HeaderAddBtn extends Component{
     this.state = {
       activeBtn: false,
       prevActiveBtn: false,
-      activeItemArr: []
+      activeItemArr: [],
+      fromScreen: ''
+
     }
   }
 
@@ -50,6 +52,12 @@ class HeaderAddBtn extends Component{
       this.setState({
         activeItemArr: params.chosenLabelsID
       });
+    }
+
+    if (params && params.fromScreen) {
+      this.setState({
+        fromScreen: params.fromScreen
+      })
     }
 
   }
@@ -97,7 +105,9 @@ class HeaderAddBtn extends Component{
   handlePressBtn = () => {
 
     const {type} = this.props;
+    const {fromScreen} = this.state;
     console.log(type);
+    console.log(fromScreen);
 
     switch (type) {
       case 'doctorSpecializations':
@@ -111,7 +121,23 @@ class HeaderAddBtn extends Component{
         break;
 
       case 'chosenLabels':
-        this.props.dispatch(saveChosenLabel(this.state.activeItemArr));
+
+
+
+        if (fromScreen === 'testsList') {
+          this.props.dispatch(saveChosenLabelForTestList(this.state.activeItemArr));
+        } else {
+          // this.props.dispatch(saveChosenLabel(this.state.activeItemArr));
+        }
+
+        if (fromScreen === 'notesList') {
+          this.props.dispatch(saveChosenLabelForNoteList(this.state.activeItemArr));
+        }
+
+        if (!fromScreen) {
+          this.props.dispatch(saveChosenLabel(this.state.activeItemArr));
+        }
+
         this.props.navigation.goBack();
         break;
 
@@ -186,13 +212,15 @@ class HeaderAddBtn extends Component{
     // console.log(prevActiveBtn);
     return(
       <TouchableHighlight
-        disabled={!activeBtn && !prevActiveBtn}
+        // disabled={!activeBtn && !prevActiveBtn}
+        disabled={false}
         underlayColor={'transparent'}
         onPress={this.handlePressBtn}
         style={{paddingRight: 8}}
       >
         <Text
-          style={(activeBtn || prevActiveBtn )? {fontSize: 17, color: Colors.DARK_GREEN} : {fontSize: 17, color: Colors.DISABLED_BORDER}}
+          // style={(activeBtn || prevActiveBtn )? {fontSize: 17, color: Colors.DARK_GREEN} : {fontSize: 17, color: Colors.DISABLED_BORDER}}
+          style={{fontSize: 17, color: Colors.DARK_GREEN}}
         >{titleBtn}</Text>
       </TouchableHighlight>
     )

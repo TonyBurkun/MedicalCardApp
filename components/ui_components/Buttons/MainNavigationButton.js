@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator} from 'react-native'
 import {withNavigation} from 'react-navigation'
+import {connect} from 'react-redux'
 import * as Colors from "../../../utils/colors";
 import {Icon} from 'react-native-elements/src/index'
+import {saveChosenLabelForNoteList, saveChosenLabelForTestList} from "../../../actions/labels";
 
 
 
@@ -18,11 +20,13 @@ class MainNavigationButton extends Component{
 
     switch (tabIndex) {
       case 0:
+        this.props.dispatch(saveChosenLabelForNoteList([]));
         navigation.navigate('CreateNote');
         break;
 
       case 1:
         console.log('MedicalTestsList Tab');
+        this.props.dispatch(saveChosenLabelForTestList([]));
         navigation.navigate('CreateTest');
         break;
 
@@ -65,7 +69,13 @@ class MainNavigationButton extends Component{
   }
 }
 
-export default withNavigation(MainNavigationButton);
+function mapStateToProps(state) {
+  console.log(state);
+
+  return {}
+}
+
+export default withNavigation(connect(mapStateToProps)(MainNavigationButton))
 
 const styles = StyleSheet.create({
   addButtonContainer: {

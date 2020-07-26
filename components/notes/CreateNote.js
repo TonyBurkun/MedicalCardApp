@@ -228,7 +228,8 @@ class CreateNote extends Component{
   };
 
   showItemsList = (param, screenTitle, radio = '') => {
-    this.props.navigation.navigate(param, {listType: param, screenTitle: screenTitle, radio: radio});
+    const {chosenLabelsID} = this.props || [];
+    this.props.navigation.navigate(param, {listType: param, screenTitle: screenTitle, radio: radio, chosenLabelsID: chosenLabelsID});
   };
 
   handleAddImage = () => {
@@ -721,14 +722,11 @@ class CreateNote extends Component{
                    containerStyle={{position: 'absolute', right: 0, top: 0, marginTop: 12}}
                    onPress={() => {
                      this.showItemsList('ChoseLabel', 'Метки')
-                     // this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
                    }}
                  />
                  <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingLeft: 16, paddingRight: 16}}>
                    {
                      chosenLabelsID.map((item, index) => {
-                       console.log(labels);
-                       console.log(item);
                        const title = labels[item].title;
                        const color = labels[item].color;
                        return (

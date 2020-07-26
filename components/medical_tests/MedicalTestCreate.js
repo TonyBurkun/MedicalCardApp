@@ -228,7 +228,8 @@ class MedicalTestCreate extends Component {
   };
 
   showItemsList = (param, screenTitle, radio = '') => {
-    this.props.navigation.navigate(param, {listType: param, screenTitle: screenTitle, radio: radio});
+    const {chosenLabelsID} = this.props || [];
+    this.props.navigation.navigate(param, {listType: param, screenTitle: screenTitle, radio: radio, chosenLabelsID: chosenLabelsID});
   };
 
 
@@ -471,7 +472,6 @@ class MedicalTestCreate extends Component {
         <InternetNotification topDimension={0}/>
         <KeyboardAwareScrollView>
           <ScrollView>
-
             <View style={{marginTop: 16}}>
               <SelectFromList
                 placeholder={'Тип анализа (обязательно)'}

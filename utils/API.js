@@ -186,6 +186,7 @@ export function signOut(navigation){
 }
 
 export function getUIDfromFireBase(){
+  console.log(firebase.auth().currentUser.uid);
   return (
     firebase.auth().currentUser.uid
   )

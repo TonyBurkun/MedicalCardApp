@@ -74,11 +74,19 @@ class ChoseLabel extends Component {
 
   componentDidMount(){
 
+    const params = this.props.navigation.state.params;
+
+
     getLabelsForUser()
       .then(data => {
         this.props.dispatch(setLabels(data));
+        let {chosenLabelsID} = this.props.labels;
 
-        const {chosenLabelsID} = this.props.labels;
+        if (params && params.fromScreen) {
+          chosenLabelsID = this.props.chosenLabelsIDForTestList
+        }
+
+
         let labelsList = convertObjToArr(data);
         labelsList = addCheckFieldToArr(labelsList);
         labelsList = setChosenItemInArr(labelsList, chosenLabelsID);
@@ -355,6 +363,7 @@ class ChoseLabel extends Component {
     const { search, searchDataList, isLoaded, showList} = this.state;
     const {navigation} = this.props;
 
+    //TODO remove  sort from the state
     searchDataList.sort((a,b) => {
       if (a.dateModified < b.dateModified) {
         return 1;
@@ -429,6 +438,7 @@ function mapStateToProps(state) {
   return(
     {
       labels,
+      chosenLabelsIDForTestList: state.labels.chosenLabelsIDForTestList,
     }
   )
 

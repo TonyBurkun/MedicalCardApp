@@ -10,6 +10,7 @@ import DateLabel from "../ui_components/DateLabel";
 import {getTestTypesList} from "../../utils/API";
 import {setTestTypes} from "../../actions/tests";
 import { withNavigationFocus } from 'react-navigation';
+import {convertObjToArr} from "../../utils/helpers";
 
 class OneTestListItem extends Component {
 
@@ -66,13 +67,14 @@ class OneTestListItem extends Component {
     console.log(this.state);
     console.log(this.props);
 
-    const {testData, hasCheckBox, index, labelsList} = this.props;
+    let {testData, hasCheckBox, index, labelsList} = this.props;
     const testLabelsID = testData.labels || [];
     const testImagesArr = testData.images || [];
     const {testTypeTitle} = this.state;
 
     console.log(testLabelsID);
     console.log(labelsList);
+
 
 
 
@@ -85,9 +87,10 @@ class OneTestListItem extends Component {
           <DateLabel date={testData.date}/>
           <Text style={{fontSize: 21, color: Colors.BLACK_TITLE}}>{testTypeTitle}</Text>
           <Text style={{fontSize: 12, color: Colors.NOTE_GREY_TEXT, marginTop: 8}}>{testData.other}</Text>
-          {Boolean(testLabelsID.length && labelsList.length) &&
+          {Boolean(testLabelsID.length) &&
             <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 8, marginBottom: -8}}>
               {testLabelsID.map((item, index) => {
+                console.log(item);
                 return   <ChosenLabel key={index} title={labelsList[item].title} color={labelsList[item].color}/>
               })}
             </View>

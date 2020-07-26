@@ -3,11 +3,16 @@ import {ADD_LABEL} from '../actions/labels'
 import {DELETE_LABEL} from "../actions/labels";
 import {UPDATE_LABEL} from "../actions/labels";
 import {SET_ACTIVE_LABEL} from "../actions/labels";
+import {SET_ACTIVE_LABEL_FOR_TEST_LIST} from "../actions/labels";
+import {SET_ACTIVE_LABEL_FOR_NOTE_LIST} from "../actions/labels";
+
 
 
 const initialState = {
   labels: {},
-  chosenLabelsID: []
+  chosenLabelsID: [],
+  chosenLabelsIDForTestList: [],
+  chosenLabelsIDForNoteList: []
 };
 
 
@@ -65,6 +70,18 @@ function labels(state=initialState, action) {
       return {
         ...state,
         chosenLabelsID: action.chosenLabelsID
+      };
+
+    case SET_ACTIVE_LABEL_FOR_TEST_LIST:
+      return {
+        ...state,
+        chosenLabelsIDForTestList: action.chosenLabelsID
+      };
+
+    case SET_ACTIVE_LABEL_FOR_NOTE_LIST:
+      return {
+        ...state,
+        chosenLabelsIDForNoteList: action.chosenLabelsID
       };
 
 

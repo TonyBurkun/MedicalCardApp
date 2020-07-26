@@ -10,15 +10,18 @@ import {
   getIndicatorsArrForShow, getUserAgeInMilliseconds,
   isIphone5,
   setInverseChosenItemInArr,
-  sortArrByObjectProp
+  sortArrByObjectProp, sortTestList
 } from "../../utils/helpers";
 import {geTestsListByCurrentUser, getLabelsForUser, getTestTypesList} from "../../utils/API";
 import {setFormedTestTypes, setTest, setTestTypesTitle} from "../../actions/tests";
 import {connect} from 'react-redux'
-import {setLabels} from "../../actions/labels";
+import {saveChosenLabelForTestList, setLabels} from "../../actions/labels";
 import OneTestListItem from "./OneTestListItem";
 import {NO_DATA_TO_SHOW} from "../../utils/textConstants";
-import {Overlay} from "react-native-elements";
+import {Icon, Overlay} from "react-native-elements";
+import commonStyles from "../../utils/commonStyles";
+import ChosenLabel from "../ui_components/ChosenLabel";
+import {setChosenDoctorSpecializations} from "../../actions/doctorSpecializations";
 
 
 class MedicalTestsList extends Component{
@@ -35,18 +38,24 @@ class MedicalTestsList extends Component{
       isLoaded: false,
       showList: false,
       gettingData: false,
+      labelsForFilter: [],
     }
   }
 
   componentDidMount(){
+    console.log('DID MOUNT');
     console.log(this.props);
 
     const {currentUserData} = this.props;
 
      Promise.all([getTestTypesList(), getLabelsForUser(), geTestsListByCurrentUser()])
+
        .then(([testTypeListObj, labelsList, testListByCurrentUser]) => {
 
 
+
+         geTestsListByCurrentUser()
+           .then(data => {console.log(data)});
 
          // LABELS LIST
          this.props.dispatch(setLabels(labelsList));
@@ -94,13 +103,16 @@ class MedicalTestsList extends Component{
        });
   }
 
-   componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     console.log('WILL RECEIVE PROPS');
 
 
-    const {testsList, labelsList} = nextProps;
+    const {testsList, labelsList, chosenLabelsID} = nextProps;
+    const {labelsForFilter} = this.state;
     const prevTestsList = this.state.testsList;
     console.log(nextProps);
+    console.log(this.props);
+    console.log(this.state);
 
     let newLabelsListArr = convertObjToArr(labelsList);
     let newTestsListArr = convertObjToArr(testsList);
@@ -113,15 +125,61 @@ class MedicalTestsList extends Component{
       })
     }
 
-
-
      this.setState({
-       testsList: newTestsListArr,
-       testsListOrigin: newTestsListArr,
+       // testsList: newTestsListArr,
+       // testsListOrigin: newTestsListArr,
        showList: Boolean(newTestsListArr.length),
      });
 
 
+
+    if (chosenLabelsID !== labelsForFilter && chosenLabelsID.length > 0) {
+      console.log('NEW CHOSEN LABELS');
+
+      this.setState({
+        labelsForFilter: chosenLabelsID
+      });
+
+      let filteredTestListByLabel = [];
+
+      for (let key in testsList) {
+
+        console.log('ITERATION');
+
+        if (testsList.hasOwnProperty(key)) {
+          let testLabels = testsList[key].labels || [];
+          console.log(testLabels);
+
+         for (let i = 0; i < testLabels.length; i++){
+           let result = chosenLabelsID.find(chosenLabel => {
+             console.log(chosenLabel, testLabels[i]);
+             return chosenLabel === testLabels[i];
+           });
+
+           if (result) {
+             filteredTestListByLabel.push(testsList[key]);
+             break;
+           }
+         }
+        }
+        this.setState({
+          testsList: filteredTestListByLabel
+
+        })
+      }
+    }
+
+    if (!chosenLabelsID.length){
+      this.setState({
+        testsList: newTestsListArr
+      })
+    }
+
+
+  }
+
+  componentWillUnmount() {
+    this.props.dispatch(saveChosenLabelForTestList([]));
   }
 
   renderFlatListItem = ({item}) => {
@@ -131,77 +189,77 @@ class MedicalTestsList extends Component{
     )
   };
 
-  renderLabelsListItem = ({item, index}) => {
-    const {labelsList} = this.state;
+  // renderLabelsListItem = ({item, index}) => {
+  //   const {labelsList} = this.state;
+  //
+  //   const chosenLabelsList = labelsList.filter(item => {
+  //     return item.checked === true;
+  //   });
+  //
+  //
+  //   let wasClickOnLabel = !!chosenLabelsList.length;
+  //
+  //
+  //
+  //   return (
+  //     <TouchableOpacity
+  //       onPress={() => this.handlePressLabel(item, index)}
+  //       style={[styles.labelBtn, !wasClickOnLabel ? {backgroundColor: item.color} : {backgroundColor: Colors.DISABLED_BORDER}, wasClickOnLabel && item.checked && {backgroundColor: item.color},  index === 0 ? {marginLeft: 16}: {marginLeft: 0}, index === labelsList.length - 1 ? {marginRight: 16} : {marginRight: 8} ]}>
+  //       <Text style={{color: Colors.WHITE, fontWeight: 'bold'}}>{item.title.toUpperCase()}</Text>
+  //     </TouchableOpacity>
+  //   )
+  // };
 
-    const chosenLabelsList = labelsList.filter(item => {
-      return item.checked === true;
-    });
-
-
-    let wasClickOnLabel = !!chosenLabelsList.length;
-
-
-
-    return (
-      <TouchableOpacity
-        onPress={() => this.handlePressLabel(item, index)}
-        style={[styles.labelBtn, !wasClickOnLabel ? {backgroundColor: item.color} : {backgroundColor: Colors.DISABLED_BORDER}, wasClickOnLabel && item.checked && {backgroundColor: item.color},  index === 0 ? {marginLeft: 16}: {marginLeft: 0}, index === labelsList.length - 1 ? {marginRight: 16} : {marginRight: 8} ]}>
-        <Text style={{color: Colors.WHITE, fontWeight: 'bold'}}>{item.title.toUpperCase()}</Text>
-      </TouchableOpacity>
-    )
-  };
-
-  handlePressLabel = (item) => {
-    const {labelsList, testsListOrigin} = this.state;
-
-    let updatedLabelsList = setInverseChosenItemInArr(labelsList, item.id);
-    this.setState({
-      labelsList: updatedLabelsList
-    });
-
-    const isChosenLabel = updatedLabelsList.find((item) => {
-      return item.checked === true;
-    });
-
-
-    if (isChosenLabel) {
-      // -- Filter Test list by chosen labels --
-      const chosenLabelsList = updatedLabelsList.filter(item => {
-        return item.checked === true;
-      });
-
-
-      const filteredTestsListByLabel = testsListOrigin.filter(test => {
-        const testLabels = test.labels || [];
-        let containLabel = false;
-
-        if (testLabels.length) {
-          chosenLabelsList.forEach(chosenLabel => {
-            testLabels.forEach(noteLabelID => {
-              if (chosenLabel.id === noteLabelID) {
-                containLabel = true;
-              }
-            })
-          });
-        }
-        return containLabel
-      });
-
-      this.setState({
-        testsList: filteredTestsListByLabel,
-      });
-
-    }
-
-    if (!isChosenLabel) {
-      // -- Show Original Note list if the use didn't chose any labels
-      this.setState({
-        testsList: testsListOrigin,
-      });
-    }
-
-  };
+  // handlePressLabel = (item) => {
+  //   const {labelsList, testsListOrigin} = this.state;
+  //
+  //   let updatedLabelsList = setInverseChosenItemInArr(labelsList, item.id);
+  //   this.setState({
+  //     labelsList: updatedLabelsList
+  //   });
+  //
+  //   const isChosenLabel = updatedLabelsList.find((item) => {
+  //     return item.checked === true;
+  //   });
+  //
+  //
+  //   if (isChosenLabel) {
+  //     // -- Filter Test list by chosen labels --
+  //     const chosenLabelsList = updatedLabelsList.filter(item => {
+  //       return item.checked === true;
+  //     });
+  //
+  //
+  //     const filteredTestsListByLabel = testsListOrigin.filter(test => {
+  //       const testLabels = test.labels || [];
+  //       let containLabel = false;
+  //
+  //       if (testLabels.length) {
+  //         chosenLabelsList.forEach(chosenLabel => {
+  //           testLabels.forEach(noteLabelID => {
+  //             if (chosenLabel.id === noteLabelID) {
+  //               containLabel = true;
+  //             }
+  //           })
+  //         });
+  //       }
+  //       return containLabel
+  //     });
+  //
+  //     this.setState({
+  //       testsList: filteredTestsListByLabel,
+  //     });
+  //
+  //   }
+  //
+  //   if (!isChosenLabel) {
+  //     // -- Show Original Note list if the use didn't chose any labels
+  //     this.setState({
+  //       testsList: testsListOrigin,
+  //     });
+  //   }
+  //
+  // };
 
   handleChoosingTest = (testID) => {
 
@@ -213,35 +271,25 @@ class MedicalTestsList extends Component{
 
   };
 
+  showItemsList = (param, screenTitle, radio = '') => {
+    const {chosenLabelsID} = this.props || [];
+    this.props.navigation.navigate(param, {listType: param, screenTitle: screenTitle, radio: radio, fromScreen: 'testsList', chosenLabelsID: chosenLabelsID});
+  };
+
+  handleClearBtn = () => {
+    console.log('press');
+    this.props.dispatch(saveChosenLabelForTestList([]))
+  };
+
 
 
   render() {
     console.log(this.state);
-    const {testsList, labelsList, isLoaded, showList} = this.state;
-    console.log(testsList);
+    console.log(this.props);
+    const {testsList, isLoaded, showList} = this.state;
+    const {labelsList} = this.props;
+    const {chosenLabelsID} = this.props || [];
 
-    // testsList.sort((a,b) => {
-    //
-    //   if (a.dateModified > b.dateModified) {
-    //     return -1;
-    //   }
-    //   if (a.dateModified < b.dateModified) {
-    //     return 1;
-    //   }
-    //   return 0
-    //
-    // });
-    // testsList.sort((a,b) => {
-    //
-    //   if (a.date.toLowerCase() > b.date.toLowerCase()) {
-    //     return -1;
-    //   }
-    //   if (a.date.toLowerCase() < b.date.toLowerCase()) {
-    //     return 1;
-    //   }
-    //   return 0
-    //
-    // });
 
     return(
       <SafeAreaView style={styles.container}>
@@ -257,21 +305,68 @@ class MedicalTestsList extends Component{
         <Fragment>
           {showList ? (
             <Fragment>
-              {labelsList.length > 0 &&
-                <View style={{marginTop: 12}}>
-                  <FlatList
-                    horizontal={true}
-                    keyExtractor={(item, index) => index.toString()}
-                    data={labelsList}
-                    renderItem={this.renderLabelsListItem}
-                  />
+              {/*{labelsList.length > 0 &&*/}
+              {/*  <View style={{marginTop: 12}}>*/}
+              {/*    <FlatList*/}
+              {/*      horizontal={true}*/}
+              {/*      keyExtractor={(item, index) => index.toString()}*/}
+              {/*      data={labelsList}*/}
+              {/*      renderItem={this.renderLabelsListItem}*/}
+              {/*    />*/}
+              {/*  </View>*/}
+              {/*}*/}
+              <View
+                style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+                <Text
+                  onPress={() => {
+                    this.showItemsList('ChoseLabel', 'Метки')
+                    // this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
+                  }}
+                  style={[commonStyles.tableBlockItemText]}>
+                  Отфильтровать по меткам:
+                </Text>
+                {chosenLabelsID.length > 0 &&
+                <TouchableOpacity
+                  style={{position: 'absolute', width: 80, right: 40, top: 0, marginTop: 20}}
+                  onPress={() => {
+                    this.handleClearBtn();
+                  }}
+                >
+
+                  <Text style={{color: Colors.BLUE_BTN}}>очистить</Text>
+                </TouchableOpacity>
+                }
+                <Icon
+                  name='chevron-down'
+                  type='evilicon'
+                  color={Colors.GRAY_TEXT}
+                  size={40}
+                  containerStyle={{position: 'absolute', right: 0, top: 0, marginTop: 12}}
+                  onPress={() => {
+                    this.showItemsList('ChoseLabel', 'Метки')
+                    // this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
+                  }}
+                />
+                <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingLeft: 16, paddingRight: 16}}>
+                  {
+                    chosenLabelsID.map((item, index) => {
+                      console.log(item);
+
+                      const title = labelsList[item].title;
+                      const color = labelsList[item].color;
+                      return (
+                        <ChosenLabel key={index} title={title} color={color}/>
+                      )
+                    })
+                  }
                 </View>
-              }
+              </View>
+
               {testsList.length ? (
                 <View style={{flex: 1, marginTop: 28}}>
                   <FlatList
                     keyExtractor={(item, index) => index.toString()}
-                    data={testsList}
+                    data={sortTestList(testsList)}
                     renderItem={this.renderFlatListItem}
                   />
                 </View>
@@ -312,6 +407,7 @@ function mapStateToProps(state) {
   return {
     currentUserData: state.authedUser.currentUserData,
     labelsList: state.labels.labels,
+    chosenLabelsID: state.labels.chosenLabelsIDForTestList,
     testsList: state.tests.testsList,
   }
 }
