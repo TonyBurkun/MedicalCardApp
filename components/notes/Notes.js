@@ -6,27 +6,23 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableHighlight,
   AsyncStorage,
   Button,
   Platform,
   ScrollView,
-  Image, FlatList, TouchableHighlight,
+  Image, FlatList,
 } from 'react-native';
 import { SafeAreaView, withNavigationFocus } from 'react-navigation'
 import * as Colors from '../../utils/colors'
 import commonStyles from '../../utils/commonStyles'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view/index'
 import {
-  signOut,
   getUIDfromFireBase,
   getCurrentUserData,
   getAppPillsList,
   getPillsList,
   getLabelsForUser,
   getNotesListByCurrentUser,
-  removeRelationImgToPill,
-  checkRelationsImgToPills,
-  deletePillByID,
   getDoctorsList, getDoctorSpecializations
 } from '../../utils/API'
 import {setAuthedUserID, getAuthedUserAction} from '../../actions/authedUser'
@@ -36,14 +32,12 @@ import {
   isIphone5,
   convertObjToArr,
   addCheckFieldToArr,
-  setChosenItemInArr,
-  setInverseChosenItemInArr,
   sortTestList
 } from "../../utils/helpers";
-import {saveChosenLabelForNoteList, saveChosenLabelForTestList, setLabels} from "../../actions/labels";
+import {saveChosenLabelForNoteList, setLabels} from "../../actions/labels";
 import {setNotes} from "../../actions/notes";
 import {NO_DATA_TO_SHOW} from "../../utils/textConstants";
-import {deletePill, setPills} from "../../actions/pills";
+import {setPills} from "../../actions/pills";
 import Swipeable from "react-native-swipeable";
 import OnePillList from "../ui_components/ListItems/OnePillList";
 import OneNoteListItem from "../ui_components/ListItems/OneNoteListItem";
@@ -240,77 +234,6 @@ class Notes extends Component{
     )
   };
 
-  // renderLabelsListItem = ({item, index}) => {
-  //   const {labelsList} = this.state;
-  //
-  //   const chosenLabelsList = labelsList.filter(item => {
-  //     return item.checked === true;
-  //   });
-  //
-  //
-  //   let wasClickOnLabel = !!chosenLabelsList.length;
-  //
-  //
-  //
-  //   return (
-  //     <TouchableOpacity
-  //       onPress={() => this.handlePressLabel(item, index)}
-  //       style={[styles.labelBtn, !wasClickOnLabel ? {backgroundColor: item.color} : {backgroundColor: Colors.DISABLED_BORDER}, wasClickOnLabel && item.checked && {backgroundColor: item.color},  index === 0 ? {marginLeft: 16}: {marginLeft: 0}, index === labelsList.length - 1 ? {marginRight: 16} : {marginRight: 8} ]}>
-  //      <Text style={{color: Colors.WHITE, fontWeight: 'bold'}}>{item.title.toUpperCase()}</Text>
-  //     </TouchableOpacity>
-  //   )
-  // };
-
-  // handlePressLabel = (item) => {
-  //   const {labelsList, notesListOrigin} = this.state;
-  //
-  //   let updatedLabelsList = setInverseChosenItemInArr(labelsList, item.id);
-  //   this.setState({
-  //     labelsList: updatedLabelsList
-  //   });
-  //
-  //   const isChosenLabel = updatedLabelsList.find((item) => {
-  //     return item.checked === true;
-  //   });
-  //
-  //
-  //   if (isChosenLabel) {
-  //     // -- Filter Notes list by chosen labels --
-  //     const chosenLabelsList = updatedLabelsList.filter(item => {
-  //       return item.checked === true;
-  //     });
-  //
-  //
-  //    const filteredNotesListByLabel = notesListOrigin.filter(note => {
-  //      const noteLabels = note.labels || [];
-  //      let containLabel = false;
-  //
-  //      if (noteLabels.length) {
-  //        chosenLabelsList.forEach(chosenLabel => {
-  //          noteLabels.forEach(noteLabelID => {
-  //            if (chosenLabel.id === noteLabelID) {
-  //              containLabel = true;
-  //            }
-  //          })
-  //        });
-  //      }
-  //      return containLabel
-  //    });
-  //
-  //    this.setState({
-  //      notesList: filteredNotesListByLabel,
-  //    });
-  //
-  //   }
-  //
-  //   if (!isChosenLabel) {
-  //     // -- Show Original Note list if the use didn't chose any labels
-  //     this.setState({
-  //       notesList: notesListOrigin,
-  //     });
-  //   }
-  //
-  // };
 
   showItemsList = (param, screenTitle, radio = '') => {
     const {chosenLabelsID} = this.props || [];
@@ -353,63 +276,50 @@ class Notes extends Component{
           <Fragment>
             {showList ? (
               <Fragment>
-                {/*{labelsList.length > 0 &&*/}
-                {/*  <View style={{marginTop: 12}}>*/}
-                {/*    <FlatList*/}
-                {/*      horizontal={true}*/}
-                {/*      keyExtractor={(item, index) => index.toString()}*/}
-                {/*      data={labelsList}*/}
-                {/*      renderItem={this.renderLabelsListItem}*/}
-                {/*    />*/}
-                {/*  </View>*/}
-                {/*}*/}
-                <View
-                  style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
-                  <Text
-                    onPress={() => {
-                      this.showItemsList('ChoseLabel', 'Метки')
-                      // this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
-                    }}
-                    style={[commonStyles.tableBlockItemText]}>
-                    Отфильтровать по меткам:
-                  </Text>
-                  {chosenLabelsID.length > 0 &&
-                  <TouchableOpacity
-                    style={{position: 'absolute', width: 80, right: 40, top: 0, marginTop: 20}}
-                    onPress={() => {
-                      this.handleClearBtn();
-                    }}
-                  >
 
-                    <Text style={{color: Colors.BLUE_BTN}}>очистить</Text>
-                  </TouchableOpacity>
-                  }
-                  <Icon
-                    name='chevron-down'
-                    type='evilicon'
-                    color={Colors.GRAY_TEXT}
-                    size={40}
-                    containerStyle={{position: 'absolute', right: 0, top: 0, marginTop: 12}}
-                    onPress={() => {
-                      this.showItemsList('ChoseLabel', 'Метки')
-                      // this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
-                    }}
-                  />
-                  <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingLeft: 16, paddingRight: 16}}>
-                    {
-                      chosenLabelsID.map((item, index) => {
-                        console.log(item);
-                        console.log(labelsList);
+               <TouchableHighlight
+                 onPress={() => {this.showItemsList('ChoseLabel', 'Метки')}}
+               >
+                 <View
+                   style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+                   <Text
+                     style={[commonStyles.tableBlockItemText]}>
+                     Отфильтровать по меткам:
+                   </Text>
+                   {chosenLabelsID.length > 0 &&
+                   <TouchableOpacity
+                     style={{position: 'absolute', width: 80, right: 40, top: 0, marginTop: 20}}
+                     onPress={() => {
+                       this.handleClearBtn();
+                     }}
+                   >
 
-                        const title = labelsList[item].title;
-                        const color = labelsList[item].color;
-                        return (
-                          <ChosenLabel key={index} title={title} color={color}/>
-                        )
-                      })
-                    }
-                  </View>
-                </View>
+                     <Text style={{color: Colors.BLUE_BTN}}>очистить</Text>
+                   </TouchableOpacity>
+                   }
+                   <Icon
+                     name='chevron-down'
+                     type='evilicon'
+                     color={Colors.GRAY_TEXT}
+                     size={40}
+                     containerStyle={{position: 'absolute', right: 0, top: 0, marginTop: 12}}
+                   />
+                   <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingLeft: 16, paddingRight: 16}}>
+                     {
+                       chosenLabelsID.map((item, index) => {
+                         console.log(item);
+                         console.log(labelsList);
+
+                         const title = labelsList[item].title;
+                         const color = labelsList[item].color;
+                         return (
+                           <ChosenLabel key={index} title={title} color={color}/>
+                         )
+                       })
+                     }
+                   </View>
+                 </View>
+               </TouchableHighlight>
 
                 {notesList.length ? (
                   <View style={{flex: 1, marginTop: 28}}>

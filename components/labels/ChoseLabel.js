@@ -82,8 +82,12 @@ class ChoseLabel extends Component {
         this.props.dispatch(setLabels(data));
         let {chosenLabelsID} = this.props.labels;
 
-        if (params && params.fromScreen) {
+        if (params && params.fromScreen && params.fromScreen === 'testsList') {
           chosenLabelsID = this.props.chosenLabelsIDForTestList
+        }
+
+        if (params && params.fromScreen && params.fromScreen === 'notesList') {
+          chosenLabelsID = this.props.chosenLabelsIDForNoteList
         }
 
 
@@ -439,6 +443,7 @@ function mapStateToProps(state) {
     {
       labels,
       chosenLabelsIDForTestList: state.labels.chosenLabelsIDForTestList,
+      chosenLabelsIDForNoteList: state.labels.chosenLabelsIDForNoteList,
     }
   )
 

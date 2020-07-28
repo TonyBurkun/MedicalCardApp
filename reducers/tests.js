@@ -94,8 +94,6 @@ function tests (state = initialState, action) {
     case UPDATE_TEST:
 
       let updatedTest = action.test;
-      // console.log(updatedTest);
-      // console.log( state.testsList);
       Object.keys(state.testsList).filter((item) => {
         if (state.testsList[item].id === updatedTest.id) {
           state.testsList[item] = updatedTest;

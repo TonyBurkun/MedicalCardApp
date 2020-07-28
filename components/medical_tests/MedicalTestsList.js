@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import {ActivityIndicator, FlatList, Image, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
+import {ActivityIndicator, FlatList, Image, Platform, StyleSheet, Text, TouchableOpacity, TouchableHighlight, View} from 'react-native'
 import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import InternetNotification from "../ui_components/InternetNotification";
 import * as Colors from "../../utils/colors";
@@ -189,86 +189,11 @@ class MedicalTestsList extends Component{
     )
   };
 
-  // renderLabelsListItem = ({item, index}) => {
-  //   const {labelsList} = this.state;
-  //
-  //   const chosenLabelsList = labelsList.filter(item => {
-  //     return item.checked === true;
-  //   });
-  //
-  //
-  //   let wasClickOnLabel = !!chosenLabelsList.length;
-  //
-  //
-  //
-  //   return (
-  //     <TouchableOpacity
-  //       onPress={() => this.handlePressLabel(item, index)}
-  //       style={[styles.labelBtn, !wasClickOnLabel ? {backgroundColor: item.color} : {backgroundColor: Colors.DISABLED_BORDER}, wasClickOnLabel && item.checked && {backgroundColor: item.color},  index === 0 ? {marginLeft: 16}: {marginLeft: 0}, index === labelsList.length - 1 ? {marginRight: 16} : {marginRight: 8} ]}>
-  //       <Text style={{color: Colors.WHITE, fontWeight: 'bold'}}>{item.title.toUpperCase()}</Text>
-  //     </TouchableOpacity>
-  //   )
-  // };
-
-  // handlePressLabel = (item) => {
-  //   const {labelsList, testsListOrigin} = this.state;
-  //
-  //   let updatedLabelsList = setInverseChosenItemInArr(labelsList, item.id);
-  //   this.setState({
-  //     labelsList: updatedLabelsList
-  //   });
-  //
-  //   const isChosenLabel = updatedLabelsList.find((item) => {
-  //     return item.checked === true;
-  //   });
-  //
-  //
-  //   if (isChosenLabel) {
-  //     // -- Filter Test list by chosen labels --
-  //     const chosenLabelsList = updatedLabelsList.filter(item => {
-  //       return item.checked === true;
-  //     });
-  //
-  //
-  //     const filteredTestsListByLabel = testsListOrigin.filter(test => {
-  //       const testLabels = test.labels || [];
-  //       let containLabel = false;
-  //
-  //       if (testLabels.length) {
-  //         chosenLabelsList.forEach(chosenLabel => {
-  //           testLabels.forEach(noteLabelID => {
-  //             if (chosenLabel.id === noteLabelID) {
-  //               containLabel = true;
-  //             }
-  //           })
-  //         });
-  //       }
-  //       return containLabel
-  //     });
-  //
-  //     this.setState({
-  //       testsList: filteredTestsListByLabel,
-  //     });
-  //
-  //   }
-  //
-  //   if (!isChosenLabel) {
-  //     // -- Show Original Note list if the use didn't chose any labels
-  //     this.setState({
-  //       testsList: testsListOrigin,
-  //     });
-  //   }
-  //
-  // };
-
   handleChoosingTest = (testID) => {
-
     const {testsList} = this.props;
     const currentTest = testsList[testID];
-    console.log(currentTest);
 
     this.props.navigation.navigate('OneMedicalTest', {testID: testID, currentTest: currentTest})
-
   };
 
   showItemsList = (param, screenTitle, radio = '') => {
@@ -305,62 +230,46 @@ class MedicalTestsList extends Component{
         <Fragment>
           {showList ? (
             <Fragment>
-              {/*{labelsList.length > 0 &&*/}
-              {/*  <View style={{marginTop: 12}}>*/}
-              {/*    <FlatList*/}
-              {/*      horizontal={true}*/}
-              {/*      keyExtractor={(item, index) => index.toString()}*/}
-              {/*      data={labelsList}*/}
-              {/*      renderItem={this.renderLabelsListItem}*/}
-              {/*    />*/}
-              {/*  </View>*/}
-              {/*}*/}
-              <View
-                style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
-                <Text
-                  onPress={() => {
-                    this.showItemsList('ChoseLabel', 'Метки')
-                    // this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
-                  }}
-                  style={[commonStyles.tableBlockItemText]}>
-                  Отфильтровать по меткам:
-                </Text>
-                {chosenLabelsID.length > 0 &&
-                <TouchableOpacity
-                  style={{position: 'absolute', width: 80, right: 40, top: 0, marginTop: 20}}
-                  onPress={() => {
-                    this.handleClearBtn();
-                  }}
-                >
+              <TouchableHighlight
+                onPress={() => {this.showItemsList('ChoseLabel', 'Метки')}}
+              >
+                <View
+                  style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+                  <Text
+                    style={[commonStyles.tableBlockItemText]}>
+                    Отфильтровать по меткам:
+                  </Text>
+                  {chosenLabelsID.length > 0 &&
+                  <TouchableOpacity
+                    style={{position: 'absolute', width: 80, right: 40, top: 0, marginTop: 20}}
+                    onPress={() => {
+                      this.handleClearBtn();
+                    }}
+                  >
 
-                  <Text style={{color: Colors.BLUE_BTN}}>очистить</Text>
-                </TouchableOpacity>
-                }
-                <Icon
-                  name='chevron-down'
-                  type='evilicon'
-                  color={Colors.GRAY_TEXT}
-                  size={40}
-                  containerStyle={{position: 'absolute', right: 0, top: 0, marginTop: 12}}
-                  onPress={() => {
-                    this.showItemsList('ChoseLabel', 'Метки')
-                    // this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
-                  }}
-                />
-                <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingLeft: 16, paddingRight: 16}}>
-                  {
-                    chosenLabelsID.map((item, index) => {
-                      console.log(item);
-
-                      const title = labelsList[item].title;
-                      const color = labelsList[item].color;
-                      return (
-                        <ChosenLabel key={index} title={title} color={color}/>
-                      )
-                    })
+                    <Text style={{color: Colors.BLUE_BTN}}>очистить</Text>
+                  </TouchableOpacity>
                   }
+                  <Icon
+                    name='chevron-down'
+                    type='evilicon'
+                    color={Colors.GRAY_TEXT}
+                    size={40}
+                    containerStyle={{position: 'absolute', right: 0, top: 0, marginTop: 12}}
+                  />
+                  <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingLeft: 16, paddingRight: 16}}>
+                    {
+                      chosenLabelsID.map((item, index) => {
+                        const title = labelsList[item].title;
+                        const color = labelsList[item].color;
+                        return (
+                          <ChosenLabel key={index} title={title} color={color}/>
+                        )
+                      })
+                    }
+                  </View>
                 </View>
-              </View>
+              </TouchableHighlight>
 
               {testsList.length ? (
                 <View style={{flex: 1, marginTop: 28}}>
