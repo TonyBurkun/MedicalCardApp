@@ -154,8 +154,8 @@ class MedicalIndicatorForm extends PureComponent {
           placeholder={'Показатель'}
           onChangeText={value => this.handleChangeResult(value, 'title')}
         />
-        <View style={{flex: 1, flexDirection: 'row', marginTop: 14}}>
-          <View style={{width: '50%', paddingRight: 16}}>
+        <View style={{flex: 1, flexDirection: 'column', marginTop: 14}}>
+          <View style={{width: '100%', paddingRight: 0, marginBottom: 14}}>
             <Text style={styles.inputTitle}>РЕЗУЛЬТАТ</Text>
             <TextInput
               value={result}
@@ -164,22 +164,24 @@ class MedicalIndicatorForm extends PureComponent {
               onChangeText={value => this.handleChangeResult(value, 'result')}
             />
           </View>
-          <View style={{flexDirection: 'row', width:'50%', justifyContent: 'flex-end'}}>
-            <View style={{marginRight: 8, flexBasis: 78}}>
+          <View style={{flexDirection: 'column', width:'100%', justifyContent: 'flex-end'}}>
+            <View style={{marginRight: 0, flexBasis: 78}}>
               <Text style={styles.inputTitle}>НОРМА</Text>
               <TextInput
+                placeholder={'Норма'}
                 editable={custom}
                 value={norma.toString()}
-                style={[styles.formInput, {textAlign: 'center'}, !custom && styles.disabledInput ]}
+                style={[styles.formInput, {textAlign: 'center', marginBottom: 14}, !custom && styles.disabledInput, custom && {textAlign: 'left'} ]}
                 onChangeText={value => this.handleChangeResult(value, 'norma')}
               />
             </View>
             <View style={{flexBasis: 78}}>
               <Text style={styles.inputTitle}>ЕД.ИЗМ</Text>
               <TextInput
+                placeholder={'Единицы измерения'}
                 value={unit}
                 editable={custom}
-                style={[styles.formInput, !custom && styles.disabledInput , {textAlign: 'center'}]}
+                style={[styles.formInput, !custom && styles.disabledInput, {textAlign: 'center'}, custom && {textAlign: 'left'} , ]}
                 onChangeText={value => this.handleChangeResult(value, 'unit')}
               />
             </View>
