@@ -52,14 +52,11 @@ class Doctors extends Component{
 
     this.setState({selectedIndex})
   }
-
   _closeAllSwipes = () => {
     this.swipe.forEach((item) => {
       item.recenter();
     });
   };
-
-
   _cloneDoctorsObjWithCheckedFalse = (doctors, chosenDoctorsID = []) => {
     const copyDoctors = JSON.parse(JSON.stringify(doctors));
     const doctorsListKeys = Object.keys(copyDoctors);
@@ -94,8 +91,6 @@ class Doctors extends Component{
     getDoctorsList()
       .then(data => {
         this.props.dispatch(setDoctors(data));
-
-        // const {chosenLabelsID} = this.state;
         const doctorsList = this._cloneDoctorsObjWithCheckedFalse(data, []);
 
 
@@ -115,7 +110,6 @@ class Doctors extends Component{
   }
 
   componentWillReceiveProps(nextProps){
-    // const data = nextProps.doctorsList;
     const data = this.props.doctorsList;
     const newDoctorsList = this._cloneDoctorsObjWithCheckedFalse(data, []);
 
@@ -249,9 +243,6 @@ class Doctors extends Component{
         return ~concatenatedDataForSearch.indexOf(searchVal)
       });
 
-      // console.log(searchResultArr.length);
-      // console.log(Boolean(searchResultArr.length));
-
 
 
       this.setState({
@@ -287,7 +278,6 @@ class Doctors extends Component{
 
   render() {
     console.log(this.state);
-    // console.log('DOCTOR PROPS ', this.state);
 
 
     let {isLoaded, doctorsList, search} = this.state;
