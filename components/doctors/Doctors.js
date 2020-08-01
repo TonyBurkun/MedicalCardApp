@@ -1,9 +1,8 @@
 import React, {Component, Fragment} from 'react'
-import {View, Text, Image, StyleSheet, Platform, Dimensions, FlatList, TouchableHighlight} from 'react-native'
+import {View, Text, Image, StyleSheet, Platform, Dimensions, FlatList, TouchableHighlight, ScrollView} from 'react-native'
 import {ButtonGroup, SearchBar} from 'react-native-elements/src/index'
 import {connect} from 'react-redux'
 import {SafeAreaView, withNavigationFocus} from "react-navigation";
-import InternetNotification from "../ui_components/InternetNotification";
 import * as Colors from "../../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import {convertObjToArr, isIphone5, sortDoctors} from '../../utils/helpers'
@@ -50,13 +49,52 @@ class Doctors extends Component{
   updateChosenTab (selectedIndex) {
     this._closeAllSwipes();
 
-    this.setState({selectedIndex})
+    // this.setState({selectedIndex});
+
+    let {doctorsList} = this.state;
+
+    switch (selectedIndex) {
+      case 0 :
+        doctorsList = this.state.doctorsListOrigin;
+        break;
+
+      case 1:
+        const uid = getUIDfromFireBase();
+        doctorsList = doctorsList.filter(item => {
+          return item.createdByUser === uid
+        });
+
+        break;
+
+
+      default:
+        break;
+    }
+
+
+
+
+    this.setState({
+      ...this.state,
+      selectedIndex,
+      doctorsList,
+    });
+
+
+
+
+
+
+
   }
+
   _closeAllSwipes = () => {
+    this.swipe = [];
     this.swipe.forEach((item) => {
       item.recenter();
     });
   };
+
   _cloneDoctorsObjWithCheckedFalse = (doctors, chosenDoctorsID = []) => {
     const copyDoctors = JSON.parse(JSON.stringify(doctors));
     const doctorsListKeys = Object.keys(copyDoctors);
@@ -282,23 +320,6 @@ class Doctors extends Component{
     const buttons = ['Все доктора', 'Созданные'];
     const { selectedIndex } = this.state;
 
-
-    switch (selectedIndex) {
-      case 0 :
-        break;
-
-      case 1:
-        const uid = getUIDfromFireBase();
-        doctorsList = doctorsList.filter(item => {
-          return item.createdByUser === uid
-        });
-
-        break;
-
-
-      default:
-        break;
-    }
 
 
 

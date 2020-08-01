@@ -42,10 +42,43 @@ class Pills extends Component{
   updateChosenTab (selectedIndex) {
     this._closeAllSwipes();
 
-    this.setState({selectedIndex})
+
+
+    let {pillsListOrigin} = this.state;
+    const uid = getUIDfromFireBase();
+    let pillsList = [];
+
+    switch (selectedIndex) {
+
+      case 0 :
+        pillsList = pillsListOrigin.filter(item => {
+          return item.createdByUser !== uid
+        });
+        break;
+
+      case 1:
+        pillsList = pillsListOrigin.filter(item => {
+          return item.createdByUser === uid
+        });
+        break;
+
+
+      default:
+        break;
+    }
+
+    this.setState({
+      ...this.state,
+      selectedIndex,
+      pillsList,
+    })
+
+
+
   }
 
   _closeAllSwipes = () => {
+    this.swipe = [];
     this.swipe.forEach((item) => {
       item.recenter();
     });
@@ -315,33 +348,10 @@ class Pills extends Component{
 
     console.log(this.state);
 
-    const uid = getUIDfromFireBase();
-
     const buttons = ['Популярные', 'Созданные'];
 
     let {isLoaded, pillsList, search} = this.state;
     const { selectedIndex } = this.state;
-
-    switch (selectedIndex) {
-
-      case 0 :
-        pillsList = pillsList.filter(item => {
-          return item.createdByUser !== uid
-        });
-        break;
-
-      case 1:
-        pillsList = pillsList.filter(item => {
-          return item.createdByUser === uid
-        });
-        break;
-
-
-      default:
-        break;
-    }
-
-
 
     return(
       <SafeAreaView style={styles.container}>
