@@ -1,5 +1,15 @@
 import React, { Component } from 'react'
-import {View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, ActivityIndicator, Alert} from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+  ActivityIndicator,
+  Alert,
+  Linking,
+} from 'react-native'
 import {Image} from 'react-native-elements'
 import { SafeAreaView, withNavigation, withNavigationFocus } from 'react-navigation'
 import * as Colors from '../../utils/colors'
@@ -108,7 +118,6 @@ class Profile extends Component{
 
   handlePressLabelBtn = () => {
     this.props.navigation.navigate('LabelsList');
-    // this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
   };
 
   handleFacebookJoin = () => {
@@ -142,44 +151,54 @@ class Profile extends Component{
       })
   };
 
-  handleTwitterJoin = async () => {
-    joinTwitter()
-      .then( () => {
-        Alert.alert(
-          SOCIAL_NETWORK_SUCCESS_LINKED.title,
-          SOCIAL_NETWORK_SUCCESS_LINKED.message,
-          [
-            {text: SOCIAL_NETWORK_SUCCESS_LINKED.buttonText}
-          ],
-          {cancelable: false}
-        );
+  // handleTwitterJoin = async () => {
+  //   joinTwitter()
+  //     .then( () => {
+  //       Alert.alert(
+  //         SOCIAL_NETWORK_SUCCESS_LINKED.title,
+  //         SOCIAL_NETWORK_SUCCESS_LINKED.message,
+  //         [
+  //           {text: SOCIAL_NETWORK_SUCCESS_LINKED.buttonText}
+  //         ],
+  //         {cancelable: false}
+  //       );
+  //
+  //       this.setState({
+  //         twitterProvider: true
+  //       });
+  //     })
+  //     .catch(error => {
+  //       const { code, message } = error;
+  //       if (code === 'auth/provider-already-linked') {
+  //         Alert.alert(
+  //           SOCIAL_NETWORK_ALREADY_LINKED.title,
+  //           SOCIAL_NETWORK_ALREADY_LINKED.message,
+  //           [
+  //             {text: SOCIAL_NETWORK_ALREADY_LINKED.buttonText}
+  //           ],
+  //           {cancelable: false}
+  //         )
+  //       }
+  //     })
+  // };
 
-        this.setState({
-          twitterProvider: true
-        });
-      })
-      .catch(error => {
-        const { code, message } = error;
-        if (code === 'auth/provider-already-linked') {
-          Alert.alert(
-            SOCIAL_NETWORK_ALREADY_LINKED.title,
-            SOCIAL_NETWORK_ALREADY_LINKED.message,
-            [
-              {text: SOCIAL_NETWORK_ALREADY_LINKED.buttonText}
-            ],
-            {cancelable: false}
-          )
-        }
-      })
-  };
-
-  handleEmailJoin = () => {
-    console.log('EMAIL JOIN');
-    this.props.navigation.navigate('ChangeEmail');
-  };
+  // handleEmailJoin = () => {
+  //   console.log('EMAIL JOIN');
+  //   this.props.navigation.navigate('ChangeEmail');
+  // };
 
   handleProblem = () => {
-
+    Linking.openURL('mailto:medicalcard.app@gmail.com')
+      .then(supported => {
+        if (!supported) {
+          console.log('Cant handle url')
+        } else {
+          return Linking.openURL('message:')
+        }
+      })
+      .catch(err => {
+        console.error('An error occurred', err)
+      })
   };
 
   handlePolicy = () => {
@@ -273,10 +292,10 @@ class Profile extends Component{
                             active={this.state.facebookProvider}
                             onPressAction={this.handleFacebookJoin}/>
 
-            <ProfileListBtnChangeStatus title={'Twitter'}
-                                        iconType = {'twitter'}
-                                        active={this.state.twitterProvider}
-                                        onPressAction={this.handleTwitterJoin}/>
+            {/*<ProfileListBtnChangeStatus title={'Twitter'}*/}
+            {/*                            iconType = {'twitter'}*/}
+            {/*                            active={this.state.twitterProvider}*/}
+            {/*                            onPressAction={this.handleTwitterJoin}/>*/}
 
             {/*<ProfileListBtnChangeStatus title={'Email'}*/}
             {/*                            iconType = {'email'}*/}

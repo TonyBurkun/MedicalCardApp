@@ -18,7 +18,7 @@ class ChosenLabel extends Component {
 
 
     return (
-      <View style={{height: 20, borderRadius: 20, paddingLeft: 15, paddingRight: 15, backgroundColor: color, marginBottom: 8, marginRight: 10, justifyContent: 'center' }}>
+      <View style={{height: 30, borderRadius: 10, paddingLeft: 15, paddingRight: 15, backgroundColor: color, marginBottom: 8, marginRight: 10, justifyContent: 'center' }}>
         <Text style={{color: Colors.WHITE, fontWeight: 'bold', fontSize: 8 }}>{title.toUpperCase()}</Text>
       </View>
     )
