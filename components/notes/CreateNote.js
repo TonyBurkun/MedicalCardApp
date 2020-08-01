@@ -3,7 +3,6 @@ import {View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator}
 import { SafeAreaView } from 'react-navigation'
 import * as Colors from '../../utils/colors'
 
-import InternetNotification from '../ui_components/InternetNotification'
 import commonStyles from "../../utils/commonStyles";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view/index";
 import FloatingLabelInput from "../ui_components/FloatingLabelInput";
@@ -511,7 +510,6 @@ class CreateNote extends Component{
           height="auto">
           <ActivityIndicator/>
         </Overlay>
-        <InternetNotification topDimension={0}/>
         <ScrollView
           contentContainerStyle={{flexGrow: 1}}
         >

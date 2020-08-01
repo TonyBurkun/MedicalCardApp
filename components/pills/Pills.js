@@ -2,7 +2,6 @@ import React, {Component, Fragment} from 'react'
 import {View, Text, Image, StyleSheet, Platform, FlatList, TouchableHighlight} from 'react-native'
 import {connect} from 'react-redux'
 import {SafeAreaView, withNavigationFocus} from "react-navigation";
-import InternetNotification from "../ui_components/InternetNotification";
 import * as Colors from "../../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import {convertObjToArr, isIphone5} from "../../utils/helpers";
@@ -358,7 +357,6 @@ class Pills extends Component{
 
     return(
       <SafeAreaView style={styles.container}>
-        <InternetNotification topDimension={0}/>
         <SearchBar
           placeholder="Название препарата"
           onChangeText={this.updateSearch}

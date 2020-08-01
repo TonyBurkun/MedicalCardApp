@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import {ActivityIndicator, FlatList, Image, Platform, StyleSheet, Text, TouchableOpacity, TouchableHighlight, View} from 'react-native'
 import {SafeAreaView, withNavigationFocus} from "react-navigation";
-import InternetNotification from "../ui_components/InternetNotification";
+
 import * as Colors from "../../utils/colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {
@@ -224,7 +224,6 @@ class MedicalTestsList extends Component{
           height="auto">
           <ActivityIndicator/>
         </Overlay>
-        <InternetNotification topDimension={0}/>
 
         {Boolean(isLoaded) &&
         <Fragment>

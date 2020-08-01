@@ -328,7 +328,6 @@ class Doctors extends Component{
 
     return(
       <SafeAreaView style={styles.container}>
-        <InternetNotification topDimension={0}/>
         <SearchBar
           placeholder="Имя, фамилия или специализация"
           onChangeText={this.updateSearch}

@@ -49,7 +49,13 @@ import ChosePillsType from "./components/pills/ChosePillsType"
 import ChosePill from "./components/pills/ChosePill";
 import ChoseLabel from './components/labels/ChoseLabel'
 
-import {createSwitchNavigator, createStackNavigator, createBottomTabNavigator, createMaterialTopTabNavigator} from 'react-navigation'
+import {
+  createSwitchNavigator,
+  createStackNavigator,
+  createBottomTabNavigator,
+  createMaterialTopTabNavigator,
+  SafeAreaView
+} from 'react-navigation'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
 import {NOTES, TESTS, DOCTORS, PILLS} from './utils/textConstants'
 import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'

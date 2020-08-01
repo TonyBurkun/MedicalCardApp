@@ -3,7 +3,6 @@ import {ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpa
 import {SafeAreaView} from 'react-navigation'
 import * as Colors from '../../utils/colors'
 
-import InternetNotification from '../ui_components/InternetNotification'
 import commonStyles from "../../utils/commonStyles";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import SelectFromList from "../ui_components/InputField/SelectFromList";
@@ -469,7 +468,6 @@ class MedicalTestCreate extends Component {
           height="auto">
           <ActivityIndicator/>
         </Overlay>
-        <InternetNotification topDimension={0}/>
         <KeyboardAwareScrollView>
           <ScrollView>
             <View style={{marginTop: 16}}>

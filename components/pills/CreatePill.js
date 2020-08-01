@@ -4,7 +4,6 @@ import {connect} from 'react-redux'
 import * as Colors from "../../utils/colors";
 import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import commonStyles from "../../utils/commonStyles";
-import InternetNotification from "../ui_components/InternetNotification";
 import {isIphone5} from "../../utils/helpers";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view/index";
 import GroupButtonsTitle from "../ui_components/titles/GroupButtonsTitle";
@@ -479,7 +478,6 @@ class CreatePill extends Component {
           height="auto">
           <ActivityIndicator/>
         </Overlay>
-        <InternetNotification topDimension={0}/>
         <ScrollView
           contentContainerStyle={{flexGrow: 1}}
         >

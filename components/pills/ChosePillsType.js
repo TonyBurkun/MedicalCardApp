@@ -5,7 +5,6 @@ import * as Colors from "../../utils/colors";
 import HeaderAddBtn from "../ui_components/TopNavigation/HeaderAddBtn";
 import {SafeAreaView} from "react-navigation";
 import commonStyles from "../../utils/commonStyles";
-import InternetNotification from "../ui_components/InternetNotification";
 import CustomList from "../ui_components/List/CustomList";
 
 class ChosePillsType extends Component {
@@ -37,7 +36,6 @@ class ChosePillsType extends Component {
 
     return (
       <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0, backgroundColor: Colors.WHITE}]}>
-        <InternetNotification topDimension={0}/>
         <CustomList data={pillsTypeListArr} route={'ChosePillsType'} chosenItemsID={chosenPillsTypeArr} searchField={false} radio={true}/>
       </SafeAreaView>
     )

@@ -15,7 +15,6 @@ import { SafeAreaView, withNavigation, withNavigationFocus } from 'react-navigat
 import * as Colors from '../../utils/colors'
 import {connect} from 'react-redux'
 
-import InternetNotification from '../ui_components/InternetNotification'
 import commonStyles from "../../utils/commonStyles";
 import ProfileListBtn from '../ui_components/Buttons/ProfileListBtn'
 import ProfileListBtnChangeStatus from "../ui_components/Buttons/ProfileListBtnChangeStatus";
@@ -245,7 +244,6 @@ class Profile extends Component{
 
     return (
       <SafeAreaView style={styles.container}>
-        <InternetNotification topDimension={0}/>
         <View style={styles.topHeader}>
           <View style={{flexDirection: 'row', marginTop: 24}}>
             <View>

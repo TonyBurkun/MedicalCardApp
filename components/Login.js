@@ -34,8 +34,6 @@ import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
 import {ACCOUNT_NOT_FOUND, LOGIN_FAILED, EMAIL_CONFIRMATION} from '../utils/systemMessages'
 import commonStyles from '../utils/commonStyles'
 
-import InternetNotification from '../components/ui_components/InternetNotification'
-
 const validationRules = {
   email: {required: true, isEmail: true},
   password: {required: true},
@@ -234,7 +232,6 @@ class Login extends Component {
 
     return (
       <SafeAreaView style={commonStyles.container}>
-        <InternetNotification/>
         <KeyboardAwareScrollView
           alwaysBounceVertical={false}
           contentContainerStyle={{flex: 1, justifyContent: 'space-between'}}

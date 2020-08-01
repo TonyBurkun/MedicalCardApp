@@ -15,7 +15,6 @@ import {deletePill, setPills, setPillsTypeList} from "../../actions/pills";
 import Swipeable from "react-native-swipeable";
 import OnePillList from "../ui_components/ListItems/OnePillList";
 import {SafeAreaView, withNavigationFocus} from "react-navigation";
-import InternetNotification from "../ui_components/InternetNotification";
 import {SearchBar} from "react-native-elements/src/index";
 import CustomButtonGroup from "../ui_components/Buttons/CustomButtonGroup";
 import {NO_DATA_TO_SHOW} from "../../utils/textConstants";
@@ -428,7 +427,6 @@ class ChosePill extends Component {
 
     return(
       <SafeAreaView style={styles.container}>
-        <InternetNotification topDimension={0}/>
         <SearchBar
           placeholder="Название препарата"
           onChangeText={this.updateSearch}

@@ -2,7 +2,6 @@ import React, {Component, Fragment} from 'react'
 import {View, Text, TextInput, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator, FlatList} from 'react-native'
 import {connect} from "react-redux";
 import { withNavigationFocus } from 'react-navigation';
-import InternetNotification from "../ui_components/InternetNotification";
 import {getCurrentUserData, getTestTypesList, getUIDfromFireBase} from "../../utils/API";
 import * as Colors from "../../utils/colors";
 import EditIconBtn from "../ui_components/TopNavigation/EditIconBtn";
@@ -233,7 +232,6 @@ class OneMedicalTest extends Component {
 
     return (
       <SafeAreaView style={styles.container}>
-        <InternetNotification/>
         <View style={[commonStyles.containerIndents, {marginTop: 16}]}>
           <DateLabel date={date}/>
           <Text style={{fontSize: 21, color: Colors.BLACK_TITLE}}>{currentTestTypeTitle}</Text>

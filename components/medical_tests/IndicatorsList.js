@@ -15,7 +15,6 @@ import * as Colors from '../../utils/colors'
 import {connect} from "react-redux";
 import {SHOW_POPUP_BEFORE_ADD_INDICATORS} from "../../utils/textConstants";
 import commonStyles from "../../utils/commonStyles";
-import InternetNotification from "../ui_components/InternetNotification";
 import MedicalIndicatorForm from "../ui_components/InputField/MedicalIndicatorForm";
 import {generateUniqID} from "../../utils/API";
 import AddButton from "../ui_components/Buttons/AddButton";
@@ -307,7 +306,6 @@ class IndicatorsList extends Component {
     return (
       <View style={{flex: 1, position: 'relative', backgroundColor: Colors.MAIN_BACKGROUND}}>
         {/*<KeyboardAvoidingView behavior='position' keyboardVerticalOffset={0} style={{flex: 1, paddingBottom: 34}}>*/}
-        <InternetNotification topDimension={0}/>
         <Overlay
           isVisible={this.state.showLoader}
           width="auto"

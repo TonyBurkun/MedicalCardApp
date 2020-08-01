@@ -20,7 +20,6 @@ import validationChecker from '../utils/validationChecker'
 import {registrationWithEmailAndPassword, isUserExistInDB, addUserTokenToAsyncStorage, checkSetUpParamInUser, handleUserData} from '../utils/API'
 import commonStyles from '../utils/commonStyles'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
-import InternetNotification from '../components/ui_components/InternetNotification'
 
 
 import {facebookLogin} from '../utils/facebook'
@@ -161,7 +160,6 @@ class Registration extends Component {
 
     return (
       <SafeAreaView style={commonStyles.container}>
-        <InternetNotification/>
         <KeyboardAwareScrollView
           alwaysBounceVertical={false}
           contentContainerStyle={{flex: 1, justifyContent: 'center'}}>

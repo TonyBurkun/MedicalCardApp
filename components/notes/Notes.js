@@ -26,7 +26,6 @@ import {
   getDoctorsList, getDoctorSpecializations
 } from '../../utils/API'
 import {setAuthedUserID, getAuthedUserAction} from '../../actions/authedUser'
-import InternetNotification from '../ui_components/InternetNotification'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import {
   isIphone5,
@@ -271,7 +270,6 @@ class Notes extends Component{
 
     return(
       <SafeAreaView style={styles.container}>
-        <InternetNotification topDimension={0}/>
         {Boolean(isLoaded) &&
           <Fragment>
             {showList ? (

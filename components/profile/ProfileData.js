@@ -4,7 +4,6 @@ import {Image, Overlay} from 'react-native-elements'
 import {connect} from 'react-redux'
 import * as Colors from "../../utils/colors";
 import {SafeAreaView} from "react-navigation";
-import InternetNotification from '../ui_components/InternetNotification';
 import GroupButtonsTitle from '../ui_components/titles/GroupButtonsTitle';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import commonStyles from "../../utils/commonStyles";
@@ -308,7 +307,6 @@ class ProfileData extends Component {
           height="auto">
           <ActivityIndicator/>
         </Overlay>
-        <InternetNotification topDimension={0}/>
         <KeyboardAwareScrollView>
           <GroupButtonsTitle title={'ОБЯЗАТЕЛЬНЫЕ ДАННЫЕ'} topMargin={16} paddingLeft={16}/>
 

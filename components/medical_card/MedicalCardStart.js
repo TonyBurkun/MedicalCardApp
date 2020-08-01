@@ -5,7 +5,6 @@ import ScreenTitle from '../ui_components/titles/ScreenTitle'
 import * as Colors from '../../utils/colors'
 import commonStyles from '../../utils/commonStyles'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import InternetNotification from '../ui_components/InternetNotification'
 import {
   addMedicalCardIDtoCurrentUser,
   createMedicalCardInDB,
@@ -44,7 +43,6 @@ class MedicalCardStart extends Component {
   render() {
     return (
       <SafeAreaView style={commonStyles.container}>
-        <InternetNotification/>
         <View>
           <ScreenTitle titleText="МЕДИЦИНСКАЯ КАРТА" align="center" marginTop={48}/>
           <Image
