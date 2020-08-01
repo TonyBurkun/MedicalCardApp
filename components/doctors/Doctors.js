@@ -6,7 +6,7 @@ import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import InternetNotification from "../ui_components/InternetNotification";
 import * as Colors from "../../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import {convertObjToArr, isIphone5} from '../../utils/helpers'
+import {convertObjToArr, isIphone5, sortDoctors} from '../../utils/helpers'
 
 import {
   getDoctorsList,
@@ -277,33 +277,10 @@ class Doctors extends Component{
 
 
   render() {
-    console.log(this.state);
-
-
     let {isLoaded, doctorsList, search} = this.state;
 
     const buttons = ['Все доктора', 'Созданные'];
     const { selectedIndex } = this.state;
-
-    doctorsList.sort((a,b) => {
-
-      let fullNameA = a.firstName + ' ' + a.lastName;
-      let fullNameB = b.firstName + ' ' + b.lastName;
-
-      fullNameA = fullNameA.toLowerCase();
-      fullNameB = fullNameB.toLowerCase();
-
-
-
-      if (fullNameA < fullNameB) {
-        return -1;
-      }
-      if (fullNameA > fullNameB) {
-        return 1;
-      }
-      return 0
-
-    });
 
 
     switch (selectedIndex) {
@@ -312,7 +289,6 @@ class Doctors extends Component{
 
       case 1:
         const uid = getUIDfromFireBase();
-
         doctorsList = doctorsList.filter(item => {
           return item.createdByUser === uid
         });
@@ -352,7 +328,7 @@ class Doctors extends Component{
                 <View style={{flex: 1, marginTop: 10, paddingRight: 16}}>
                   <FlatList
                     keyExtractor={(item, index) => index.toString()}
-                    data={doctorsList}
+                    data={sortDoctors(doctorsList)}
                     renderItem={this.renderFlatListItem}
                   />
                 </View>

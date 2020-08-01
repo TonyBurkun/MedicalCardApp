@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import * as Colors from "../../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import {convertObjToArr, isIphone5} from "../../utils/helpers";
+import {convertObjToArr, isIphone5, sortPills} from "../../utils/helpers";
 import {
   checkRelationsImgToPills,
   deleteDoctorByID, deletePillByID, getAppPillsList,
@@ -322,18 +322,6 @@ class Pills extends Component{
     let {isLoaded, pillsList, search} = this.state;
     const { selectedIndex } = this.state;
 
-    pillsList.sort((a,b) => {
-
-      if (a.pillTitle.toLowerCase() < b.pillTitle.toLowerCase()) {
-        return -1;
-      }
-      if (a.pillTitle.toLowerCase() > b.pillTitle.toLowerCase()) {
-        return 1;
-      }
-      return 0
-
-    });
-
     switch (selectedIndex) {
 
       case 0 :
@@ -381,7 +369,7 @@ class Pills extends Component{
                   <View style={{flex: 1, marginTop: 10, paddingRight: 16}}>
                     <FlatList
                       keyExtractor={(item, index) => index.toString()}
-                      data={pillsList}
+                      data={sortPills(pillsList)}
                       renderItem={this.renderFlatListItem}
                     />
                   </View>

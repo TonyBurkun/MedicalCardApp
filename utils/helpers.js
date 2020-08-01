@@ -256,3 +256,44 @@ export function sortTestList(testsList){
 
   return testsList;
 }
+
+
+export function sortPills(pillsList){
+  pillsList.sort((a,b) => {
+
+    if (a.pillTitle.toLowerCase() < b.pillTitle.toLowerCase()) {
+      return -1;
+    }
+    if (a.pillTitle.toLowerCase() > b.pillTitle.toLowerCase()) {
+      return 1;
+    }
+    return 0
+
+  });
+
+  return pillsList;
+}
+
+export function sortDoctors(doctorsList){
+  doctorsList.sort((a,b) => {
+
+    let fullNameA = a.firstName + ' ' + a.lastName;
+    let fullNameB = b.firstName + ' ' + b.lastName;
+
+    fullNameA = fullNameA.toLowerCase();
+    fullNameB = fullNameB.toLowerCase();
+
+
+
+    if (fullNameA < fullNameB) {
+      return -1;
+    }
+    if (fullNameA > fullNameB) {
+      return 1;
+    }
+    return 0
+
+  });
+
+  return doctorsList;
+}
