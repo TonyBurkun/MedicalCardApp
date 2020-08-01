@@ -49,7 +49,6 @@ class Doctors extends Component{
   updateChosenTab (selectedIndex) {
     this._closeAllSwipes();
 
-    // this.setState({selectedIndex});
 
     let {doctorsList} = this.state;
 
@@ -89,7 +88,6 @@ class Doctors extends Component{
   }
 
   _closeAllSwipes = () => {
-    this.swipe = [];
     this.swipe.forEach((item) => {
       item.recenter();
     });

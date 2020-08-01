@@ -42,8 +42,6 @@ class Pills extends Component{
   updateChosenTab (selectedIndex) {
     this._closeAllSwipes();
 
-
-
     let {pillsListOrigin} = this.state;
     const uid = getUIDfromFireBase();
     let pillsList = [];
@@ -78,7 +76,6 @@ class Pills extends Component{
   }
 
   _closeAllSwipes = () => {
-    this.swipe = [];
     this.swipe.forEach((item) => {
       item.recenter();
     });
