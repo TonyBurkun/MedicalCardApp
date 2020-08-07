@@ -72,7 +72,7 @@ const validationChecker = (function() {
            switch (rule) {
              case 'isEmail':
                if(rulesObj[rule]) {
-                 if (!defaultRules[rule].medicalTest(formData[nameField])){
+                 if (!defaultRules[rule].test(formData[nameField])){
                    this._addError(nameField, rule, rulesObj[rule]);
                  }
                }
@@ -80,7 +80,7 @@ const validationChecker = (function() {
 
              case 'isNumber':
                if (rulesObj[rule]) {
-                 if (!defaultRules[rule].medicalTest(formData[nameField])) {
+                 if (!defaultRules[rule].test(formData[nameField])) {
                    this._addError(nameField, rule, rulesObj[rule])
                  }
                }
@@ -99,14 +99,14 @@ const validationChecker = (function() {
           switch (rule) {
             case 'required':
               if (rulesObj[rule]) {
-                if (!defaultRules[rule].medicalTest(formData[nameField])) {
+                if (!defaultRules[rule].test(formData[nameField])) {
                   this._addError(nameField, rule, rulesObj[rule])
                 }
               }
               break;
             case 'isEmail':
               if(rulesObj[rule]) {
-                if (!defaultRules[rule].medicalTest(formData[nameField])){
+                if (!defaultRules[rule].test(formData[nameField])){
                   this._addError(nameField, rule, rulesObj[rule]);
                 }
               } else {
@@ -116,7 +116,7 @@ const validationChecker = (function() {
 
             case 'isNumber':
               if (rulesObj[rule]) {
-                if (!defaultRules[rule].medicalTest(formData[nameField])) {
+                if (!defaultRules[rule].test(formData[nameField])) {
                   this._addError(nameField, rule, rulesObj[rule])
                 }
               }

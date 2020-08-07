@@ -297,3 +297,17 @@ export function sortDoctors(doctorsList){
 
   return doctorsList;
 }
+
+
+// export function fillteredPillsListByUID(pillsListOrigin, uid){
+//   return pillsListOrigin.filter(item => {
+//     return item.createdByUser === uid
+//   })
+// }
+//
+//
+// export function fillteredPillsListExceptUID(pillsListOrigin, uid){
+//   return pillsListOrigin.filter(item => {
+//     return item.createdByUser !== uid
+//   })
+// }

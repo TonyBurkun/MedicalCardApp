@@ -60,6 +60,7 @@ export default class RecoveryPassword extends Component {
           </View>
           <TextInput
             placeholder="Введите Ваш Email адрес"
+            placeholderTextColor = {Colors.GRAY_TEXT}
             style={[commonStyles.formInput, {marginTop: hp('10%'), marginBottom: hp('8.5%')}]}
             value={email}
             onChangeText={(text) => {

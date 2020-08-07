@@ -169,7 +169,8 @@ const commonStyles = StyleSheet.create({
   facebookBtn: {
     backgroundColor: Colors.FB_COLOR,
     borderColor: Colors.FB_COLOR,
-    width: '47.5%',
+    // width: '47.5%',
+    width: '100%',
   },
 
   facebookBtn__Text: {},

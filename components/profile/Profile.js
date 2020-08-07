@@ -219,6 +219,20 @@ class Profile extends Component{
     })
   };
 
+  handleRateUsBtn = () => {
+    Linking.openURL('itms-apps://itunes.apple.com/us/app/apple-store/myiosappid?mt=8')
+      .then(supported => {
+        if (!supported) {
+          console.log('Cant handle url')
+        } else {
+          return Linking.openURL('message:')
+        }
+      })
+      .catch(err => {
+        console.error('An error occurred', err)
+      })
+  };
+
 
 
   render() {
@@ -317,19 +331,20 @@ class Profile extends Component{
                 <Text style={{fontSize: 12, color: Colors.TYPOGRAPHY_COLOR_DARK, marginTop: 10}}>
                   Мы с удовольствием выслушаем Ваши предложения и проблемы.
                 </Text>
-                <Text style={{fontSize: 12, color: Colors.TYPOGRAPHY_COLOR_DARK, marginTop: 10}}>
-                  Мы очень надеемся стать Вашим другом в сети.
-                </Text>
+                {/*<Text style={{fontSize: 12, color: Colors.TYPOGRAPHY_COLOR_DARK, marginTop: 10}}>*/}
+                {/*  Мы очень надеемся стать Вашим другом в сети.*/}
+                {/*</Text>*/}
 
                 <View style={{marginTop: 15}}>
-                  <TouchableOpacity style={{width: 200, height: 48, backgroundColor: Colors.FB_COLOR, borderRadius: 14, position: 'relative', justifyContent: 'center'}}>
-                    <Image
-                      style={{width: 32, height: 32, position: 'absolute', left: 8, top: -9}}
-                      source={ require('../../assets/profile/fb-icon.png')}
-                    />
-                    <Text style={{fontSize: 12, color: Colors.WHITE, alignSelf: 'center'}}>FACEBOOK</Text>
-                  </TouchableOpacity>
+                  {/*<TouchableOpacity style={{width: 200, height: 48, backgroundColor: Colors.FB_COLOR, borderRadius: 14, position: 'relative', justifyContent: 'center'}}>*/}
+                  {/*  <Image*/}
+                  {/*    style={{width: 32, height: 32, position: 'absolute', left: 8, top: -9}}*/}
+                  {/*    source={ require('../../assets/profile/fb-icon.png')}*/}
+                  {/*  />*/}
+                  {/*  <Text style={{fontSize: 12, color: Colors.WHITE, alignSelf: 'center'}}>FACEBOOK</Text>*/}
+                  {/*</TouchableOpacity>*/}
                   <TouchableOpacity
+                    onPressAction={this.handleRateUsBtn}
                     style={{
                       width: 200,
                       height: 48,

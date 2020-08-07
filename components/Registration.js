@@ -182,6 +182,7 @@ class Registration extends Component {
 
               <TextInput
                 placeholder="Ваш Email"
+                placeholderTextColor = {Colors.GRAY_TEXT}
                 style={commonStyles.formInput}
                 value={this.state.email}
                 autoCapitalize = 'none'
@@ -197,6 +198,7 @@ class Registration extends Component {
               <Text>{validationChecker.getErrorsInField('email')}</Text>
               <TextInput
                 placeholder="Пароль"
+                placeholderTextColor = {Colors.GRAY_TEXT}
                 secureTextEntry={true}
                 style={commonStyles.formInput}
                 value={this.state.password}
@@ -212,6 +214,7 @@ class Registration extends Component {
               <Text>{validationChecker.getErrorsInField('password')}</Text>
               <TextInput
                 placeholder="Подтверждение пароля"
+                placeholderTextColor = {Colors.GRAY_TEXT}
                 secureTextEntry={true}
                 style={[commonStyles.formInput, commonStyles.formInput__last]}
                 value={this.state.confirmPassword}

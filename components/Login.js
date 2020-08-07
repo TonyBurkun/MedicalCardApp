@@ -250,6 +250,7 @@ class Login extends Component {
               </View>
               <TextInput
                 placeholder="Ваш Email"
+                placeholderTextColor = {Colors.GRAY_TEXT}
                 style={commonStyles.formInput}
                 value={email}
                 onChangeText={(text) => {
@@ -264,6 +265,7 @@ class Login extends Component {
               <Text>{validationChecker.getErrorsInField('email')}</Text>
               <TextInput
                 placeholder="Пароль"
+                placeholderTextColor = {Colors.GRAY_TEXT}
                 secureTextEntry={true}
                 style={[commonStyles.formInput, commonStyles.formInput__last]}
                 value={password}
@@ -305,12 +307,12 @@ class Login extends Component {
                 >
                   <Text style={[commonStyles.submitBtnText, commonStyles.facebookBtn__Text]}>FaceBook</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={this.handleTwitterLogin}
-                  style={[commonStyles.submitBtn, commonStyles.twitterBtn]}
-                >
-                  <Text style={[commonStyles.submitBtnText, commonStyles.twitterBtn__Text]}>Twitter</Text>
-                </TouchableOpacity>
+                {/*<TouchableOpacity*/}
+                {/*  onPress={this.handleTwitterLogin}*/}
+                {/*  style={[commonStyles.submitBtn, commonStyles.twitterBtn]}*/}
+                {/*>*/}
+                {/*  <Text style={[commonStyles.submitBtnText, commonStyles.twitterBtn__Text]}>Twitter</Text>*/}
+                {/*</TouchableOpacity>*/}
               </View>
             </View>
             <View
