@@ -91,11 +91,12 @@ export function getUserAgeInMilliseconds(userDate){
   const splitDateArr = userDate.split('-');
   const [day, month, year] = splitDateArr;
 
-  const dateInMilliseconds = new Date(year, month, day).getTime();
+  const dateInMilliseconds = new Date(year, month-1, day).getTime();
   const currentDateInMilliseconds = new Date().getTime();
 
-  const ageInMilliseconds = currentDateInMilliseconds - dateInMilliseconds;
 
+
+  const ageInMilliseconds = currentDateInMilliseconds - dateInMilliseconds;
   return Math.round(ageInMilliseconds / 1000 / 60 / 60 / 24);
 }
 
@@ -187,6 +188,10 @@ export function getFormedTestTypesList(testTypesList, userAge, gender){
 
     formedTestTypeObj.title = currentTestTypeObj.title;
     formedTestTypeObj.id = currentTestTypeObj.id;
+
+    console.log(currentTestTypeObj);
+    console.log(userAge);
+    console.log(gender);
     formedTestTypeObj.indicators = getIndicatorsArrForShow(currentTestTypeObj, userAge, gender);
 
     formedTestTypesListObj[formedTestTypeObj.id] = formedTestTypeObj;

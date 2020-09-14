@@ -52,11 +52,6 @@ class MedicalTestsList extends Component{
 
        .then(([testTypeListObj, labelsList, testListByCurrentUser]) => {
 
-
-
-         geTestsListByCurrentUser()
-           .then(data => {console.log(data)});
-
          // LABELS LIST
          this.props.dispatch(setLabels(labelsList));
          let labelsListArr = convertObjToArr(labelsList);
@@ -80,7 +75,6 @@ class MedicalTestsList extends Component{
 
          const userAge = getUserAgeInMilliseconds(currentUserData.date);
          const formedTestTypesListObj = getFormedTestTypesList(testTypesList, userAge, currentUserData.gender);
-        console.log(formedTestTypesListObj);
 
          this.props.dispatch(setTestTypesTitle(testTypesTitleList));
          this.props.dispatch(setFormedTestTypes(formedTestTypesListObj));
@@ -128,6 +122,7 @@ class MedicalTestsList extends Component{
      this.setState({
        // testsList: newTestsListArr,
        // testsListOrigin: newTestsListArr,
+       isLoaded: true,
        showList: Boolean(newTestsListArr.length),
      });
 

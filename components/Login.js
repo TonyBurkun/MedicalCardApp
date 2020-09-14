@@ -298,22 +298,22 @@ class Login extends Component {
                 >ВОЙТИ</Text>
               </TouchableOpacity>
 
-              <Text style={styles.separationText}>ИЛИ</Text>
+              {/*<Text style={styles.separationText}>ИЛИ</Text>*/}
 
-              <View style={[commonStyles.socialBtnBlock]}>
-                <TouchableOpacity
-                  onPress={this.handleFacebookLogin}
-                  style={[commonStyles.submitBtn, commonStyles.facebookBtn]}
-                >
-                  <Text style={[commonStyles.submitBtnText, commonStyles.facebookBtn__Text]}>FaceBook</Text>
-                </TouchableOpacity>
-                {/*<TouchableOpacity*/}
-                {/*  onPress={this.handleTwitterLogin}*/}
-                {/*  style={[commonStyles.submitBtn, commonStyles.twitterBtn]}*/}
-                {/*>*/}
-                {/*  <Text style={[commonStyles.submitBtnText, commonStyles.twitterBtn__Text]}>Twitter</Text>*/}
-                {/*</TouchableOpacity>*/}
-              </View>
+              {/*<View style={[commonStyles.socialBtnBlock]}>*/}
+              {/*  <TouchableOpacity*/}
+              {/*    onPress={this.handleFacebookLogin}*/}
+              {/*    style={[commonStyles.submitBtn, commonStyles.facebookBtn]}*/}
+              {/*  >*/}
+              {/*    <Text style={[commonStyles.submitBtnText, commonStyles.facebookBtn__Text]}>FaceBook</Text>*/}
+              {/*  </TouchableOpacity>*/}
+              {/*  /!*<TouchableOpacity*!/*/}
+              {/*  /!*  onPress={this.handleTwitterLogin}*!/*/}
+              {/*  /!*  style={[commonStyles.submitBtn, commonStyles.twitterBtn]}*!/*/}
+              {/*  /!*>*!/*/}
+              {/*  /!*  <Text style={[commonStyles.submitBtnText, commonStyles.twitterBtn__Text]}>Twitter</Text>*!/*/}
+              {/*  /!*</TouchableOpacity>*!/*/}
+              {/*</View>*/}
             </View>
             <View
               style={[commonStyles.lineTextBtn, {...Platform.select({android: {marginBottom: 25}}), marginTop: 50}]}>

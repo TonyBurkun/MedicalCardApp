@@ -245,22 +245,22 @@ class Registration extends Component {
                 >ЗАРЕГИСТРИРОВАТЬСЯ</Text>
               </TouchableOpacity>
 
-              <Text style={[commonStyles.subTitle, {marginTop: 40}]}>Или присоединиться через социальную сеть:</Text>
+              {/*<Text style={[commonStyles.subTitle, {marginTop: 40}]}>Или присоединиться через социальную сеть:</Text>*/}
 
-              <View style={[commonStyles.socialBtnBlock]}>
-                <TouchableOpacity
-                  onPress={this.handleFacebookLogin}
-                  style={[commonStyles.submitBtn, commonStyles.facebookBtn]}
-                >
-                  <Text style={[commonStyles.submitBtnText, commonStyles.facebookBtn__Text]}>FaceBook</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={this.handleTwitterLogin}
-                  style={[commonStyles.submitBtn, commonStyles.twitterBtn]}
-                >
-                  <Text style={[commonStyles.submitBtnText, commonStyles.twitterBtn__Text]}>Twitter</Text>
-                </TouchableOpacity>
-              </View>
+              {/*<View style={[commonStyles.socialBtnBlock]}>*/}
+              {/*  <TouchableOpacity*/}
+              {/*    onPress={this.handleFacebookLogin}*/}
+              {/*    style={[commonStyles.submitBtn, commonStyles.facebookBtn]}*/}
+              {/*  >*/}
+              {/*    <Text style={[commonStyles.submitBtnText, commonStyles.facebookBtn__Text]}>FaceBook</Text>*/}
+              {/*  </TouchableOpacity>*/}
+              {/*  <TouchableOpacity*/}
+              {/*    onPress={this.handleTwitterLogin}*/}
+              {/*    style={[commonStyles.submitBtn, commonStyles.twitterBtn]}*/}
+              {/*  >*/}
+              {/*    <Text style={[commonStyles.submitBtnText, commonStyles.twitterBtn__Text]}>Twitter</Text>*/}
+              {/*  </TouchableOpacity>*/}
+              {/*</View>*/}
 
               {/*<Text style={styles.termsText}>*/}
               {/*<Text>*/}

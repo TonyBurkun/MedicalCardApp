@@ -1,7 +1,7 @@
 import firebase from 'react-native-firebase'
 import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import {EMAIL_CONFIRMATION, SUBMIT_RECOVERY_PASS, RECOVERY_PASS_NO_USER} from '../utils/systemMessages'
+import {EMAIL_CONFIRMATION, SUBMIT_RECOVERY_PASS, RECOVERY_PASS_NO_USER, EMAIL_ALREADY_IN_USE} from '../utils/systemMessages'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
 
 
@@ -139,7 +139,16 @@ export function registrationWithEmailAndPassword(email, password, navigation){
       if (errorCode == 'auth/weak-password') {
         alert('The password is too weak.');
       } else {
-        alert(errorMessage);
+        // alert(errorMessage);
+
+        Alert.alert(
+          EMAIL_ALREADY_IN_USE.title,
+          EMAIL_ALREADY_IN_USE.message,
+          [
+            {text: EMAIL_ALREADY_IN_USE.buttonText}
+          ],
+          {cancelable: false}
+        )
       }
       console.log(error);
     });

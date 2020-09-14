@@ -298,11 +298,11 @@ class Profile extends Component{
             <ProfileListBtn title={'Метки'} iconType = {'label'} onPressAction={this.handlePressLabelBtn}
             />
 
-            <GroupButtonsTitle title={'БЕЗОПАСНОСТЬ'}/>
-            <ProfileListBtnChangeStatus title={'Facebook'}
-                            iconType = {'fb'}
-                            active={this.state.facebookProvider}
-                            onPressAction={this.handleFacebookJoin}/>
+            {/*<GroupButtonsTitle title={'БЕЗОПАСНОСТЬ'}/>*/}
+            {/*<ProfileListBtnChangeStatus title={'Facebook'}*/}
+            {/*                iconType = {'fb'}*/}
+            {/*                active={this.state.facebookProvider}*/}
+            {/*                onPressAction={this.handleFacebookJoin}/>*/}
 
             {/*<ProfileListBtnChangeStatus title={'Twitter'}*/}
             {/*                            iconType = {'twitter'}*/}
