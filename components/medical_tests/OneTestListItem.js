@@ -28,6 +28,7 @@ class OneTestListItem extends Component {
     console.log('MOUNT');
     const {testTypesList, testData} = this.props;
     console.log(testData);
+    console.log(this.props);
     if (testTypesList && testTypesList.length) {
       const currentTestType = testTypesList[testData.testType];
       this.setState({
@@ -56,10 +57,14 @@ class OneTestListItem extends Component {
 
     const {testType} = nextProps.testData;
     const {formedTestTypesList} = this.props.tests;
-    const testTypeTitle = formedTestTypesList[testType].title;
-    this.setState({
-      testTypeTitle
-    });
+    const testTypeTitle = formedTestTypesList[testType];
+
+    if (testTypeTitle) {
+      this.setState({
+        testTypeTitle: testTypeTitle.title
+      });
+    }
+
   }
 
 
