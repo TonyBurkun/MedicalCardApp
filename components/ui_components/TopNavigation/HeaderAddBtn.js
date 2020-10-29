@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, TouchableHighlight, TouchableOpacity} from 'react-native'
+import {View, Text, TouchableHighlight, TouchableOpacity, Alert} from 'react-native'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {withNavigation} from 'react-navigation'
@@ -7,8 +7,10 @@ import * as Colors from '../../../utils/colors'
 import GroupButtonsTitle from "../titles/GroupButtonsTitle";
 import {setChosenDoctorSpecializations} from '../../../actions/doctorSpecializations'
 import {setChosenDoctors} from "../../../actions/doctors";
-import {saveChosenLabel} from "../../../actions/labels";
+import {saveChosenLabel, saveChosenLabelForNoteList, saveChosenLabelForTestList} from "../../../actions/labels";
 import {saveChosenPillsType, setChosenPills} from "../../../actions/pills"
+import {setChosenIndicators, setChosenTestType, setIndicatorAfterSave, showPopUpWarning} from "../../../actions/tests";
+import {TRY_SAVE_NOT_FILLED_INDICATOR} from "../../../utils/systemMessages";
 
 
 
@@ -22,45 +24,12 @@ class HeaderAddBtn extends Component{
     this.state = {
       activeBtn: false,
       prevActiveBtn: false,
-      activeItemArr: []
+      activeItemArr: [],
+      fromScreen: ''
+
     }
   }
 
-
-  handlePressBtn = () => {
-
-    const {type} = this.props;
-    console.log(type);
-
-    switch (type) {
-      case 'doctorSpecializations':
-        this.props.dispatch(setChosenDoctorSpecializations(this.state.activeItemArr));
-        break;
-
-      case 'chosenDoctors':
-        this.props.dispatch(setChosenDoctors(this.state.activeItemArr));
-        break;
-
-      case 'chosenLabels':
-        this.props.dispatch(saveChosenLabel(this.state.activeItemArr));
-        break;
-
-      case 'chosePillsType':
-        console.log('press save pills');
-        this.props.dispatch(saveChosenPillsType(this.state.activeItemArr));
-        break;
-
-      case 'chosenPills':
-        console.log('add Pills');
-        this.props.dispatch(setChosenPills(this.state.activeItemArr));
-        break;
-
-      default:
-        break;
-    }
-
-    this.props.navigation.goBack();
-  };
 
   componentDidMount(){
     console.log('mount');
@@ -80,11 +49,15 @@ class HeaderAddBtn extends Component{
     }
 
     if (params && params.chosenLabelsID){
-      console.log('here');
-      console.log(params);
       this.setState({
         activeItemArr: params.chosenLabelsID
       });
+    }
+
+    if (params && params.fromScreen) {
+      this.setState({
+        fromScreen: params.fromScreen
+      })
     }
 
   }
@@ -112,7 +85,7 @@ class HeaderAddBtn extends Component{
     if (params && params.type === 'onlyAddItem'){
       console.log('here');
       const activeBtn = params.chosenItemsID.length;
-      const prevActiveBtn = true;
+      const prevActiveBtn = false;
 
       this.setState({
         activeBtn: Boolean(activeBtn),
@@ -129,6 +102,108 @@ class HeaderAddBtn extends Component{
   }
 
 
+  handlePressBtn = () => {
+
+    const {type} = this.props;
+    const {fromScreen} = this.state;
+    console.log(type);
+    console.log(fromScreen);
+
+    switch (type) {
+      case 'doctorSpecializations':
+        this.props.dispatch(setChosenDoctorSpecializations(this.state.activeItemArr));
+        this.props.navigation.goBack();
+        break;
+
+      case 'chosenDoctors':
+        this.props.dispatch(setChosenDoctors(this.state.activeItemArr));
+        this.props.navigation.goBack();
+        break;
+
+      case 'chosenLabels':
+
+
+
+        if (fromScreen === 'testsList') {
+          this.props.dispatch(saveChosenLabelForTestList(this.state.activeItemArr));
+        } else {
+          // this.props.dispatch(saveChosenLabel(this.state.activeItemArr));
+        }
+
+        if (fromScreen === 'notesList') {
+          this.props.dispatch(saveChosenLabelForNoteList(this.state.activeItemArr));
+        }
+
+        if (!fromScreen) {
+          this.props.dispatch(saveChosenLabel(this.state.activeItemArr));
+        }
+
+        this.props.navigation.goBack();
+        break;
+
+      case 'chosePillsType':
+        console.log('press save pills');
+        this.props.dispatch(saveChosenPillsType(this.state.activeItemArr));
+        this.props.navigation.goBack();
+        break;
+
+      case 'chosenPills':
+        console.log('add Pills');
+        this.props.dispatch(setChosenPills(this.state.activeItemArr));
+        this.props.navigation.goBack();
+        break;
+
+      case 'chosenTestType':
+        const {chosenTestType} = this.props.tests;
+        // const {formedTestTypesList} = this.props.tests;
+        // const test = formedTestTypesList[this.state.activeItemArr[0]];
+        // console.log(this.state.activeItemArr);
+        // const chosenTestTypeObj = {};
+        // chosenTestTypeObj.id = test.id;
+        // chosenTestTypeObj.index = this.state.activeItemArr;
+
+
+
+
+        this.props.dispatch(setChosenTestType(this.state.activeItemArr));
+
+        if (this.state.activeItemArr[0] !== chosenTestType[0]) {
+          this.props.dispatch(setChosenIndicators([]));
+          this.props.dispatch(setIndicatorAfterSave([]));
+        }
+        this.props.navigation.goBack();
+        break;
+
+      case 'chosenIndicators':
+        console.log('add Indicators');
+        const {activeItemArr} = this.state;
+        console.log(activeItemArr);
+        let noEmptyActiveItemsArr =  activeItemArr.filter((item, index) => {
+          if (!item.custom && item.inputFields.result.length) {
+            return item;
+          }
+
+          if (item.custom && (item.inputFields.result || item.inputFields.title || item.inputFields.unit ||  item.inputFields.norma)){
+            return item
+          }
+        });
+
+        console.log(noEmptyActiveItemsArr);
+
+        this.props.dispatch(setIndicatorAfterSave(noEmptyActiveItemsArr));
+        this.props.dispatch(setChosenIndicators({}));
+        this.props.navigation.goBack();
+        break;
+
+      default:
+        break;
+    }
+
+    // this.props.navigation.goBack();
+  };
+
+
+
   render() {
 
     const {titleBtn} = this.props;
@@ -137,13 +212,15 @@ class HeaderAddBtn extends Component{
     // console.log(prevActiveBtn);
     return(
       <TouchableHighlight
-        disabled={!activeBtn && !prevActiveBtn}
+        // disabled={!activeBtn && !prevActiveBtn}
+        disabled={false}
         underlayColor={'transparent'}
         onPress={this.handlePressBtn}
         style={{paddingRight: 8}}
       >
         <Text
-          style={(activeBtn || prevActiveBtn )? {fontSize: 17, color: Colors.DARK_GREEN} : {fontSize: 17, color: Colors.DISABLED_BORDER}}
+          // style={(activeBtn || prevActiveBtn )? {fontSize: 17, color: Colors.DARK_GREEN} : {fontSize: 17, color: Colors.DISABLED_BORDER}}
+          style={{fontSize: 17, color: Colors.DARK_GREEN}}
         >{titleBtn}</Text>
       </TouchableHighlight>
     )
@@ -152,10 +229,13 @@ class HeaderAddBtn extends Component{
 }
 
 function mapStateToProps(state){
+  console.log(state);
   const labels = state.labels;
   return {
     chosenLabelsID: labels.chosenLabelsID,
     chosenDoctorSpecializations: state.doctors.chosenDoctorSpecializations,
+    tests: state.tests
+
   }
 }
 

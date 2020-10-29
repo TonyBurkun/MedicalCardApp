@@ -42,6 +42,8 @@ class ChoseDoctorSpecializations extends Component{
     const doctorSpecializationArr = this.props.doctorSpecializations;
     const {chosenDoctorSpecializations} = this.props;
 
+
+
     
 
     return (

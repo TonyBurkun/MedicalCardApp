@@ -22,40 +22,48 @@ import StepTwo from './components/StepTwo'
 import MedicalCardStart from './components/medical_card/MedicalCardStart'
 import MedicalCardCreate from './components/medical_card/MedicalCardCreate'
 import MedicalCardList from './components/medical_card/MedicalCardList'
-import CreateNote from './components/notes/CreateNote'
-import OneNote from "./components/notes/OneNote";
-import CreateTest from './components/tests/CreateTest'
 import CreateLabel from './components/labels/CreateLabel'
 import LabelsList from './components/labels/LabelsList'
-
 import Notes from './components/notes/Notes'
-import Tests from './components/tests/Tests'
+import OneNote from "./components/notes/OneNote";
+import CreateNote from './components/notes/CreateNote'
+
+import MedicalTestCreate from './components/medical_tests/MedicalTestCreate'
+import MedicalTestsList from './components/medical_tests/MedicalTestsList'
+import IndicatorsList from "./components/medical_tests/IndicatorsList"
+
 import Doctors from './components/doctors/Doctors'
-import CreateDoctor from "./components/doctors/CreateDoctor";
-import ChoseDoctor from "./components/doctors/ChoseDoctor";
-import ChoseDoctorSpecializations from "./components/doctors/ChoseDoctorSpecializations";
-import Pills from './components/pills/Pills'
+import CreateDoctor from "./components/doctors/CreateDoctor"
+import ChoseDoctor from "./components/doctors/ChoseDoctor"
+import ChoseDoctorSpecializations from "./components/doctors/ChoseDoctorSpecializations"
 import MainNavigationButton from './components/ui_components/Buttons/MainNavigationButton'
 import Profile from './components/profile/Profile'
-import ProfileData from "./components/profile/ProfileData";
-import ChangeEmail from "./components/profile/ChangeEmail";
-import CalendarIcon from "./components/ui_components/CalendarIcon";
-import Avatar from "./components/ui_components/Avatar";
-import OneDoctor from "./components/doctors/OneDoctor";
-import CreatePill from "./components/pills/CreatePill";
-import ChosePillsType from "./components/pills/ChosePillsType";
-
-
+import ProfileData from "./components/profile/ProfileData"
+import ChangeEmail from "./components/profile/ChangeEmail"
+import CalendarIcon from "./components/ui_components/CalendarIcon"
+import Avatar from "./components/ui_components/Avatar"
+import OneDoctor from "./components/doctors/OneDoctor"
+import Pills from './components/pills/Pills'
+import CreatePill from "./components/pills/CreatePill"
+import ChosePillsType from "./components/pills/ChosePillsType"
 import ChosePill from "./components/pills/ChosePill";
-
-
-
 import ChoseLabel from './components/labels/ChoseLabel'
-import {createSwitchNavigator, createStackNavigator, createBottomTabNavigator, createMaterialTopTabNavigator} from 'react-navigation'
+
+import {
+  createSwitchNavigator,
+  createStackNavigator,
+  createBottomTabNavigator,
+  createMaterialTopTabNavigator,
+  SafeAreaView
+} from 'react-navigation'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from './utils/textConstants'
 import {NOTES, TESTS, DOCTORS, PILLS} from './utils/textConstants'
 import {checkSetUpParamInUser, signOut, isUserExistInDB, isUserAuth} from './utils/API'
 import TermsOfUse from "./components/profile/TermsOfUse";
+import HeaderAddBtn from "./components/ui_components/TopNavigation/HeaderAddBtn";
+import TypeTestList from "./components/medical_tests/TypeTestList";
+import OneMedicalTest from "./components/medical_tests/OneMedicalTest";
+import {saveChosenLabelForTestList} from "./actions/labels";
 
 
 
@@ -80,9 +88,9 @@ const RouteConfigs = {
   },
 
   TestsTab: {
-    screen: Tests,
+    screen: MedicalTestsList,
     navigationOptions: {
-      tabBarLabel: 'Tests',
+      tabBarLabel: 'MedicalTestsList',
       tabBarIcon: ({focused}) => (
         focused
         ? <Image
@@ -346,7 +354,6 @@ const MedicalCardCreateStack = createStackNavigator({
   }
 });
 
-
 const MainNavStack = createStackNavigator({
   Home: {
     screen: Tabs,
@@ -406,7 +413,69 @@ const MainNavStack = createStackNavigator({
   },
 
   CreateTest: {
-    screen: CreateTest,
+    screen: MedicalTestCreate,
+    navigationOptions: ({navigation}) => {
+
+      const isEditForm = Boolean(navigation.state.params);
+      return {
+        headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>
+          {isEditForm ? ('Редактирование') : ('Добавить Анализ')}
+        </Text>,
+        headerTintColor: Colors.GRAY_TEXT,
+        headerStyle: {
+          backgroundColor: Colors.WHITE,
+          elevation: 0,
+          shadowOpacity: 0,
+          borderTopWidth: 1,
+          borderTopColor: Colors.TAB_NAVIGATION_BORDER,
+
+        },
+      }
+    }
+  },
+
+  TypeTestList: {
+    screen: TypeTestList,
+    navigationOptions: ({navigation}) => {
+      return {
+        headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Тип Анализа</Text>,
+        headerTintColor: Colors.GRAY_TEXT,
+        headerStyle: {
+          backgroundColor: Colors.WHITE,
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0,
+
+        },
+        headerRight: (
+          <HeaderAddBtn titleBtn={'Сохранить'} type={'chosenTestType'}/>
+        )
+      }
+    }
+  },
+
+  MedicalIndicators: {
+    screen: IndicatorsList,
+    navigationOptions: ({navigation}) => {
+      return {
+        headerTitle: () => <Text style={{fontSize: 17, fontWeight: 'bold', color: Colors.BLACK_TITLE}}>Показатели</Text>,
+        headerTintColor: Colors.GRAY_TEXT,
+        headerStyle: {
+          backgroundColor: Colors.WHITE,
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0,
+
+        },
+        headerRight: (
+          <HeaderAddBtn titleBtn={'Сохранить'} type={'chosenIndicators'}/>
+        )
+      }
+    }
+  },
+
+  OneMedicalTest: {
+    screen: OneMedicalTest,
     navigationOptions: {
       // header: null
     }

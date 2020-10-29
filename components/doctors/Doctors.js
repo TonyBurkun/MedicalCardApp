@@ -1,12 +1,11 @@
 import React, {Component, Fragment} from 'react'
-import {View, Text, Image, StyleSheet, Platform, Dimensions, FlatList, TouchableHighlight} from 'react-native'
+import {View, Text, Image, StyleSheet, Platform, Dimensions, FlatList, TouchableHighlight, ScrollView} from 'react-native'
 import {ButtonGroup, SearchBar} from 'react-native-elements/src/index'
 import {connect} from 'react-redux'
 import {SafeAreaView, withNavigationFocus} from "react-navigation";
-import InternetNotification from "../ui_components/InternetNotification";
 import * as Colors from "../../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import {convertObjToArr, isIphone5} from '../../utils/helpers'
+import {convertObjToArr, isIphone5, sortDoctors} from '../../utils/helpers'
 
 import {
   getDoctorsList,
@@ -50,7 +49,42 @@ class Doctors extends Component{
   updateChosenTab (selectedIndex) {
     this._closeAllSwipes();
 
-    this.setState({selectedIndex})
+
+    let {doctorsList} = this.state;
+
+    switch (selectedIndex) {
+      case 0 :
+        doctorsList = this.state.doctorsListOrigin;
+        break;
+
+      case 1:
+        const uid = getUIDfromFireBase();
+        doctorsList = doctorsList.filter(item => {
+          return item.createdByUser === uid
+        });
+
+        break;
+
+
+      default:
+        break;
+    }
+
+
+
+
+    this.setState({
+      ...this.state,
+      selectedIndex,
+      doctorsList,
+    });
+
+
+
+
+
+
+
   }
 
   _closeAllSwipes = () => {
@@ -58,7 +92,6 @@ class Doctors extends Component{
       item.recenter();
     });
   };
-
 
   _cloneDoctorsObjWithCheckedFalse = (doctors, chosenDoctorsID = []) => {
     const copyDoctors = JSON.parse(JSON.stringify(doctors));
@@ -94,8 +127,6 @@ class Doctors extends Component{
     getDoctorsList()
       .then(data => {
         this.props.dispatch(setDoctors(data));
-
-        // const {chosenLabelsID} = this.state;
         const doctorsList = this._cloneDoctorsObjWithCheckedFalse(data, []);
 
 
@@ -115,7 +146,6 @@ class Doctors extends Component{
   }
 
   componentWillReceiveProps(nextProps){
-    // const data = nextProps.doctorsList;
     const data = this.props.doctorsList;
     const newDoctorsList = this._cloneDoctorsObjWithCheckedFalse(data, []);
 
@@ -249,9 +279,6 @@ class Doctors extends Component{
         return ~concatenatedDataForSearch.indexOf(searchVal)
       });
 
-      // console.log(searchResultArr.length);
-      // console.log(Boolean(searchResultArr.length));
-
 
 
       this.setState({
@@ -286,59 +313,16 @@ class Doctors extends Component{
 
 
   render() {
-    console.log(this.state);
-    // console.log('DOCTOR PROPS ', this.state);
-
-
     let {isLoaded, doctorsList, search} = this.state;
 
     const buttons = ['Все доктора', 'Созданные'];
     const { selectedIndex } = this.state;
 
-    doctorsList.sort((a,b) => {
-
-      let fullNameA = a.firstName + ' ' + a.lastName;
-      let fullNameB = b.firstName + ' ' + b.lastName;
-
-      fullNameA = fullNameA.toLowerCase();
-      fullNameB = fullNameB.toLowerCase();
-
-
-
-      if (fullNameA < fullNameB) {
-        return -1;
-      }
-      if (fullNameA > fullNameB) {
-        return 1;
-      }
-      return 0
-
-    });
-
-
-    switch (selectedIndex) {
-      case 0 :
-        break;
-
-      case 1:
-        const uid = getUIDfromFireBase();
-
-        doctorsList = doctorsList.filter(item => {
-          return item.createdByUser === uid
-        });
-
-        break;
-
-
-      default:
-        break;
-    }
 
 
 
     return(
       <SafeAreaView style={styles.container}>
-        <InternetNotification topDimension={0}/>
         <SearchBar
           placeholder="Имя, фамилия или специализация"
           onChangeText={this.updateSearch}
@@ -363,7 +347,7 @@ class Doctors extends Component{
                 <View style={{flex: 1, marginTop: 10, paddingRight: 16}}>
                   <FlatList
                     keyExtractor={(item, index) => index.toString()}
-                    data={doctorsList}
+                    data={sortDoctors(doctorsList)}
                     renderItem={this.renderFlatListItem}
                   />
                 </View>

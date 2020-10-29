@@ -4,14 +4,30 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Linking,
+  Platform
 } from 'react-native'
 import {Icon} from 'react-native-elements'
 import * as Colors from "../../utils/colors";
 
 export default class CalendarIcon extends Component{
+
+  handlePressCalendar = () => {
+    if(Platform.OS === 'ios') {
+      Linking.openURL('calshow:');
+    } else if(Platform.OS === 'android') {
+      Linking.openURL('content://com.android.calendar/time/');
+    }
+  };
+
+
+
   render() {
     return (
-      <TouchableOpacity style={styles.calendarBtn}>
+      <TouchableOpacity
+        style={styles.calendarBtn}
+        onPress={this.handlePressCalendar}
+      >
         <Icon
           name='calendar'
           type='material-community'

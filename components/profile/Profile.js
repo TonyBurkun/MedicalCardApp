@@ -1,16 +1,25 @@
 import React, { Component } from 'react'
-import {View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, ActivityIndicator, Alert} from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+  ActivityIndicator,
+  Alert,
+  Linking,
+} from 'react-native'
 import {Image} from 'react-native-elements'
 import { SafeAreaView, withNavigation, withNavigationFocus } from 'react-navigation'
 import * as Colors from '../../utils/colors'
 import {connect} from 'react-redux'
 
-import InternetNotification from '../ui_components/InternetNotification'
 import commonStyles from "../../utils/commonStyles";
 import ProfileListBtn from '../ui_components/Buttons/ProfileListBtn'
 import ProfileListBtnChangeStatus from "../ui_components/Buttons/ProfileListBtnChangeStatus";
 import GroupButtonsTitle from '../ui_components/titles/GroupButtonsTitle'
-import {signOut} from "../../utils/API";
+import {getCurrentUserData, signOut} from "../../utils/API";
 import {getBottomSpace, getStatusBarHeight} from "react-native-iphone-x-helper/index";
 
 import {updateCurrentUserData} from "../../actions/authedUser";
@@ -62,6 +71,15 @@ class Profile extends Component{
   componentDidMount() {
     const providerDataArr = firebase.auth().currentUser.providerData;
     console.log(providerDataArr);
+    console.log(this.props);
+    const {currentUserData} = this.props;
+    console.log(currentUserData);
+
+    getCurrentUserData()
+      .then(data => {
+        this.props.dispatch(updateCurrentUserData(data));
+      });
+
 
     providerDataArr.forEach((item) => {
       switch (item.providerId) {
@@ -99,7 +117,6 @@ class Profile extends Component{
 
   handlePressLabelBtn = () => {
     this.props.navigation.navigate('LabelsList');
-    // this.props.navigation.navigate('LabelsList', {navType: 'showAddCancelBtn'});
   };
 
   handleFacebookJoin = () => {
@@ -133,44 +150,54 @@ class Profile extends Component{
       })
   };
 
-  handleTwitterJoin = async () => {
-    joinTwitter()
-      .then( () => {
-        Alert.alert(
-          SOCIAL_NETWORK_SUCCESS_LINKED.title,
-          SOCIAL_NETWORK_SUCCESS_LINKED.message,
-          [
-            {text: SOCIAL_NETWORK_SUCCESS_LINKED.buttonText}
-          ],
-          {cancelable: false}
-        );
+  // handleTwitterJoin = async () => {
+  //   joinTwitter()
+  //     .then( () => {
+  //       Alert.alert(
+  //         SOCIAL_NETWORK_SUCCESS_LINKED.title,
+  //         SOCIAL_NETWORK_SUCCESS_LINKED.message,
+  //         [
+  //           {text: SOCIAL_NETWORK_SUCCESS_LINKED.buttonText}
+  //         ],
+  //         {cancelable: false}
+  //       );
+  //
+  //       this.setState({
+  //         twitterProvider: true
+  //       });
+  //     })
+  //     .catch(error => {
+  //       const { code, message } = error;
+  //       if (code === 'auth/provider-already-linked') {
+  //         Alert.alert(
+  //           SOCIAL_NETWORK_ALREADY_LINKED.title,
+  //           SOCIAL_NETWORK_ALREADY_LINKED.message,
+  //           [
+  //             {text: SOCIAL_NETWORK_ALREADY_LINKED.buttonText}
+  //           ],
+  //           {cancelable: false}
+  //         )
+  //       }
+  //     })
+  // };
 
-        this.setState({
-          twitterProvider: true
-        });
-      })
-      .catch(error => {
-        const { code, message } = error;
-        if (code === 'auth/provider-already-linked') {
-          Alert.alert(
-            SOCIAL_NETWORK_ALREADY_LINKED.title,
-            SOCIAL_NETWORK_ALREADY_LINKED.message,
-            [
-              {text: SOCIAL_NETWORK_ALREADY_LINKED.buttonText}
-            ],
-            {cancelable: false}
-          )
-        }
-      })
-  };
-
-  handleEmailJoin = () => {
-    console.log('EMAIL JOIN');
-    this.props.navigation.navigate('ChangeEmail');
-  };
+  // handleEmailJoin = () => {
+  //   console.log('EMAIL JOIN');
+  //   this.props.navigation.navigate('ChangeEmail');
+  // };
 
   handleProblem = () => {
-
+    Linking.openURL('mailto:medicalcard.app@gmail.com')
+      .then(supported => {
+        if (!supported) {
+          console.log('Cant handle url')
+        } else {
+          return Linking.openURL('message:')
+        }
+      })
+      .catch(err => {
+        console.error('An error occurred', err)
+      })
   };
 
   handlePolicy = () => {
@@ -190,6 +217,20 @@ class Profile extends Component{
       ...this.state,
       screenHeight: this.state.screenHeight + contentHeight
     })
+  };
+
+  handleRateUsBtn = () => {
+    Linking.openURL('itms-apps://itunes.apple.com/us/app/apple-store/myiosappid?mt=8')
+      .then(supported => {
+        if (!supported) {
+          console.log('Cant handle url')
+        } else {
+          return Linking.openURL('message:')
+        }
+      })
+      .catch(err => {
+        console.error('An error occurred', err)
+      })
   };
 
 
@@ -217,7 +258,6 @@ class Profile extends Component{
 
     return (
       <SafeAreaView style={styles.container}>
-        <InternetNotification topDimension={0}/>
         <View style={styles.topHeader}>
           <View style={{flexDirection: 'row', marginTop: 24}}>
             <View>
@@ -258,16 +298,16 @@ class Profile extends Component{
             <ProfileListBtn title={'Метки'} iconType = {'label'} onPressAction={this.handlePressLabelBtn}
             />
 
-            <GroupButtonsTitle title={'БЕЗОПАСНОСТЬ'}/>
-            <ProfileListBtnChangeStatus title={'Facebook'}
-                            iconType = {'fb'}
-                            active={this.state.facebookProvider}
-                            onPressAction={this.handleFacebookJoin}/>
+            {/*<GroupButtonsTitle title={'БЕЗОПАСНОСТЬ'}/>*/}
+            {/*<ProfileListBtnChangeStatus title={'Facebook'}*/}
+            {/*                iconType = {'fb'}*/}
+            {/*                active={this.state.facebookProvider}*/}
+            {/*                onPressAction={this.handleFacebookJoin}/>*/}
 
-            <ProfileListBtnChangeStatus title={'Twitter'}
-                                        iconType = {'twitter'}
-                                        active={this.state.twitterProvider}
-                                        onPressAction={this.handleTwitterJoin}/>
+            {/*<ProfileListBtnChangeStatus title={'Twitter'}*/}
+            {/*                            iconType = {'twitter'}*/}
+            {/*                            active={this.state.twitterProvider}*/}
+            {/*                            onPressAction={this.handleTwitterJoin}/>*/}
 
             {/*<ProfileListBtnChangeStatus title={'Email'}*/}
             {/*                            iconType = {'email'}*/}
@@ -291,19 +331,20 @@ class Profile extends Component{
                 <Text style={{fontSize: 12, color: Colors.TYPOGRAPHY_COLOR_DARK, marginTop: 10}}>
                   Мы с удовольствием выслушаем Ваши предложения и проблемы.
                 </Text>
-                <Text style={{fontSize: 12, color: Colors.TYPOGRAPHY_COLOR_DARK, marginTop: 10}}>
-                  Мы очень надеемся стать Вашим другом в сети.
-                </Text>
+                {/*<Text style={{fontSize: 12, color: Colors.TYPOGRAPHY_COLOR_DARK, marginTop: 10}}>*/}
+                {/*  Мы очень надеемся стать Вашим другом в сети.*/}
+                {/*</Text>*/}
 
                 <View style={{marginTop: 15}}>
-                  <TouchableOpacity style={{width: 200, height: 48, backgroundColor: Colors.FB_COLOR, borderRadius: 14, position: 'relative', justifyContent: 'center'}}>
-                    <Image
-                      style={{width: 32, height: 32, position: 'absolute', left: 8, top: -9}}
-                      source={ require('../../assets/profile/fb-icon.png')}
-                    />
-                    <Text style={{fontSize: 12, color: Colors.WHITE, alignSelf: 'center'}}>FACEBOOK</Text>
-                  </TouchableOpacity>
+                  {/*<TouchableOpacity style={{width: 200, height: 48, backgroundColor: Colors.FB_COLOR, borderRadius: 14, position: 'relative', justifyContent: 'center'}}>*/}
+                  {/*  <Image*/}
+                  {/*    style={{width: 32, height: 32, position: 'absolute', left: 8, top: -9}}*/}
+                  {/*    source={ require('../../assets/profile/fb-icon.png')}*/}
+                  {/*  />*/}
+                  {/*  <Text style={{fontSize: 12, color: Colors.WHITE, alignSelf: 'center'}}>FACEBOOK</Text>*/}
+                  {/*</TouchableOpacity>*/}
                   <TouchableOpacity
+                    onPressAction={this.handleRateUsBtn}
                     style={{
                       width: 200,
                       height: 48,

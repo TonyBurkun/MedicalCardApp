@@ -16,7 +16,6 @@ import {setChosenBadHabits} from '../../actions/badHabits'
 import {setChosenGenitalInfections} from '../../actions/genitalInfections'
 import ScreenTitle from "../ui_components/titles/ScreenTitle";
 import {ifIphoneX, isIphoneX} from 'react-native-iphone-x-helper/index'
-import InternetNotification from '../ui_components/InternetNotification'
 
 
 
@@ -24,6 +23,7 @@ class MedicalCardList extends Component{
 
   constructor(props){
     super(props);
+    console.log(props);
 
     const listType = this.props.navigation.getParam('listType');
     const radio = this.props.navigation.getParam('radio');
@@ -111,13 +111,14 @@ class MedicalCardList extends Component{
 
 
   renderFlatListItem = ({item, index}) => {
+    console.log(item);
     return (
 
       <ListItem
         key={index}
         title={item.value}
         onPress={() => {this.onPress(index)}}
-        containerStyle={{paddingTop: 9, paddingBottom: 9, paddingLeft: 0, }}
+        containerStyle={{paddingTop: 16, paddingBottom: 16, paddingLeft: 0, }}
         titleStyle={{fontSize: 14}}
         bottomDivider={true}
         leftAvatar={
@@ -133,80 +134,80 @@ class MedicalCardList extends Component{
           />
         }
 
-        rightAvatar={
-          <DatePicker
-            locale={'ru'}
-            key={index}
-            // key={index}
-            style={[item.date? styles.filledDatePicker : styles.emptyDatePicker]}
-            date={item.date} //initial date from state
-            // mode="date" //The enum of date, datetime and time
-            format="DD-MM-YYYY"
-            minDate="01-01-1930"
-            maxDate={new Date()}
-            confirmBtnText="Сохранить"
-            cancelBtnText="Не добавлять дату"
-            // iconSource={require('../assets/datepicker-icon.png')}
-            iconComponent={<Icon
-              name='calendar'
-              type='feather'
-              color={Colors.BLACK_TITLE}
-            />}
-            hideText={!item.date}
-            showIcon={!item.date}
-            customStyles={{
-              dateIcon: {
-                position: 'absolute',
-                width: 14,
-                height: 16,
-                left: '50%',
-                marginLeft: -7,
-                top: '50%',
-                marginTop: -8,
-
-              },
-              dateInput: {
-                alignItems: 'flex-start',
-                paddingLeft: 16,
-                borderWidth: 0,
-                backgroundColor: Colors.WHITE,
-              },
-              dateText: {
-                fontSize: 14,
-                color: Colors.MAIN_GREEN,
-                fontWeight: 'bold'
-              },
-              placeholderText: {
-                fontSize: 14,
-                color: Colors.GRAY_TEXT,
-              },
-
-            }}
-            onDateChange={(value) => {
-              const dataArr = this.state.data;
-              dataArr[index].date = value;
-
-              this.setState({
-                ...this.state,
-                data: dataArr,
-                originData: dataArr,
-                refresh: !this.state.refresh
-              });
-            }}
-            onOpenModal={()=> {
-              const dataArr = this.state.data;
-              dataArr[index].date = '';
-
-              this.setState({
-                ...this.state,
-                data: dataArr,
-                originData: dataArr,
-                refresh: !this.state.refresh
-              });
-            }}
-          />
-
-        }
+        // rightAvatar={
+        //   <DatePicker
+        //     locale={'ru'}
+        //     key={index}
+        //     // key={index}
+        //     style={[item.date? styles.filledDatePicker : styles.emptyDatePicker]}
+        //     date={item.date} //initial date from state
+        //     // mode="date" //The enum of date, datetime and time
+        //     format="DD-MM-YYYY"
+        //     minDate="01-01-1930"
+        //     maxDate={new Date()}
+        //     confirmBtnText="Сохранить"
+        //     cancelBtnText="Не добавлять дату"
+        //     // iconSource={require('../assets/datepicker-icon.png')}
+        //     iconComponent={<Icon
+        //       name='calendar'
+        //       type='feather'
+        //       color={Colors.BLACK_TITLE}
+        //     />}
+        //     hideText={!item.date}
+        //     showIcon={!item.date}
+        //     customStyles={{
+        //       dateIcon: {
+        //         position: 'absolute',
+        //         width: 14,
+        //         height: 16,
+        //         left: '50%',
+        //         marginLeft: -7,
+        //         top: '50%',
+        //         marginTop: -8,
+        //
+        //       },
+        //       dateInput: {
+        //         alignItems: 'flex-start',
+        //         paddingLeft: 16,
+        //         borderWidth: 0,
+        //         backgroundColor: Colors.WHITE,
+        //       },
+        //       dateText: {
+        //         fontSize: 14,
+        //         color: Colors.MAIN_GREEN,
+        //         fontWeight: 'bold'
+        //       },
+        //       placeholderText: {
+        //         fontSize: 14,
+        //         color: Colors.GRAY_TEXT,
+        //       },
+        //
+        //     }}
+        //     onDateChange={(value) => {
+        //       const dataArr = this.state.data;
+        //       dataArr[index].date = value;
+        //
+        //       this.setState({
+        //         ...this.state,
+        //         data: dataArr,
+        //         originData: dataArr,
+        //         refresh: !this.state.refresh
+        //       });
+        //     }}
+        //     onOpenModal={()=> {
+        //       const dataArr = this.state.data;
+        //       dataArr[index].date = '';
+        //
+        //       this.setState({
+        //         ...this.state,
+        //         data: dataArr,
+        //         originData: dataArr,
+        //         refresh: !this.state.refresh
+        //       });
+        //     }}
+        //   />
+        //
+        // }
 
       />
     )
@@ -271,7 +272,6 @@ class MedicalCardList extends Component{
 
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: Colors.WHITE}}>
-        <InternetNotification/>
         <SearchBar
           placeholder="Поиск по названию"
           onChangeText={this.updateSearch}

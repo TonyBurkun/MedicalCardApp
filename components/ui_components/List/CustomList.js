@@ -27,8 +27,9 @@ class CustomList extends Component{
     console.log(this.props);
     const {data, chosenItemsID} = this.props;
     const dataObj = data.map((item, index) => {
+      console.log(item);
       return  {
-        id: index,
+        index: index,
         value: item,
         checked: false,
       }
@@ -48,7 +49,7 @@ class CustomList extends Component{
 
 
 
-    updateSearch = search => {
+  updateSearch = search => {
     this.setState({ search });
 
     const searchVal = search;
@@ -80,9 +81,16 @@ class CustomList extends Component{
 
     let {data, originData, chosenIDArr} = this.state;
     const {radio} = this.props;
+    console.log(data);
+    console.log(originData);
 
     if (radio) {
       data = data.map((item) => {
+        item.checked = false;
+        return item;
+      });
+
+      originData = originData.map((item) => {
         item.checked = false;
         return item;
       })
@@ -100,9 +108,11 @@ class CustomList extends Component{
 
     originData.forEach((item) => {
       if(item.checked) {
-        activeItemsArr.push(item.id)
+        activeItemsArr.push(item.index)
       }
     });
+
+    console.log(activeItemsArr);
 
 
     const {route} = this.props;
@@ -115,8 +125,8 @@ class CustomList extends Component{
     const {searchField} = this.props;
 
 
-    console.log(this.state);
-    console.log(this.props);
+    // console.log(this.state);
+    // console.log(this.props);
     return (
 
 
@@ -139,7 +149,7 @@ class CustomList extends Component{
                 data.map((item, index) => {
                   return (
                     <ListItem
-                      key={item.id}
+                      key={item.index}
                       title={item.value}
                       onPress={() => {this.onPressListItem(index)}}
                       containerStyle={{paddingTop: 19, paddingBottom: 19, paddingLeft: 0, paddingRight: 16,}}

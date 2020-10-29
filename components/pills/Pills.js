@@ -2,10 +2,9 @@ import React, {Component, Fragment} from 'react'
 import {View, Text, Image, StyleSheet, Platform, FlatList, TouchableHighlight} from 'react-native'
 import {connect} from 'react-redux'
 import {SafeAreaView, withNavigationFocus} from "react-navigation";
-import InternetNotification from "../ui_components/InternetNotification";
 import * as Colors from "../../utils/colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import {convertObjToArr, isIphone5} from "../../utils/helpers";
+import {convertObjToArr, isIphone5, sortPills} from "../../utils/helpers";
 import {
   checkRelationsImgToPills,
   deleteDoctorByID, deletePillByID, getAppPillsList,
@@ -43,7 +42,37 @@ class Pills extends Component{
   updateChosenTab (selectedIndex) {
     this._closeAllSwipes();
 
-    this.setState({selectedIndex})
+    let {pillsListOrigin} = this.state;
+    const uid = getUIDfromFireBase();
+    let pillsList = [];
+
+    switch (selectedIndex) {
+
+      case 0 :
+        pillsList = pillsListOrigin.filter(item => {
+          return item.createdByUser !== uid
+        });
+        break;
+
+      case 1:
+        pillsList = pillsListOrigin.filter(item => {
+          return item.createdByUser === uid
+        });
+        break;
+
+
+      default:
+        break;
+    }
+
+    this.setState({
+      ...this.state,
+      selectedIndex,
+      pillsList,
+    })
+
+
+
   }
 
   _closeAllSwipes = () => {
@@ -316,49 +345,13 @@ class Pills extends Component{
 
     console.log(this.state);
 
-    const uid = getUIDfromFireBase();
-
     const buttons = ['Популярные', 'Созданные'];
 
     let {isLoaded, pillsList, search} = this.state;
     const { selectedIndex } = this.state;
 
-    pillsList.sort((a,b) => {
-
-      if (a.pillTitle.toLowerCase() < b.pillTitle.toLowerCase()) {
-        return -1;
-      }
-      if (a.pillTitle.toLowerCase() > b.pillTitle.toLowerCase()) {
-        return 1;
-      }
-      return 0
-
-    });
-
-    switch (selectedIndex) {
-
-      case 0 :
-        pillsList = pillsList.filter(item => {
-          return item.createdByUser !== uid
-        });
-        break;
-
-      case 1:
-        pillsList = pillsList.filter(item => {
-          return item.createdByUser === uid
-        });
-        break;
-
-
-      default:
-        break;
-    }
-
-
-
     return(
       <SafeAreaView style={styles.container}>
-        <InternetNotification topDimension={0}/>
         <SearchBar
           placeholder="Название препарата"
           onChangeText={this.updateSearch}
@@ -383,7 +376,7 @@ class Pills extends Component{
                   <View style={{flex: 1, marginTop: 10, paddingRight: 16}}>
                     <FlatList
                       keyExtractor={(item, index) => index.toString()}
-                      data={pillsList}
+                      data={sortPills(pillsList)}
                       renderItem={this.renderFlatListItem}
                     />
                   </View>

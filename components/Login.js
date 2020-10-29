@@ -34,8 +34,6 @@ import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
 import {ACCOUNT_NOT_FOUND, LOGIN_FAILED, EMAIL_CONFIRMATION} from '../utils/systemMessages'
 import commonStyles from '../utils/commonStyles'
 
-import InternetNotification from '../components/ui_components/InternetNotification'
-
 const validationRules = {
   email: {required: true, isEmail: true},
   password: {required: true},
@@ -96,8 +94,6 @@ class Login extends Component {
 
 
             const userTokenWasSaved = await addUserTokenToAsyncStorage(USER_TOKEN_LOCAL_STORAGE_KEY, 'true');
-
-            console.log(userTokenWasSaved);
             if (userTokenWasSaved) {
               const setUpParam = await checkSetUpParamInUser();
 
@@ -236,7 +232,6 @@ class Login extends Component {
 
     return (
       <SafeAreaView style={commonStyles.container}>
-        <InternetNotification/>
         <KeyboardAwareScrollView
           alwaysBounceVertical={false}
           contentContainerStyle={{flex: 1, justifyContent: 'space-between'}}
@@ -255,6 +250,7 @@ class Login extends Component {
               </View>
               <TextInput
                 placeholder="Ваш Email"
+                placeholderTextColor = {Colors.GRAY_TEXT}
                 style={commonStyles.formInput}
                 value={email}
                 onChangeText={(text) => {
@@ -269,6 +265,7 @@ class Login extends Component {
               <Text>{validationChecker.getErrorsInField('email')}</Text>
               <TextInput
                 placeholder="Пароль"
+                placeholderTextColor = {Colors.GRAY_TEXT}
                 secureTextEntry={true}
                 style={[commonStyles.formInput, commonStyles.formInput__last]}
                 value={password}
@@ -301,22 +298,22 @@ class Login extends Component {
                 >ВОЙТИ</Text>
               </TouchableOpacity>
 
-              <Text style={styles.separationText}>ИЛИ</Text>
+              {/*<Text style={styles.separationText}>ИЛИ</Text>*/}
 
-              <View style={[commonStyles.socialBtnBlock]}>
-                <TouchableOpacity
-                  onPress={this.handleFacebookLogin}
-                  style={[commonStyles.submitBtn, commonStyles.facebookBtn]}
-                >
-                  <Text style={[commonStyles.submitBtnText, commonStyles.facebookBtn__Text]}>FaceBook</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={this.handleTwitterLogin}
-                  style={[commonStyles.submitBtn, commonStyles.twitterBtn]}
-                >
-                  <Text style={[commonStyles.submitBtnText, commonStyles.twitterBtn__Text]}>Twitter</Text>
-                </TouchableOpacity>
-              </View>
+              {/*<View style={[commonStyles.socialBtnBlock]}>*/}
+              {/*  <TouchableOpacity*/}
+              {/*    onPress={this.handleFacebookLogin}*/}
+              {/*    style={[commonStyles.submitBtn, commonStyles.facebookBtn]}*/}
+              {/*  >*/}
+              {/*    <Text style={[commonStyles.submitBtnText, commonStyles.facebookBtn__Text]}>FaceBook</Text>*/}
+              {/*  </TouchableOpacity>*/}
+              {/*  /!*<TouchableOpacity*!/*/}
+              {/*  /!*  onPress={this.handleTwitterLogin}*!/*/}
+              {/*  /!*  style={[commonStyles.submitBtn, commonStyles.twitterBtn]}*!/*/}
+              {/*  /!*>*!/*/}
+              {/*  /!*  <Text style={[commonStyles.submitBtnText, commonStyles.twitterBtn__Text]}>Twitter</Text>*!/*/}
+              {/*  /!*</TouchableOpacity>*!/*/}
+              {/*</View>*/}
             </View>
             <View
               style={[commonStyles.lineTextBtn, {...Platform.select({android: {marginBottom: 25}}), marginTop: 50}]}>

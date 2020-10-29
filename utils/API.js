@@ -1,7 +1,7 @@
 import firebase from 'react-native-firebase'
 import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import {EMAIL_CONFIRMATION, SUBMIT_RECOVERY_PASS, RECOVERY_PASS_NO_USER} from '../utils/systemMessages'
+import {EMAIL_CONFIRMATION, SUBMIT_RECOVERY_PASS, RECOVERY_PASS_NO_USER, EMAIL_ALREADY_IN_USE} from '../utils/systemMessages'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
 
 
@@ -139,7 +139,16 @@ export function registrationWithEmailAndPassword(email, password, navigation){
       if (errorCode == 'auth/weak-password') {
         alert('The password is too weak.');
       } else {
-        alert(errorMessage);
+        // alert(errorMessage);
+
+        Alert.alert(
+          EMAIL_ALREADY_IN_USE.title,
+          EMAIL_ALREADY_IN_USE.message,
+          [
+            {text: EMAIL_ALREADY_IN_USE.buttonText}
+          ],
+          {cancelable: false}
+        )
       }
       console.log(error);
     });
@@ -186,6 +195,7 @@ export function signOut(navigation){
 }
 
 export function getUIDfromFireBase(){
+  console.log(firebase.auth().currentUser.uid);
   return (
     firebase.auth().currentUser.uid
   )
@@ -586,6 +596,66 @@ export async function removeNoteImages(noteID, imageName) {
 
 
 // -- END NOTES FLOW ---------
+
+
+// -- TEST FLOW  -------------
+
+export async function getTestTypesList(){
+  const snapshotDB = await firebase.database().ref('test_types/').once('value');
+  return snapshotDB.val() || [];
+}
+
+export async function saveIndicatorImageToStorage (imageID, imageName, localUri){
+  //localUri - local link on the image from device
+
+  const downloadURL = await firebase
+    .storage()
+    .ref(`indicator-images/${imageID}/${imageName}.jpg`)
+    .putFile(
+      localUri
+    );
+
+  return downloadURL;
+
+}
+
+
+export function createNewTest(testData){
+  console.log(testData.id);
+  const uid = getUIDfromFireBase();
+  firebase.database().ref(`tests/${uid}/${testData.id}`).set(testData);
+}
+
+export async function geTestsListByCurrentUser(){
+  const uid = getUIDfromFireBase();
+  const snapshotDB = await firebase.database().ref(`tests/${uid}`).once('value');
+  return snapshotDB.val() || {};
+}
+
+export async function removeTestImages(testID, imageName) {
+  console.log('delete Images');
+  console.log(testID,imageName);
+  await firebase.storage()
+    .ref(`indicator-images/${testID}/${imageName}.jpg`).delete();
+}
+
+export  function updateChosenTest(testID, testData) {
+  const uid = getUIDfromFireBase();
+  firebase.database().ref(`tests/${uid}/${testID}`).update(testData);
+}
+
+
+export async function deleteTestByID(testID){
+  const uid = getUIDfromFireBase();
+  await firebase.database().ref(`tests/${uid}/${testID}`).remove();
+}
+
+
+
+
+
+
+// -- END TEST FLOW  ---------
 
 
 

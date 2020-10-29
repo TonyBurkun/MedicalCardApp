@@ -6,42 +6,44 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableHighlight,
   AsyncStorage,
   Button,
   Platform,
   ScrollView,
-  Image, FlatList, TouchableHighlight,
+  Image, FlatList,
 } from 'react-native';
 import { SafeAreaView, withNavigationFocus } from 'react-navigation'
 import * as Colors from '../../utils/colors'
 import commonStyles from '../../utils/commonStyles'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view/index'
 import {
-  signOut,
   getUIDfromFireBase,
   getCurrentUserData,
   getAppPillsList,
   getPillsList,
   getLabelsForUser,
   getNotesListByCurrentUser,
-  removeRelationImgToPill,
-  checkRelationsImgToPills,
-  deletePillByID,
   getDoctorsList, getDoctorSpecializations
 } from '../../utils/API'
 import {setAuthedUserID, getAuthedUserAction} from '../../actions/authedUser'
-import InternetNotification from '../ui_components/InternetNotification'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import {isIphone5, convertObjToArr, addCheckFieldToArr, setChosenItemInArr, setInverseChosenItemInArr} from "../../utils/helpers";
-import {setLabels} from "../../actions/labels";
+import {
+  isIphone5,
+  convertObjToArr,
+  addCheckFieldToArr,
+  sortTestList
+} from "../../utils/helpers";
+import {saveChosenLabelForNoteList, setLabels} from "../../actions/labels";
 import {setNotes} from "../../actions/notes";
 import {NO_DATA_TO_SHOW} from "../../utils/textConstants";
-import {deletePill, setPills} from "../../actions/pills";
+import {setPills} from "../../actions/pills";
 import Swipeable from "react-native-swipeable";
 import OnePillList from "../ui_components/ListItems/OnePillList";
 import OneNoteListItem from "../ui_components/ListItems/OneNoteListItem";
 import {setDoctors} from "../../actions/doctors";
 import {setDoctorSpecializations} from "../../actions/doctorSpecializations";
+import {Icon} from "react-native-elements";
+import ChosenLabel from "../ui_components/ChosenLabel";
 
 
 
@@ -60,33 +62,10 @@ class Notes extends Component{
       notesListOrigin: [],
       labelsList: [],
       chosenLabels: false,
+      labelsForFilter: []
     }
   }
 
-
-  // _cloneNotesObjWithCheckedFalse = (notes, chosenNotesID = []) => {
-  //   const copyNotes = JSON.parse(JSON.stringify(notes));
-  //   const notesListKeys = Object.keys(copyNotes);
-  //
-  //
-  //   let notesArr = notesListKeys.map((item) => {
-  //     copyNotes[item].checked = false;
-  //
-  //     return copyNotes[item];
-  //   });
-  //
-  //
-  //   chosenNotesID.forEach((id) => {
-  //     notesArr.forEach((item) => {
-  //       if (item.id === id) {
-  //         item.checked = true;
-  //       }
-  //     })
-  //   });
-  //
-  //   return notesArr;
-  //
-  // };
 
 
 
@@ -177,8 +156,13 @@ class Notes extends Component{
 
   componentWillReceiveProps(nextProps) {
 
+    console.log(nextProps);
+    console.log(this.props);
 
-    const {notesList, labelsList } = nextProps;
+
+    const {notesList, labelsList, chosenLabelsID} = nextProps;
+    console.log(chosenLabelsID);
+    const {labelsForFilter} = this.state;
 
     let newLabelsListArr = convertObjToArr(labelsList);
     let newNotesListArr = convertObjToArr(notesList);
@@ -193,10 +177,52 @@ class Notes extends Component{
 
 
     this.setState({
-      notesList: newNotesListArr,
-      notesListOrigin: newNotesListArr,
+      // notesList: newNotesListArr,
+      // notesListOrigin: newNotesListArr,
       showList: Boolean( newNotesListArr.length),
-    })
+    });
+
+    if (chosenLabelsID !== labelsForFilter && chosenLabelsID.length > 0) {
+      console.log('NEW CHOSEN LABELS');
+
+      this.setState({
+        labelsForFilter: chosenLabelsID
+      });
+
+      let filteredNotesListByLabel = [];
+
+      for (let key in notesList) {
+
+        console.log('ITERATION');
+
+        if (notesList.hasOwnProperty(key)) {
+          let noteLabels = notesList[key].labels || [];
+          console.log(noteLabels);
+
+          for (let i = 0; i < noteLabels.length; i++){
+            let result = chosenLabelsID.find(chosenLabel => {
+              console.log(chosenLabel, noteLabels[i]);
+              return chosenLabel === noteLabels[i];
+            });
+
+            if (result) {
+              filteredNotesListByLabel.push(notesList[key]);
+              break;
+            }
+          }
+        }
+        this.setState({
+          notesList: filteredNotesListByLabel
+
+        })
+      }
+    }
+
+    if (!chosenLabelsID.length){
+      this.setState({
+        notesList: newNotesListArr
+      })
+    }
 
 
   }
@@ -207,76 +233,15 @@ class Notes extends Component{
     )
   };
 
-  renderLabelsListItem = ({item, index}) => {
-    const {labelsList} = this.state;
 
-    const chosenLabelsList = labelsList.filter(item => {
-      return item.checked === true;
-    });
-
-
-    let wasClickOnLabel = !!chosenLabelsList.length;
-
-
-
-    return (
-      <TouchableOpacity
-        onPress={() => this.handlePressLabel(item, index)}
-        style={[styles.labelBtn, !wasClickOnLabel ? {backgroundColor: item.color} : {backgroundColor: Colors.DISABLED_BORDER}, wasClickOnLabel && item.checked && {backgroundColor: item.color},  index === 0 ? {marginLeft: 16}: {marginLeft: 0}, index === labelsList.length - 1 ? {marginRight: 16} : {marginRight: 8} ]}>
-       <Text style={{color: Colors.WHITE, fontWeight: 'bold'}}>{item.title.toUpperCase()}</Text>
-      </TouchableOpacity>
-    )
+  showItemsList = (param, screenTitle, radio = '') => {
+    const {chosenLabelsID} = this.props || [];
+    this.props.navigation.navigate(param, {listType: param, screenTitle: screenTitle, radio: radio, fromScreen: 'notesList', chosenLabelsID: chosenLabelsID});
   };
 
-  handlePressLabel = (item) => {
-    const {labelsList, notesListOrigin} = this.state;
-
-    let updatedLabelsList = setInverseChosenItemInArr(labelsList, item.id);
-    this.setState({
-      labelsList: updatedLabelsList
-    });
-
-    const isChosenLabel = updatedLabelsList.find((item) => {
-      return item.checked === true;
-    });
-
-
-    if (isChosenLabel) {
-      // -- Filter Notes list by chosen labels --
-      const chosenLabelsList = updatedLabelsList.filter(item => {
-        return item.checked === true;
-      });
-
-
-     const filteredNotesListByLabel = notesListOrigin.filter(note => {
-       const noteLabels = note.labels || [];
-       let containLabel = false;
-
-       if (noteLabels.length) {
-         chosenLabelsList.forEach(chosenLabel => {
-           noteLabels.forEach(noteLabelID => {
-             if (chosenLabel.id === noteLabelID) {
-               containLabel = true;
-             }
-           })
-         });
-       }
-       return containLabel
-     });
-
-     this.setState({
-       notesList: filteredNotesListByLabel,
-     });
-
-    }
-
-    if (!isChosenLabel) {
-      // -- Show Original Note list if the use didn't chose any labels
-      this.setState({
-        notesList: notesListOrigin,
-      });
-    }
-
+  handleClearBtn = () => {
+    console.log('press');
+    this.props.dispatch(saveChosenLabelForNoteList([]))
   };
 
 
@@ -297,64 +262,68 @@ class Notes extends Component{
 
   render(){
 
-    const {notesList,  labelsList, isLoaded, showList} = this.state;
+    const {notesList, isLoaded, showList} = this.state;
+    const {labelsList} = this.props;
     console.log(this.state);
     console.log(isLoaded);
-
-
-
-    notesList.sort((a,b) => {
-
-      if (a.dateModified > b.dateModified) {
-        return -1;
-      }
-      if (a.dateModified < b.dateModified) {
-        return 1;
-      }
-      return 0
-
-    });
-
-
-    notesList.sort((a,b) => {
-
-      if (a.date.toLowerCase() > b.date.toLowerCase()) {
-        return -1;
-      }
-      if (a.date.toLowerCase() < b.date.toLowerCase()) {
-        return 1;
-      }
-      return 0
-
-    });
-
-    console.log(labelsList);
-
-
-
+    const {chosenLabelsID} = this.props || [];
 
     return(
       <SafeAreaView style={styles.container}>
-        <InternetNotification topDimension={0}/>
         {Boolean(isLoaded) &&
           <Fragment>
             {showList ? (
               <Fragment>
-                {labelsList.length > 0 &&
-                  <View style={{marginTop: 12}}>
-                    <FlatList
-                      horizontal={true}
-                      keyExtractor={(item, index) => index.toString()}
-                      data={labelsList}
-                      renderItem={this.renderLabelsListItem}
-                    />
-                  </View>
-                }
+
+               <TouchableHighlight
+                 onPress={() => {this.showItemsList('ChoseLabel', 'Метки')}}
+               >
+                 <View
+                   style={[commonStyles.tableBlockItem, {position: 'relative'}]}>
+                   <Text
+                     style={[commonStyles.tableBlockItemText]}>
+                     Отфильтровать по меткам:
+                   </Text>
+                   {chosenLabelsID.length > 0 &&
+                   <TouchableOpacity
+                     style={{position: 'absolute', width: 80, right: 40, top: 0, marginTop: 20}}
+                     onPress={() => {
+                       this.handleClearBtn();
+                     }}
+                   >
+
+                     <Text style={{color: Colors.BLUE_BTN}}>очистить</Text>
+                   </TouchableOpacity>
+                   }
+                   <Icon
+                     name='chevron-down'
+                     type='evilicon'
+                     color={Colors.GRAY_TEXT}
+                     size={40}
+                     containerStyle={{position: 'absolute', right: 0, top: 0, marginTop: 12}}
+                   />
+                   <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingLeft: 16, paddingRight: 16}}>
+                     {
+                       chosenLabelsID.map((item, index) => {
+                         console.log(item);
+                         console.log(labelsList);
+
+                         const title = labelsList[item].title;
+                         const color = labelsList[item].color;
+                         return (
+                           <ChosenLabel key={index} title={title} color={color}/>
+                         )
+                       })
+                     }
+                   </View>
+                 </View>
+               </TouchableHighlight>
+
                 {notesList.length ? (
                   <View style={{flex: 1, marginTop: 28}}>
                     <FlatList
                       keyExtractor={(item, index) => index.toString()}
-                      data={notesList}
+                      data={sortTestList(notesList)}
                       renderItem={this.renderFlatListItem}
                     />
                   </View>
@@ -402,6 +371,7 @@ function mapStateToProps (state) {
     currentUserPhotoURL: photoURL || '',
     labelsList: state.labels.labels,
     notesList: state.notes.notesList,
+    chosenLabelsID: state.labels.chosenLabelsIDForNoteList,
   }
 }
 

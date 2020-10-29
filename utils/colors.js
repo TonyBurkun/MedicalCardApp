@@ -44,11 +44,12 @@ export const DARK_GREEN = '#2A7343';
 export const GREEN_TIP = '#3CBA7B';
 export const GREEN_ADD_BTN = '#4DD750';
 export const PROFILE_HEAD_BG = '#5FDA9C';
-export const AVATAR_TEXT_BLOCK = '#62DE5B';
-
-export const FB_COLOR = '#3B5998';
 export const TW_COLOR = '#1DA1F2';
+
+export const AVATAR_TEXT_BLOCK = '#62DE5B';
+export const FB_COLOR = '#3B5998';
 export const BLUE = '#4A90E2';
+export const BLUE_BTN = '#2F80ED';
 
 
 export const REMOVE_BTN = '#D66775';

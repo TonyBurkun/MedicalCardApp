@@ -4,7 +4,6 @@ import {SafeAreaView} from 'react-navigation'
 import {getBottomSpace, getStatusBarHeight} from "react-native-iphone-x-helper";
 import * as Colors from "../../utils/colors";
 import commonStyles from "../../utils/commonStyles";
-import InternetNotification from "../ui_components/InternetNotification";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import validationChecker from "../../utils/validationChecker";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
@@ -78,7 +77,6 @@ class ChangeEmail extends Component {
 
     return (
       <SafeAreaView style={commonStyles.container}>
-        <InternetNotification topDimension={0}/>
         <KeyboardAwareScrollView
           alwaysBounceVertical={false}
           contentContainerStyle={{flex: 1, justifyContent: 'space-between'}}>

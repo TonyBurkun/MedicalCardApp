@@ -11,12 +11,19 @@ import commonStyles from "../../utils/commonStyles";
 import OneLabel from './OneLabel'
 import AddButton from '../ui_components/Buttons/AddButton'
 
-import {getLabelsForUser, getNotesListByCurrentUser, removeLabelForCurrentUser, updateChosenNote} from '../../utils/API'
+import {
+  geTestsListByCurrentUser,
+  getLabelsForUser,
+  getNotesListByCurrentUser,
+  removeLabelForCurrentUser,
+  updateChosenNote, updateChosenTest
+} from '../../utils/API'
 import {deleteLabel, saveChosenLabel, setLabels} from '../../actions/labels'
 import Swipeable from 'react-native-swipeable';
 import {convertObjToArr, isIphone5} from "../../utils/helpers";
 import {updateNote} from "../../actions/notes";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {updateTest} from "../../actions/tests";
 
 
 class LabelsList extends Component{
@@ -255,6 +262,28 @@ class LabelsList extends Component{
                     labelsArr.splice(searchResult, 1);
                     updateChosenNote(item.id, item);
                     this.props.dispatch(updateNote(item));
+                  }
+                }
+              })
+
+            });
+
+          // Remove the deleted LABEL from the all Tests where it was added ----
+          geTestsListByCurrentUser()
+            .then(data => {
+              const labelID = item.id;
+              const testsListArr = convertObjToArr(data);
+              testsListArr.forEach((item) => {
+                if (item.labels) {
+                  let labelsArr = item.labels;
+                  let searchResult = labelsArr.indexOf(labelID);
+                  if (searchResult !== -1) {
+                    labelsArr.splice(searchResult, 1);
+                    //TODO need to add updateChosenTest method and update the props
+                    console.log(item.id);
+                    console.log(item);
+                    updateChosenTest(item.id, item);
+                    this.props.dispatch(updateTest(item));
                   }
                 }
               })

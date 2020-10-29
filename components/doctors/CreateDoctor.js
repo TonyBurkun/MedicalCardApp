@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View, Text, ScrollView, TouchableOpacity} from 'react-native'
+import {View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet} from 'react-native'
 import * as Colors from "../../utils/colors";
 import commonStyles from "../../utils/commonStyles";
 import {SafeAreaView, withNavigationFocus} from "react-navigation";
@@ -35,6 +35,7 @@ class CreateDoctor extends Component{
         jobLocation: '',
         cellPhone: '',
         addCellPhone: '',
+        comment: '',
         rating: 0
       }
     }
@@ -76,6 +77,7 @@ class CreateDoctor extends Component{
           jobLocation: editedDoctor.jobLocation,
           cellPhone: editedDoctor.cellPhone,
           addCellPhone: editedDoctor.addCellPhone,
+          comment: editedDoctor.comment,
           rating: editedDoctor.rating
         }
       });
@@ -83,8 +85,6 @@ class CreateDoctor extends Component{
 
       this.props.dispatch(setChosenDoctorSpecializations(editedDoctor.specializations));
     }
-
-    console.log('DID MOUNT FINISH');
 
   }
 
@@ -191,6 +191,7 @@ class CreateDoctor extends Component{
         jobLocation: this.state.formField.jobLocation,
         cellPhone: this.state.formField.cellPhone,
         addCellPhone: this.state.formField.addCellPhone,
+        comment: this.state.formField.comment,
         rating: this.state.formField.rating,
         createdByUser: uid,
         dateModified: new Date().getTime(),
@@ -204,7 +205,7 @@ class CreateDoctor extends Component{
 
 
     } else {
-      const {firstName, lastName, specializations, jobLocation, cellPhone, addCellPhone, rating } = this.state.formField;
+      const {firstName, lastName, specializations, jobLocation, cellPhone, addCellPhone, comment, rating } = this.state.formField;
       const uid = getUIDfromFireBase();
       const generatedID = generateUniqID();
 
@@ -217,6 +218,7 @@ class CreateDoctor extends Component{
         jobLocation,
         cellPhone,
         addCellPhone,
+        comment,
         rating,
         createdByUser: uid,
         dateModified: new Date().getTime(),
@@ -227,7 +229,6 @@ class CreateDoctor extends Component{
       createNewDoctor(data);
       this.props.dispatch(addDoctor(data));
       this.props.dispatch(setChosenDoctorSpecializations([]));
-      // this.props.navigation.navigate('DoctorsTab');
       this.props.navigation.goBack();
 
     }
@@ -245,11 +246,11 @@ class CreateDoctor extends Component{
 
     const {doctorSpecializations} = this.props;
     const chosenDoctorSpecializations = this.state.formField.specializations;
-    const {firstName, lastName, specializations, jobLocation, cellPhone, addCellPhone, rating } = this.state.formField;
+    const {firstName, lastName, specializations, jobLocation, cellPhone, addCellPhone, comment, rating } = this.state.formField;
     const {isFormEdit} = this.state;
 
 
-    const isEnabled = lastName.length > 0 && specializations.length > 0;
+    const isEnabled = lastName.length > 0 && specializations.length > 0 && cellPhone.length > 0 &&  jobLocation.length > 0 ;
 
     let chosenDoctorSpecializationsTitle = chosenDoctorSpecializations.map((item) => {
         return doctorSpecializations[item];
@@ -277,7 +278,7 @@ class CreateDoctor extends Component{
         <InternetNotification/>
         <ScrollView
           contentContainerStyle={{flexGrow: 1}}
-          scrollEnabled={isIphone5()}
+          // scrollEnabled={isIphone5()}
         >
           <KeyboardAwareScrollView
             contentContainerStyle={{justifyContent: 'space-between', flexGrow: 1}}>
@@ -331,12 +332,12 @@ class CreateDoctor extends Component{
 
                 <GroupButtonsTitle title={'ДОПОЛНИТЕЛЬНЫЕ ДАННЫЕ'} paddingLeft={16}/>
                 <FloatingLabelInput
-                  label="Место работы (учереждение, адрес)"
+                  label="Место работы (Обязательно)"
                   value={this.state.formField.jobLocation}
                   onChangeText={this.handleJobLocationChange}
                 />
                 <PhoneLabelInput
-                  label="Мобильный номер"
+                  label="Мобильный номер (Обязательно)"
                   value={this.state.formField.cellPhone}
                   onChangeText={this.handleCellPhoneChange}
                 />
@@ -345,6 +346,29 @@ class CreateDoctor extends Component{
                   value={this.state.formField.addCellPhone}
                   onChangeText={this.handleAddCellPhoneChange}
                 />
+              </View>
+
+              <View style={commonStyles.tableBlock}>
+                <Text style={[commonStyles.tableBlockTitle, {paddingLeft: 16}]}>КОМЕНТАРИЙ</Text>
+
+                <View style={{paddingLeft: 16, paddingRight: 16}}>
+                  <TextInput
+                    style={styles.textArea}
+                    editable = {true}
+                    multiline = {true}
+                    placeholder={'Введите текст'}
+                    value={this.state.formField.comment}
+                    onChangeText={(text) => {
+                      this.setState({
+                        ...this.state,
+                        formField: {
+                          ...this.state.formField,
+                          comment: text
+                        }
+                      })
+                    }}
+                  />
+                </View>
               </View>
 
               <View style={{marginTop: 24}}>
@@ -382,6 +406,23 @@ function mapStateToProps (state) {
 }
 
 export default connect(mapStateToProps)(CreateDoctor)
+
+const styles = StyleSheet.create({
+
+  textArea: {
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.BORDER_COLOR,
+    backgroundColor: Colors.WHITE,
+    height: 120,
+    paddingTop: 16,
+    paddingBottom: 16,
+    paddingLeft: 8,
+    paddingRight: 8,
+    fontSize: 16,
+    color: Colors.TYPOGRAPHY_COLOR_DARK
+  }
+});
 
 
 

@@ -24,7 +24,6 @@ import ScreenTitle from './ui_components/titles/ScreenTitle'
 
 import firebase from 'react-native-firebase'
 import ImagePicker from 'react-native-image-picker';
-import InternetNotification from '../components/ui_components/InternetNotification'
 import RadioButtons from "./ui_components/Buttons/RadioButtons";
 import {Overlay} from "react-native-elements";
 
@@ -214,7 +213,6 @@ export default class StepOne extends Component {
           height="auto">
           <ActivityIndicator/>
         </Overlay>
-        <InternetNotification/>
         <ScrollView
           scrollEnabled={scrollEnabled}
           onContentSizeChange={this.onContentSizeChange}

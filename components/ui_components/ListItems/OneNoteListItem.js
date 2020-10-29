@@ -18,6 +18,7 @@ class OneNoteListItem extends Component {
 
 
   render() {
+    console.log(this.props);
 
     const {noteData, hasCheckBox, index} = this.props;
     const noteLabelsID = noteData.labels || [];

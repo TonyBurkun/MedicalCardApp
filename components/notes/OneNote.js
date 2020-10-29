@@ -8,7 +8,6 @@ import {getCurrentDate} from "../../utils/helpers";
 import {SafeAreaView} from "react-navigation";
 import commonStyles from "../../utils/commonStyles";
 import {Icon, Image, ListItem, Overlay} from "react-native-elements/src/index";
-import InternetNotification from "../ui_components/InternetNotification";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view/index";
 import FloatingLabelInput from "../ui_components/FloatingLabelInput";
 import DatePicker from "react-native-datepicker";
@@ -115,7 +114,6 @@ class OneNote extends Component {
     return (
       <SafeAreaView
         style={[styles.container, commonStyles.containerIndents]}>
-        <InternetNotification topDimension={0}/>
         <ScrollView
           contentContainerStyle={{flexGrow: 1}}
         >

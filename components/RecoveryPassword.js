@@ -6,7 +6,6 @@ import validationChecker from '../utils/validationChecker'
 import {sendPasswordResetEmail} from '../utils/API'
 import commonStyles from '../utils/commonStyles'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import InternetNotification from '../components/ui_components/InternetNotification'
 
 
 const validationRules = {
@@ -50,7 +49,6 @@ export default class RecoveryPassword extends Component {
     const isEnabled = email.length > 0;
     return (
       <View style={commonStyles.container}>
-        <InternetNotification topDimension={0}/>
         <KeyboardAwareScrollView
           contentContainerStyle={{flex: 1, justifyContent: 'flex-start'}}>
 
@@ -62,6 +60,7 @@ export default class RecoveryPassword extends Component {
           </View>
           <TextInput
             placeholder="Введите Ваш Email адрес"
+            placeholderTextColor = {Colors.GRAY_TEXT}
             style={[commonStyles.formInput, {marginTop: hp('10%'), marginBottom: hp('8.5%')}]}
             value={email}
             onChangeText={(text) => {

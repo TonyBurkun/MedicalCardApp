@@ -20,7 +20,6 @@ import validationChecker from '../utils/validationChecker'
 import {registrationWithEmailAndPassword, isUserExistInDB, addUserTokenToAsyncStorage, checkSetUpParamInUser, handleUserData} from '../utils/API'
 import commonStyles from '../utils/commonStyles'
 import {USER_TOKEN_LOCAL_STORAGE_KEY} from '../utils/textConstants'
-import InternetNotification from '../components/ui_components/InternetNotification'
 
 
 import {facebookLogin} from '../utils/facebook'
@@ -161,7 +160,6 @@ class Registration extends Component {
 
     return (
       <SafeAreaView style={commonStyles.container}>
-        <InternetNotification/>
         <KeyboardAwareScrollView
           alwaysBounceVertical={false}
           contentContainerStyle={{flex: 1, justifyContent: 'center'}}>
@@ -184,6 +182,7 @@ class Registration extends Component {
 
               <TextInput
                 placeholder="Ваш Email"
+                placeholderTextColor = {Colors.GRAY_TEXT}
                 style={commonStyles.formInput}
                 value={this.state.email}
                 autoCapitalize = 'none'
@@ -199,6 +198,7 @@ class Registration extends Component {
               <Text>{validationChecker.getErrorsInField('email')}</Text>
               <TextInput
                 placeholder="Пароль"
+                placeholderTextColor = {Colors.GRAY_TEXT}
                 secureTextEntry={true}
                 style={commonStyles.formInput}
                 value={this.state.password}
@@ -214,6 +214,7 @@ class Registration extends Component {
               <Text>{validationChecker.getErrorsInField('password')}</Text>
               <TextInput
                 placeholder="Подтверждение пароля"
+                placeholderTextColor = {Colors.GRAY_TEXT}
                 secureTextEntry={true}
                 style={[commonStyles.formInput, commonStyles.formInput__last]}
                 value={this.state.confirmPassword}
@@ -244,22 +245,22 @@ class Registration extends Component {
                 >ЗАРЕГИСТРИРОВАТЬСЯ</Text>
               </TouchableOpacity>
 
-              <Text style={[commonStyles.subTitle, {marginTop: 40}]}>Или присоединиться через социальную сеть:</Text>
+              {/*<Text style={[commonStyles.subTitle, {marginTop: 40}]}>Или присоединиться через социальную сеть:</Text>*/}
 
-              <View style={[commonStyles.socialBtnBlock]}>
-                <TouchableOpacity
-                  onPress={this.handleFacebookLogin}
-                  style={[commonStyles.submitBtn, commonStyles.facebookBtn]}
-                >
-                  <Text style={[commonStyles.submitBtnText, commonStyles.facebookBtn__Text]}>FaceBook</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={this.handleTwitterLogin}
-                  style={[commonStyles.submitBtn, commonStyles.twitterBtn]}
-                >
-                  <Text style={[commonStyles.submitBtnText, commonStyles.twitterBtn__Text]}>Twitter</Text>
-                </TouchableOpacity>
-              </View>
+              {/*<View style={[commonStyles.socialBtnBlock]}>*/}
+              {/*  <TouchableOpacity*/}
+              {/*    onPress={this.handleFacebookLogin}*/}
+              {/*    style={[commonStyles.submitBtn, commonStyles.facebookBtn]}*/}
+              {/*  >*/}
+              {/*    <Text style={[commonStyles.submitBtnText, commonStyles.facebookBtn__Text]}>FaceBook</Text>*/}
+              {/*  </TouchableOpacity>*/}
+              {/*  <TouchableOpacity*/}
+              {/*    onPress={this.handleTwitterLogin}*/}
+              {/*    style={[commonStyles.submitBtn, commonStyles.twitterBtn]}*/}
+              {/*  >*/}
+              {/*    <Text style={[commonStyles.submitBtnText, commonStyles.twitterBtn__Text]}>Twitter</Text>*/}
+              {/*  </TouchableOpacity>*/}
+              {/*</View>*/}
 
               {/*<Text style={styles.termsText}>*/}
               {/*<Text>*/}

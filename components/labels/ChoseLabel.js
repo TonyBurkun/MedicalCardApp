@@ -3,7 +3,13 @@ import {View, Text, StyleSheet, TouchableHighlight, Image, FlatList} from 'react
 import HeaderCancelBtn from "../ui_components/TopNavigation/HeaderCancelBtn";
 import * as Colors from "../../utils/colors";
 import HeaderAddBtn from "../ui_components/TopNavigation/HeaderAddBtn";
-import {getLabelsForUser, getNotesListByCurrentUser, removeLabelForCurrentUser, updateChosenNote} from "../../utils/API";
+import {
+  geTestsListByCurrentUser,
+  getLabelsForUser,
+  getNotesListByCurrentUser,
+  removeLabelForCurrentUser,
+  updateChosenNote, updateChosenTest
+} from "../../utils/API";
 import {deleteLabel, setLabels} from "../../actions/labels";
 import Swipeable from "react-native-swipeable";
 import OneLabel from "./OneLabel";
@@ -16,6 +22,7 @@ import {connect} from 'react-redux'
 import {addCheckFieldToArr, convertObjToArr, isIphone5, setChosenItemInArr} from "../../utils/helpers";
 import {updateNote} from "../../actions/notes";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {updateTest} from "../../actions/tests";
 
 class ChoseLabel extends Component {
 
@@ -67,11 +74,23 @@ class ChoseLabel extends Component {
 
   componentDidMount(){
 
+    const params = this.props.navigation.state.params;
+
+
     getLabelsForUser()
       .then(data => {
         this.props.dispatch(setLabels(data));
+        let {chosenLabelsID} = this.props.labels;
 
-        const {chosenLabelsID} = this.props.labels;
+        if (params && params.fromScreen && params.fromScreen === 'testsList') {
+          chosenLabelsID = this.props.chosenLabelsIDForTestList
+        }
+
+        if (params && params.fromScreen && params.fromScreen === 'notesList') {
+          chosenLabelsID = this.props.chosenLabelsIDForNoteList
+        }
+
+
         let labelsList = convertObjToArr(data);
         labelsList = addCheckFieldToArr(labelsList);
         labelsList = setChosenItemInArr(labelsList, chosenLabelsID);
@@ -97,15 +116,19 @@ class ChoseLabel extends Component {
     let nextLabelsListArr = convertObjToArr(nextLabels);
     nextLabelsListArr = addCheckFieldToArr(nextLabelsListArr);
 
+    console.log(nextLabelsListArr);
+    console.log(labelsList);
 
 
     if (nextLabelsListArr !== labelsList) {
+      console.log('NOT EQUAL');
       let chosenLabelsID = nextProps.labels.chosenLabelsID;
       if (Boolean(nextProps.navigation.state.params) && Boolean(nextProps.navigation.state.params.chosenItemsID)) {
         chosenLabelsID = nextProps.navigation.state.params.chosenItemsID;
       }
 
       const newLabelsList = setChosenItemInArr(nextLabelsListArr, chosenLabelsID);
+      console.log(newLabelsList);
 
       if (newLabelsList.length) {
         this.setState({
@@ -257,6 +280,29 @@ class ChoseLabel extends Component {
                 }
               })
 
+            });
+
+
+          // Remove the deleted LABEL from the all Tests where it was added ----
+          geTestsListByCurrentUser()
+            .then(data => {
+              const labelID = item.id;
+              const testsListArr = convertObjToArr(data);
+              testsListArr.forEach((item) => {
+                if (item.labels) {
+                  let labelsArr = item.labels;
+                  let searchResult = labelsArr.indexOf(labelID);
+                  if (searchResult !== -1) {
+                    labelsArr.splice(searchResult, 1);
+                    //TODO need to add updateChosenTest method and update the props
+                    console.log(item.id);
+                    console.log(item);
+                    updateChosenTest(item.id, item);
+                    this.props.dispatch(updateTest(item));
+                  }
+                }
+              })
+
             })
 
         });
@@ -321,6 +367,7 @@ class ChoseLabel extends Component {
     const { search, searchDataList, isLoaded, showList} = this.state;
     const {navigation} = this.props;
 
+    //TODO remove  sort from the state
     searchDataList.sort((a,b) => {
       if (a.dateModified < b.dateModified) {
         return 1;
@@ -389,11 +436,14 @@ class ChoseLabel extends Component {
 }
 
 function mapStateToProps(state) {
+  console.log(state);
   const labels = state.labels;
   console.log(state);
   return(
     {
       labels,
+      chosenLabelsIDForTestList: state.labels.chosenLabelsIDForTestList,
+      chosenLabelsIDForNoteList: state.labels.chosenLabelsIDForNoteList,
     }
   )
 

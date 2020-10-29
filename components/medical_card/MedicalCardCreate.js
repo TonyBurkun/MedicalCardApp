@@ -21,7 +21,7 @@ import {setChosenDisability, setDisability} from '../../actions/disability'
 import {setBadHabits, setChosenBadHabits} from '../../actions/badHabits'
 import {setChosenGenitalInfections, setGenitalInfections} from '../../actions/genitalInfections'
 import {setOther} from '../../actions/other'
-import {getChildhoodDiseases, getMedicalCardByID} from '../../utils/API';
+import {getChildhoodDiseases, getCurrentUserData, getMedicalCardByID} from '../../utils/API';
 import {getVaccinations} from '../../utils/API';
 import {getPregnancyOutcome} from '../../utils/API';
 import {getGynecologicalDiseases} from '../../utils/API';
@@ -31,8 +31,8 @@ import {getGenitalInfections} from '../../utils/API';
 
 import {generateUniqID, createMedicalCardInDB, getUIDfromFireBase, updateMedicalCardInDB, updateUserData, addMedicalCardIDtoCurrentUser} from '../../utils/API'
 import {ifIphoneX} from "react-native-iphone-x-helper/index";
-import InternetNotification from '../ui_components/InternetNotification'
 import withNavigation from "react-navigation/src/views/withNavigation";
+import {updateCurrentUserData} from "../../actions/authedUser";
 
 
 class MedicalCardCreate extends Component {
@@ -42,6 +42,7 @@ class MedicalCardCreate extends Component {
     let isProfile = false;
     let medicalCardID = null;
     const navigationParams = this.props.navigation.state.params;
+    console.log(navigationParams);
 
     if (Boolean(navigationParams) && Boolean(navigationParams.profile !== undefined)) {
       isProfile = this.props.navigation.state.params.profile;
@@ -68,7 +69,7 @@ class MedicalCardCreate extends Component {
     }
   }
 
-   componentDidMount() {
+ async componentDidMount() {
 
     getChildhoodDiseases()
       .then(success => {
@@ -126,14 +127,12 @@ class MedicalCardCreate extends Component {
         console.log('You can not download the Genital Infections list: ', error);
       });
 
-     const {medicalCardID}= this.state;
+    const {medicalCardID} = this.state;
 
-    if (Boolean(medicalCardID)) {
+    if (medicalCardID) {
       getMedicalCardByID(medicalCardID)
-        .then(data => {
+        .then( data => {
           console.log(data);
-          console.log(this);
-
           this.setState({
             ...this.state,
             formField: {
@@ -141,70 +140,110 @@ class MedicalCardCreate extends Component {
               allergicReactions: data.allergicReactions,
               transferredIVF: data.transferredIVF,
               other: data.other
-            },
+            }
           });
+          // this.props.dispatch(setAllergicReactions(data.allergicReactions || ''));
+          // this.props.dispatch(setTransferredIVF(data.transferredIVF || false));
+          // this.props.dispatch(setOther(data.other || ''));
+          this.props.dispatch(setChosenChildhoodDiseases(data.chosenChildhoodDiseases || []));
+          this.props.dispatch(setChosenVaccinations(data.chosenVaccinations || []));
+          this.props.dispatch(setChosenPregnancyOutcome(data.chosenPregnancyOutcome || []));
+          this.props.dispatch(setChosenGynecologicalDiseases(data.chosenGynecologicalDiseases || []));
+          this.props.dispatch(setChosenDisability(data.chosenDisability || []));
+          this.props.dispatch(setChosenBadHabits(data.chosenBadHabits || []));
+          this.props.dispatch(setChosenGenitalInfections(data.chosenGenitalInfections || []));
 
-          if (Boolean(data.chosenChildhoodDiseases)) {
-            this.props.dispatch(setChosenChildhoodDiseases(data.chosenChildhoodDiseases));
-            let {childhoodDiseases} = this.props;
-            data.chosenChildhoodDiseases.forEach(item => {
-             childhoodDiseases[item.id].check = true
-            })
-          }
-
-          if (Boolean(data.chosenVaccinations)) {
-            this.props.dispatch(setChosenVaccinations(data.chosenVaccinations));
-            let {vaccinations} = this.props;
-            data.chosenVaccinations.forEach(item => {
-              vaccinations[item.id].check = true
-            })
-          }
-
-          if (Boolean(data.chosenPregnancyOutcome)) {
-            this.props.dispatch(setChosenPregnancyOutcome(data.chosenPregnancyOutcome));
-            let {pregnancyOutcome} = this.props;
-            data.chosenPregnancyOutcome.forEach(item => {
-              pregnancyOutcome[item.id].check = true
-            })
-          }
-
-          if (Boolean(data.chosenGynecologicalDiseases)) {
-            this.props.dispatch(setChosenGynecologicalDiseases(data.chosenGynecologicalDiseases));
-            let {gynecologicalDiseases} = this.props;
-            data.chosenGynecologicalDiseases.forEach(item => {
-              gynecologicalDiseases[item.id].check = true
-            })
-          }
-
-          if (Boolean(data.chosenDisability)){
-            this.props.dispatch(setChosenDisability(data.chosenDisability));
-            let {disability} = this.props;
-            data.chosenDisability.forEach(item => {
-              disability[item.id].check = true
-            })
-          }
-
-          if (Boolean(data.chosenBadHabits)){
-            this.props.dispatch(setChosenBadHabits(data.chosenBadHabits));
-            let {badHabits} = this.props;
-            data.chosenBadHabits.forEach(item => {
-              badHabits[item.id].check = true
-            })
-          }
-
-          if (Boolean(data.chosenGenitalInfections)) {
-            this.props.dispatch(setChosenGenitalInfections(data.chosenGenitalInfections));
-            let {genitalInfections} = this.props;
-            data.chosenGenitalInfections.forEach(item => {
-              genitalInfections[item.id].check = true
-            })
-          }
 
         })
-        .catch(error => {console.log('There is an error while getting Medical Card data by ID: ', error)})
+        .catch(error => {
+          alert(error);
+          console.log('There is an error while getting Medical Card data by ID: ', error)
+        });
     }
 
 
+
+
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+    const {medicalCard} = nextProps;
+
+    if (medicalCard.chosenChildhoodDiseases.length) {
+      let {childhoodDiseases} = this.props;
+      medicalCard.chosenChildhoodDiseases.forEach(item => {
+        childhoodDiseases[item.id].check = true;
+        childhoodDiseases[item.id].date = item.date;
+
+      })
+    }
+
+
+    if (medicalCard.chosenVaccinations.length) {
+      let {vaccinations} = this.props;
+      medicalCard.chosenVaccinations.forEach(item => {
+        vaccinations[item.id].check = true;
+        vaccinations[item.id].date = item.date;
+      })
+    }
+
+    if (medicalCard.chosenPregnancyOutcome.length) {
+      let {pregnancyOutcome} = this.props;
+      medicalCard.chosenPregnancyOutcome.forEach(item => {
+        pregnancyOutcome[item.id].check = true;
+        pregnancyOutcome[item.id].date = item.date;
+      })
+    }
+
+    if ((medicalCard.chosenGynecologicalDiseases.length)) {
+      let {gynecologicalDiseases} = this.props;
+      medicalCard.chosenGynecologicalDiseases.forEach(item => {
+        gynecologicalDiseases[item.id].check = true;
+        gynecologicalDiseases[item.id].date = item.date;
+
+      })
+    }
+
+    if ((medicalCard.chosenDisability.length)) {
+      let {disability} = this.props;
+      medicalCard.chosenDisability.forEach(item => {
+        disability[item.id].check = true;
+        disability[item.id].date = item.date;
+      })
+    }
+
+    if ((medicalCard.chosenBadHabits.length)) {
+      let {badHabits} = this.props;
+      medicalCard.chosenBadHabits.forEach(item => {
+        badHabits[item.id].check = true;
+        badHabits[item.id].date = item.date;
+      })
+    }
+
+    if ((medicalCard.chosenGenitalInfections.length)) {
+      let {genitalInfections} = this.props;
+      medicalCard.chosenGenitalInfections.forEach(item => {
+        genitalInfections[item.id].check = true;
+        genitalInfections[item.id].date = item.date;
+
+      })
+    }
+
+
+  }
+
+  componentWillUnmount(){
+    this.props.dispatch(setAllergicReactions(''));
+    this.props.dispatch(setTransferredIVF( false));
+    this.props.dispatch(setOther(''));
+    this.props.dispatch(setChosenChildhoodDiseases([]));
+    this.props.dispatch(setChosenVaccinations([]));
+    this.props.dispatch(setChosenPregnancyOutcome([]));
+    this.props.dispatch(setChosenGynecologicalDiseases([]));
+    this.props.dispatch(setChosenDisability([]));
+    this.props.dispatch(setChosenBadHabits([]));
+    this.props.dispatch(setChosenGenitalInfections([]));
   }
 
   handleTextChange = (newText) => {
@@ -214,15 +253,11 @@ class MedicalCardCreate extends Component {
         allergicReactions: newText,
       }
 
-    })
+    });
   };
 
 
   showItemsList = (param, screenTitle, radio = '') => {
-    // let isProfile = false;
-    // if (Boolean(this.props.navigation.state.params)) {
-    //   isProfile = this.props.navigation.state.params.profile;
-    // }
 
     console.log(param);
 
@@ -284,6 +319,10 @@ class MedicalCardCreate extends Component {
       //Updating the Medical Card from Profile screen
 
       const {medicalCardID} = this.state;
+
+
+      console.log(medicalCardID);
+      console.log(medicalCardDataObj);
       updateMedicalCardInDB(medicalCardID, medicalCardDataObj);
       this.props.navigation.goBack();
     }
@@ -398,7 +437,6 @@ class MedicalCardCreate extends Component {
 
     return (
       <SafeAreaView style={[commonStyles.container, {paddingLeft: 0, paddingRight: 0, paddingBottom: 0}]}>
-        <InternetNotification/>
         <KeyboardAwareScrollView>
           <ScrollView
             alwaysBounceVertical={false}
@@ -583,7 +621,8 @@ class MedicalCardCreate extends Component {
                           transferredIVF: !this.state.formField.transferredIVF
 
                         }
-                      })
+                      });
+                      // this.props.dispatch(setTransferredIVF(!this.state.formField.transferredIVF));
                     }}
                   />
                 </View>

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native'
-import {SafeAreaView} from "react-navigation";
+import {SafeAreaView, withNavigationFocus} from "react-navigation";
 import {connect} from 'react-redux'
 import * as Colors from "../../utils/colors";
 import commonStyles from "../../utils/commonStyles";
@@ -13,6 +13,7 @@ import {getUIDfromFireBase} from '../../utils/API'
 
 import HeaderAddBtn from "../ui_components/TopNavigation/HeaderAddBtn";
 import EditIconBtn from "../ui_components/TopNavigation/EditIconBtn";
+import withNavigation from "react-navigation/src/views/withNavigation";
 
 class OneDoctor extends Component{
 
@@ -28,6 +29,7 @@ class OneDoctor extends Component{
       specializations: [],
       addCellPhone: '',
       cellPhone: '',
+      comment: ''
     }
 
   }
@@ -85,10 +87,34 @@ class OneDoctor extends Component{
         specializations: currentDoctor.specializations,
         addCellPhone: currentDoctor.addCellPhone,
         cellPhone: currentDoctor.cellPhone,
+        comment: currentDoctor.comment,
 
       })
 
 
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+
+    console.log('New PROPS', nextProps);
+    const params = this.props.navigation.state.params;
+    const doctorID = params.doctorID;
+
+    if (doctorID) {
+      let updatedCurrentDoctor = nextProps.doctorsList[doctorID];
+      console.log(updatedCurrentDoctor);
+      this.setState({
+        currentDoctor: updatedCurrentDoctor,
+        firstName: updatedCurrentDoctor.firstName,
+        lastName: updatedCurrentDoctor.lastName,
+        jobLocation: updatedCurrentDoctor.jobLocation,
+        rating: updatedCurrentDoctor.rating,
+        specializations: updatedCurrentDoctor.specializations,
+        addCellPhone: updatedCurrentDoctor.addCellPhone,
+        cellPhone: updatedCurrentDoctor.cellPhone,
+        comment: updatedCurrentDoctor.comment,
+      });
     }
   }
 
@@ -102,19 +128,19 @@ class OneDoctor extends Component{
 
     const {firstName, lastName, specializations, jobLocation, cellPhone, addCellPhone, rating} = this.state;
     const {doctorSpecializations} = this.props;
-    console.log(rating);
-
 
     function showTwoFirstLetters(firstName, lastName){
       let firstLetters = 'Д';
 
       if (firstName.length) {
         const firstNameArr = firstName.split(' ');
-        firstNameArr.length = 2;
+        if (firstNameArr.length > 2) {
+          firstNameArr.length = 2;
+        }
         if (firstNameArr.length === 2) {
           firstLetters = firstNameArr[0].slice(0,1) +  firstNameArr[1].slice(0,1)
         } else {
-          firstLetters = firstNameArr[0].slice(0,2)
+          firstLetters = firstNameArr[0].slice(0,1)
         }
         return firstLetters.toUpperCase();
       }
@@ -138,11 +164,6 @@ class OneDoctor extends Component{
 
     }
 
-
-
-
-
-
     return(
       <SafeAreaView style={commonStyles.container}>
           <InternetNotification/>
@@ -155,7 +176,7 @@ class OneDoctor extends Component{
               <Text style={styles.nameBlock__text}>{showTwoFirstLetters(firstName, lastName)}</Text>
             </View>
             <View>
-              <Text style={{textAlign: 'center', fontSize: 24, color: Colors.BLACK_TITLE_BTN, marginTop: 24}}>{lastName}</Text>
+              <Text style={{textAlign: 'center', fontSize: 24, color: Colors.BLACK_TITLE_BTN, marginTop: 24}}>{`${firstName} ${lastName}`}</Text>
               <Text style={{ textAlign: 'center', fontSize: 16, color: Colors.GRAY_TEXT, marginTop: 8}}>{showSpecializations(specializations, doctorSpecializations)}</Text>
             </View>
             <View style={{marginTop: 16}}>
@@ -197,6 +218,11 @@ class OneDoctor extends Component{
 
             </View>
           </View>
+          <View>
+            <Text>{this.state.comment}</Text>
+          </View>
+
+
           <View style={{marginTop: 50, marginBottom: 70, justifyContent: 'flex-end'}}>
             <Text style={{fontSize: 16, color: Colors.BLACK_TITLE, textAlign: 'center', marginBottom: 16}}>Оценка доктора
             </Text>
@@ -222,7 +248,9 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(OneDoctor)
+// export default connect(mapStateToProps)(OneDoctor)
+
+export default withNavigationFocus(connect(mapStateToProps)(OneDoctor))
 
 const styles = StyleSheet.create({
   nameBlock: {
